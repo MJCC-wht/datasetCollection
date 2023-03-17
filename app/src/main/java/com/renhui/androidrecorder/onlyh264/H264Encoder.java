@@ -49,13 +49,14 @@ public class H264Encoder {
             mediaCodec = MediaCodec.createEncoderByType("video/avc");
             mediaCodec.configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             mediaCodec.start();
-            createfile();
+            createFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void createfile() {
+    private void createFile() {
+        // 在android根路径下
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/test.mp4";
         File file = new File(path);
         if (file.exists()) {
