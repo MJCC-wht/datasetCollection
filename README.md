@@ -10,3 +10,7 @@ Android音视频采集的方法：预览用SurfaceView，视频采集用Camera�
 
 #### 1.3 数据处理思路
 使用MediaCodec 类进行编码压缩，视频压缩为H.264，音频压缩为aac，使用MediaMuxer 将音视频合成为MP4。
+
+
+
+#### test
