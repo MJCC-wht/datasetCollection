@@ -42,7 +42,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "申请权限", Toast.LENGTH_SHORT).show();
-            // 申请 相机 麦克风权限
+            // 申请相机、麦克风和存储权限
             ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
@@ -61,7 +61,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     stopCamera();
                     finish();
                 } else {
-                    startCamera();
+                    startCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
                     view.setTag("stop");
                     ((TextView) view).setText("停止");
                     MediaMuxerThread.startMuxer();
@@ -103,8 +103,8 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     /**
      * 打开摄像头
      */
-    private void startCamera() {
-        camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+    private void startCamera(int cameraId) {
+        camera = Camera.open(cameraId);
         camera.setDisplayOrientation(90);
         Camera.Parameters parameters = camera.getParameters();
         parameters.setPreviewFormat(ImageFormat.NV21);
@@ -130,6 +130,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         if (camera != null) {
             camera.setPreviewCallback(null);
             camera.stopPreview();
+            camera.release();
             camera = null;
         }
     }

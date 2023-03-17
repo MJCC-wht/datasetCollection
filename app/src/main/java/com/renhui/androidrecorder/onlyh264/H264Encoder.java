@@ -3,6 +3,7 @@ package com.renhui.androidrecorder.onlyh264;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
+import android.media.MediaMuxer;
 import android.os.Environment;
 
 import java.io.BufferedOutputStream;
@@ -20,9 +21,15 @@ public class H264Encoder {
     private final static int TIMEOUT_USEC = 12000;
 
     private MediaCodec mediaCodec;
+    private MediaMuxer mediaMuxer;
 
     public boolean isRuning = false;
     private int width, height, framerate;
+    private static final int COMPRESS_RATIO = 256;
+    public static final int IMAGE_HEIGHT = 1080;
+    public static final int IMAGE_WIDTH = 1920;
+    private static final int FRAME_RATE = 60; // 帧率
+    private static final int BIT_RATE = IMAGE_HEIGHT * IMAGE_WIDTH * 3; // bit rate CameraWrapper.
     public byte[] configbyte;
 
     private BufferedOutputStream outputStream;
@@ -42,29 +49,17 @@ public class H264Encoder {
 
         MediaFormat mediaFormat = MediaFormat.createVideoFormat("video/avc", width, height);
         mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar);
-        mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, width * height * 5);
-        mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
-        mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
+        mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, BIT_RATE);
+        mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, framerate);
+        mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 10);
         try {
             mediaCodec = MediaCodec.createEncoderByType("video/avc");
+            // 创建混合器生成mp4
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/test.mp4";
+            mediaMuxer = new MediaMuxer(path, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
             mediaCodec.configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             mediaCodec.start();
-            createFile();
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void createFile() {
-        // 在android根路径下
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/test.mp4";
-        File file = new File(path);
-        if (file.exists()) {
-            file.delete();
-        }
-        try {
-            outputStream = new BufferedOutputStream(new FileOutputStream(file));
-        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -81,56 +76,52 @@ public class H264Encoder {
      */
     public void startEncoder() {
         new Thread(new Runnable() {
-
             @Override
             public void run() {
                 isRuning = true;
                 byte[] input = null;
                 long pts = 0;
                 long generateIndex = 0;
+                int mTrackIndex = 0;
 
                 while (isRuning) {
+                    // 从相机预览取出一帧待处理的数据，需要从NV21->NV12
                     if (yuv420Queue.size() > 0) {
                         input = yuv420Queue.poll();
                         byte[] yuv420sp = new byte[width * height * 3 / 2];
                         // 必须要转格式，否则录制的内容播放出来为绿屏
-                        NV21ToNV12(input, yuv420sp, width, height);
+                        NV21toI420SemiPlanar(input, yuv420sp, width, height);
+//                        NV21ToNV12(input, yuv420sp, width, height);
                         input = yuv420sp;
                     }
                     if (input != null) {
                         try {
-                            ByteBuffer[] inputBuffers = mediaCodec.getInputBuffers();
-                            ByteBuffer[] outputBuffers = mediaCodec.getOutputBuffers();
+                            // 拿到有空闲的输入缓存区的下标
                             int inputBufferIndex = mediaCodec.dequeueInputBuffer(-1);
                             if (inputBufferIndex >= 0) {
                                 pts = computePresentationTime(generateIndex);
-                                ByteBuffer inputBuffer = inputBuffers[inputBufferIndex];
-                                inputBuffer.clear();
+                                ByteBuffer inputBuffer = mediaCodec.getInputBuffer(inputBufferIndex);
                                 inputBuffer.put(input);
-                                mediaCodec.queueInputBuffer(inputBufferIndex, 0, input.length, System.currentTimeMillis(), 0);
-                                generateIndex += 1;
+                                generateIndex++;
+                                // 将数据放到编码队列
+                                mediaCodec.queueInputBuffer(inputBufferIndex, 0, input.length, pts, 0);
                             }
-
                             MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+                            // 得到成功编码后输出的outputBufferId
                             int outputBufferIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, TIMEOUT_USEC);
-                            while (outputBufferIndex >= 0) {
-                                ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];
+                            if (outputBufferIndex >= 0) {
+                                ByteBuffer outputBuffer = mediaCodec.getOutputBuffer(outputBufferIndex);
+                                // mediaCodec的直接编码输出是h264
                                 byte[] outData = new byte[bufferInfo.size];
-                                outputBuffer.get(outData);
-                                if (bufferInfo.flags == MediaCodec.BUFFER_FLAG_CODEC_CONFIG) {
-                                    configbyte = new byte[bufferInfo.size];
-                                    configbyte = outData;
-                                } else if (bufferInfo.flags == MediaCodec.BUFFER_FLAG_SYNC_FRAME) {
-                                    byte[] keyframe = new byte[bufferInfo.size + configbyte.length];
-                                    System.arraycopy(configbyte, 0, keyframe, 0, configbyte.length);
-                                    System.arraycopy(outData, 0, keyframe, configbyte.length, outData.length);
-                                    outputStream.write(keyframe, 0, keyframe.length);
-                                } else {
-                                    outputStream.write(outData, 0, outData.length);
-                                }
-
+                                outputBuffer.position(bufferInfo.offset);
+                                outputBuffer.limit(bufferInfo.offset + bufferInfo.size);
+                                // 直接用MediaMuxer写入
+                                mediaMuxer.writeSampleData(mTrackIndex, outputBuffer, bufferInfo);
                                 mediaCodec.releaseOutputBuffer(outputBufferIndex, false);
-                                outputBufferIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, TIMEOUT_USEC);
+                            } else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                                MediaFormat mediaFormat = mediaCodec.getOutputFormat();
+                                mTrackIndex = mediaMuxer.addTrack(mediaFormat);
+                                mediaMuxer.start();
                             }
 
                         } catch (Throwable t) {
@@ -149,15 +140,17 @@ public class H264Encoder {
                 try {
                     mediaCodec.stop();
                     mediaCodec.release();
+                    mediaCodec = null;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                // 关闭数据流
+                // 关闭Muxer
                 try {
-                    outputStream.flush();
-                    outputStream.close();
-                } catch (IOException e) {
+                    mediaMuxer.stop();
+                    mediaMuxer.release();
+                    mediaMuxer = null;
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -184,6 +177,14 @@ public class H264Encoder {
         }
         for (j = 0; j < framesize / 2; j += 2) {
             nv12[framesize + j] = nv21[j + framesize - 1];
+        }
+    }
+
+    private static void NV21toI420SemiPlanar(byte[] nv21bytes, byte[] i420bytes, int width, int height) {
+        System.arraycopy(nv21bytes, 0, i420bytes, 0, width * height);
+        for (int i = width * height; i < nv21bytes.length; i += 2) {
+            i420bytes[i] = nv21bytes[i + 1];
+            i420bytes[i + 1] = nv21bytes[i];
         }
     }
 

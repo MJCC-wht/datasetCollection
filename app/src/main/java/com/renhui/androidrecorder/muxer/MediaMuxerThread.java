@@ -186,7 +186,8 @@ public class MediaMuxerThread extends Thread {
      * @return
      */
     public boolean isMuxerStart() {
-        return isAudioTrackAdd && isVideoTrackAdd;
+//        return isAudioTrackAdd && isVideoTrackAdd;
+        return isVideoTrackAdd;
     }
 
 
@@ -200,9 +201,9 @@ public class MediaMuxerThread extends Thread {
     private void initMuxer() {
         muxerDatas = new Vector<>();
         fileSwapHelper = new FileUtils();
-        audioThread = new AudioEncoderThread((new WeakReference<MediaMuxerThread>(this)));
+//        audioThread = new AudioEncoderThread((new WeakReference<MediaMuxerThread>(this)));
         videoThread = new VideoEncoderThread(1920, 1080, new WeakReference<MediaMuxerThread>(this));
-        audioThread.start();
+//        audioThread.start();
         videoThread.start();
         try {
             readyStart();
@@ -228,18 +229,20 @@ public class MediaMuxerThread extends Thread {
                         }
                     }
                 } else {
+                    // VideoThread传来的数据不为空的情况下
                     if (fileSwapHelper.requestSwapFile()) {
                         //需要切换文件
                         String nextFileName = fileSwapHelper.getNextFileName();
                         Log.e(TAG, "正在重启混合器..." + nextFileName);
                         restart(nextFileName);
                     } else {
+                        // 取出队首
                         MuxerData data = muxerDatas.remove(0);
-                        int track;
+                        int track = -1;
                         if (data.trackIndex == TRACK_VIDEO) {
                             track = videoTrackIndex;
                         } else {
-                            track = audioTrackIndex;
+                            Log.e(TAG, "视频轨道数据出现错误");
                         }
                         Log.e(TAG, "写入混合数据 " + data.bufferInfo.size);
                         try {

@@ -31,9 +31,9 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     SurfaceHolder surfaceHolder;
     Button muxerButton;
 
-    int width = 1280;
-    int height = 720;
-    int framerate = 30;
+    int width = 1920;
+    int height = 1080;
+    int framerate = 60;
     H264Encoder encoder;
 
     @Override
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                 // 跳转到 MediaMuxerActivity
                 Intent intent = new Intent(MainActivity.this, MediaMuxerActivity.class);
                 startActivity(intent);
-                finish();
+//                finish();
             }
         });
 
@@ -104,10 +104,9 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         camera.setDisplayOrientation(90);
         Camera.Parameters parameters = camera.getParameters();
         parameters.setPreviewFormat(ImageFormat.NV21);
-        parameters.setPreviewSize(1280, 720);
+        parameters.setPreviewSize(1920, 1080);
         // 对焦
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-
         try {
             camera.setParameters(parameters);
             camera.setPreviewDisplay(surfaceHolder);
@@ -118,12 +117,9 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         }
 
         // 进行自动对焦
-        camera.autoFocus(new Camera.AutoFocusCallback() {
-            @Override
-            public void onAutoFocus(boolean b, Camera camera) {
-                if (b) {
-                    Log.w("MainActivity", "autofocus success");
-                }
+        camera.autoFocus((b, camera) -> {
+            if (b) {
+                Log.w("MainActivity", "autofocus success");
             }
         });
 
@@ -155,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
     @Override
     public void onPreviewFrame(byte[] bytes, Camera camera) {
+        // 存到test.mp4当中
         if (encoder != null) {
             encoder.putData(bytes);
         }

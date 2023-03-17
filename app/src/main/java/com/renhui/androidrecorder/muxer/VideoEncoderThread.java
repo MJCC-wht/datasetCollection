@@ -23,7 +23,7 @@ public class VideoEncoderThread extends Thread {
 
     // 编码相关参数
     private static final String MIME_TYPE = "video/avc"; // H.264 Advanced Video
-    private static final int FRAME_RATE = 25; // 帧率
+    private static final int FRAME_RATE = 60; // 帧率
     private static final int IFRAME_INTERVAL = 10; // I帧间隔（GOP）
     private static final int TIMEOUT_USEC = 10000; // 编码超时时间
 
@@ -36,7 +36,7 @@ public class VideoEncoderThread extends Thread {
     private byte[] mFrameData;
 
     private static final int COMPRESS_RATIO = 256;
-    private static final int BIT_RATE = IMAGE_HEIGHT * IMAGE_WIDTH * 3 * 8 * FRAME_RATE / COMPRESS_RATIO; // bit rate CameraWrapper.
+    private static final int BIT_RATE = IMAGE_HEIGHT * IMAGE_WIDTH * 3; // bit rate CameraWrapper.
 
     private final Object lock = new Object();
 
@@ -61,7 +61,7 @@ public class VideoEncoderThread extends Thread {
         prepare();
     }
 
-    // 执行相关准备工作
+    // 执行相关初始化的准备工作
     private void prepare() {
         Log.i(TAG, "VideoEncoderThread().prepare");
         mFrameData = new byte[this.mWidth * this.mHeight * 3 / 2];
@@ -134,18 +134,18 @@ public class VideoEncoderThread extends Thread {
 
         while (!isExit) {
             if (!isStart) {
+                // 如果没开始，确保关闭MediaCodec，防止冲突
                 stopMediaCodec();
-
                 if (!isMuxerReady) {
                     synchronized (lock) {
                         try {
                             Log.e(TAG, "video -- 等待混合器准备...");
                             lock.wait();
                         } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
-
                 if (isMuxerReady) {
                     try {
                         Log.e(TAG, "video -- startMediaCodec...");
@@ -155,11 +155,12 @@ public class VideoEncoderThread extends Thread {
                         try {
                             Thread.sleep(100);
                         } catch (InterruptedException e1) {
+                            e1.printStackTrace();
                         }
                     }
                 }
-
             } else if (!frameBytes.isEmpty()) {
+                // 开始编码并且有数据的情况，相当于出队首
                 byte[] bytes = this.frameBytes.remove(0);
                 Log.e("ang-->", "解码视频数据:" + bytes.length);
                 try {
@@ -188,13 +189,9 @@ public class VideoEncoderThread extends Thread {
         // 将原始的N21数据转为I420
         NV21toI420SemiPlanar(input, mFrameData, this.mWidth, this.mHeight);
 
-        ByteBuffer[] inputBuffers = mMediaCodec.getInputBuffers();
-        ByteBuffer[] outputBuffers = mMediaCodec.getOutputBuffers();
-
         int inputBufferIndex = mMediaCodec.dequeueInputBuffer(TIMEOUT_USEC);
         if (inputBufferIndex >= 0) {
-            ByteBuffer inputBuffer = inputBuffers[inputBufferIndex];
-            inputBuffer.clear();
+            ByteBuffer inputBuffer = mMediaCodec.getInputBuffer(inputBufferIndex);
             inputBuffer.put(mFrameData);
             mMediaCodec.queueInputBuffer(inputBufferIndex, 0, mFrameData.length, System.nanoTime() / 1000, 0);
         } else {
@@ -206,7 +203,6 @@ public class VideoEncoderThread extends Thread {
         do {
             if (outputBufferIndex == MediaCodec.INFO_TRY_AGAIN_LATER) {
             } else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                outputBuffers = mMediaCodec.getOutputBuffers();
             } else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                 MediaFormat newFormat = mMediaCodec.getOutputFormat();
                 MediaMuxerThread mediaMuxerRunnable = this.mediaMuxer.get();
@@ -217,7 +213,7 @@ public class VideoEncoderThread extends Thread {
                 Log.e(TAG, "outputBufferIndex < 0");
             } else {
                 Log.d(TAG, "perform encoding");
-                ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];
+                ByteBuffer outputBuffer = mMediaCodec.getOutputBuffer(outputBufferIndex);
                 if (outputBuffer == null) {
                     throw new RuntimeException("encoderOutputBuffer " + outputBufferIndex + " was null");
                 }
@@ -228,14 +224,15 @@ public class VideoEncoderThread extends Thread {
                 if (mBufferInfo.size != 0) {
                     MediaMuxerThread mediaMuxer = this.mediaMuxer.get();
 
+                    // 确保添加视频轨
                     if (mediaMuxer != null && !mediaMuxer.isVideoTrackAdd()) {
                         MediaFormat newFormat = mMediaCodec.getOutputFormat();
                         mediaMuxer.addTrackIndex(MediaMuxerThread.TRACK_VIDEO, newFormat);
                     }
-                    // adjust the ByteBuffer values to match BufferInfo (not needed?)
                     outputBuffer.position(mBufferInfo.offset);
                     outputBuffer.limit(mBufferInfo.offset + mBufferInfo.size);
 
+                    // 将视频轨添加到Muxer数据中，最后一起writeSample
                     if (mediaMuxer != null && mediaMuxer.isMuxerStart()) {
                         mediaMuxer.addMuxerData(new MediaMuxerThread.MuxerData(MediaMuxerThread.TRACK_VIDEO, outputBuffer, mBufferInfo));
                     }
