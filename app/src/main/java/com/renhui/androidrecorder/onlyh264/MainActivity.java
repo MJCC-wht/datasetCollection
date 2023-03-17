@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "申请权限", Toast.LENGTH_SHORT).show();
-            // 申请 相机 麦克风权限
+            // 申请相机、麦克风和本地存储权限
             ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.CAMERA,
                     Manifest.permission.RECORD_AUDIO,
@@ -57,11 +57,13 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
         surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         surfaceHolder = surfaceView.getHolder();
+        // 创建回调，用于通过surfaceHolder控制surfaceView
         surfaceHolder.addCallback(this);
         muxerButton = (Button) findViewById(R.id.go_muxer);
         muxerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // 跳转到 MediaMuxerActivity
                 Intent intent = new Intent(MainActivity.this, MediaMuxerActivity.class);
                 startActivity(intent);
                 finish();
@@ -98,10 +100,13 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         Log.w("MainActivity", "enter surfaceCreated method");
         // 目前设定的是，当surface创建后，就打开摄像头开始预览
         camera = Camera.open();
+        // 竖直显示
         camera.setDisplayOrientation(90);
         Camera.Parameters parameters = camera.getParameters();
         parameters.setPreviewFormat(ImageFormat.NV21);
         parameters.setPreviewSize(1280, 720);
+        // 对焦
+        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 
         try {
             camera.setParameters(parameters);
@@ -111,6 +116,16 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // 进行自动对焦
+        camera.autoFocus(new Camera.AutoFocusCallback() {
+            @Override
+            public void onAutoFocus(boolean b, Camera camera) {
+                if (b) {
+                    Log.w("MainActivity", "autofocus success");
+                }
+            }
+        });
 
         encoder = new H264Encoder(width, height, framerate);
         encoder.startEncoder();
@@ -129,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         if (camera != null) {
             camera.setPreviewCallback(null);
             camera.stopPreview();
+            camera.release();
             camera = null;
         }
 
