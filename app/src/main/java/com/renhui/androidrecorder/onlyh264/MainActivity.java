@@ -1,6 +1,7 @@
 package com.renhui.androidrecorder.onlyh264;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
@@ -69,12 +70,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 //                finish();
             }
         });
-
-        if (supportH264Codec()) {
-            Log.e("MainActivity", "support H264 hard codec");
-        } else {
-            Log.e("MainActivity", "not support H264 hard codec");
-        }
     }
 
     private boolean supportH264Codec() {
@@ -123,8 +118,20 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             }
         });
 
-        encoder = new H264Encoder(width, height, framerate);
-        encoder.startEncoder();
+        if (supportH264Codec()) {
+            Log.e("MainActivity", "support H264 hard codec");
+            encoder = new H264Encoder(width, height, framerate);
+            encoder.startEncoder();
+        } else {
+            Log.e("MainActivity", "not support H264 hard codec");
+            // 如果不支持H.264编码 弹窗
+            AlertDialog alertDialog1 = new AlertDialog.Builder(this)
+                    .setTitle("程序出现一个错误")//标题
+                    .setMessage("不支持H.264视频编码格式！")//内容
+                    .setIcon(R.mipmap.ic_launcher)//图标
+                    .create();
+            alertDialog1.show();
+        }
     }
 
     @Override
