@@ -1,0 +1,51 @@
+package com.renhui.androidrecorder.homepage;
+
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+import com.renhui.androidrecorder.R;
+import com.renhui.androidrecorder.muxer.MediaMuxerActivity;
+
+public class InfoShowActivity extends AppCompatActivity {
+    private Button btnOK;
+    private TextView complete_info;
+    private String file_name; // 合成文件名
+
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
+    }
+
+    public String getFile_name() {
+        return file_name;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_info_show);
+
+        Intent intent = getIntent();
+        file_name = intent.getStringExtra("fileName");
+        complete_info=(TextView) findViewById(R.id.textView);
+        complete_info.setText(this.file_name);
+        // 后面还要加条件判断。。。
+
+        btnOK = (Button) findViewById(R.id.btnOK);
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //点击按钮跳转到注册页面
+                Intent intent = new Intent();
+                intent.setClass(InfoShowActivity.this, MediaMuxerActivity.class);
+                // file name transit
+                //intent.putExtra("complete_info",file_name);
+                startActivity(intent);
+            }
+        });
+
+    }
+}
