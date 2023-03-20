@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".homepage.HomepageActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true">
+
+        <ImageButton
+            android:id="@+id/yundong"
+            android:layout_width="170dp"
+            android:layout_height="120dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="70dp"
+            android:background="@drawable/butai"></ImageButton>
+
+        <TextView
+            android:id="@+id/txt1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/yundong"
+            android:layout_marginLeft="65dp"
+            android:layout_marginTop="7dp"
+            android:text="4个动作"
+            android:textColor="#000000"
+            android:textSize="18sp"></TextView>
+
+        <ImageButton
+            android:id="@+id/renzhi"
+            android:layout_width="170dp"
+            android:layout_height="120dp"
+            android:layout_below="@+id/yundong"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="43dp"
+            android:background="@drawable/renzhi"></ImageButton>
+
+        <TextView
+            android:id="@+id/txt2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/renzhi"
+            android:layout_marginLeft="65dp"
+            android:layout_marginTop="7dp"
+            android:text="5个视频"
+            android:textColor="#000000"
+            android:textSize="18sp"></TextView>
+
+        <ImageButton
+            android:id="@+id/biaoqing"
+            android:layout_width="170dp"
+            android:layout_height="120dp"
+            android:layout_below="@+id/renzhi"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/biaoqing"></ImageButton>
+        <TextView
+            android:id="@+id/txt3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/biaoqing"
+            android:layout_marginLeft="65dp"
+            android:layout_marginTop="7dp"
+            android:text="5个视频"
+            android:textColor="#000000"
+            android:textSize="18sp"></TextView>
+        <ImageButton
+            android:id="@+id/yuyin"
+            android:layout_width="170dp"
+            android:layout_height="120dp"
+            android:layout_below="@+id/biaoqing"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="31dp"
+            android:background="@drawable/yuyin"></ImageButton>
+
+        <TextView
+            android:id="@+id/txt4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/yuyin"
+            android:layout_marginLeft="55dp"
+            android:layout_marginTop="7dp"
+            android:text="3个语音任务"
+            android:textColor="#000000"
+            android:textSize="18sp"></TextView>
+        <TextView
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="50dp"
+            android:id="@+id/txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="功能维度"
+            android:textColor="#000000"
+            android:textSize="30sp"></TextView>
+        <TextView
+            android:id="@+id/txtx"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="70dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="采集动作"
+            android:textColor="#000000"
+            android:layout_toRightOf="@+id/txt"
+            android:textSize="30sp"></TextView>
+
+        <Button
+            android:id="@+id/btn11"
+            style="@style/MyBtnStyle"
+            android:layout_width="77dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtx"
+            android:layout_alignTop="@+id/yundong"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/yundong"
+            android:background="@drawable/btn_bg_selector"
+            android:text="1.正常\n   行走"
+            android:textSize="22sp"></Button>
+
+        <Button
+            android:id="@+id/btn12"
+            style="@style/MyBtnStyle"
+            android:layout_width="170dp"
+            android:layout_height="65dp"
+            android:layout_below="@+id/btn11"
+            android:layout_marginLeft="98dp"
+            android:layout_marginTop="-65dp"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/yundong"
+            android:background="@drawable/btn_bg_selector"
+            android:text="2.从椅子上站起坐下"
+            android:textSize="22sp"></Button>
+
+        <Button
+            android:id="@+id/btn13"
+            style="@style/MyBtnStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn11"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="13dp"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/yundong"
+            android:background="@drawable/btn_bg_selector"
+            android:text="3.左右\n   抬腿"
+            android:textSize="22sp"></Button>
+        <Button
+            android:id="@+id/btn14"
+            style="@style/MyBtnStyle"
+            android:layout_width="104dp"
+            android:layout_height="66dp"
+            android:layout_below="@+id/btn12"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="13dp"
+            android:layout_toRightOf="@+id/btn13"
+            android:background="@drawable/btn_bg_selector"
+            android:text="4.360°\n  转身"
+            android:textSize="22sp"></Button>
+
+        <Button
+            android:id="@+id/btn21"
+            style="@style/MyBtnStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/renzhi"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="13dp"
+            android:layout_toRightOf="@+id/renzhi"
+            android:background="@drawable/btn_bg_selector"
+            android:text="Vedio 1"
+            android:textSize="20sp"></Button>
+
+        <Button
+            android:id="@+id/btn22"
+            style="@style/MyBtnStyle"
+            android:layout_width="96dp"
+            android:layout_height="49dp"
+            android:layout_alignTop="@+id/renzhi"
+            android:layout_marginLeft="115dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginRight="13dp"
+            android:layout_toRightOf="@+id/renzhi"
+            android:background="@drawable/btn_bg_selector"
+            android:text="Vedio 2"
+            android:textSize="20sp"></Button>
+
+        <Button
+            android:id="@+id/btn23"
+            style="@style/MyBtnStyle"
+            android:layout_width="63dp"
+            android:layout_height="68dp"
+            android:layout_below="@+id/btn21"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="8dp"
+            android:layout_toRightOf="@+id/renzhi"
+            android:background="@drawable/btn_bg_selector"
+            android:text="Vedio 3"
+            android:textSize="20sp"></Button>
+
+        <Button
+            android:id="@+id/btn24"
+            style="@style/MyBtnStyle"
+            android:layout_width="63dp"
+            android:layout_height="68dp"
+            android:layout_below="@+id/btn21"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="8dp"
+            android:layout_toRightOf="@+id/btn23"
+            android:background="@drawable/btn_bg_selector"
+            android:text="Vedio 4"
+            android:textSize="20sp"></Button>
+        <Button
+            android:id="@+id/btn25"
+            style="@style/MyBtnStyle"
+            android:layout_width="65dp"
+            android:layout_height="68dp"
+            android:layout_below="@+id/btn21"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="8dp"
+            android:layout_toRightOf="@+id/btn24"
+            android:background="@drawable/btn_bg_selector"
+            android:text="Vedio 5"
+            android:textSize="20sp"></Button>
+        <Button
+            android:id="@+id/btn31"
+            style="@style/MyBtnStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/biaoqing"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginRight="13dp"
+            android:layout_toRightOf="@+id/renzhi"
+            android:background="@drawable/btn_bg_selector"
+            android:text="Vedio 1"
+            android:textSize="20sp"></Button>
+
+        <Button
+            android:id="@+id/btn32"
+            style="@style/MyBtnStyle"
+            android:layout_width="96dp"
+            android:layout_height="49dp"
+            android:layout_alignTop="@+id/biaoqing"
+            android:layout_marginLeft="115dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginRight="13dp"
+            android:layout_toRightOf="@+id/biaoqing"
+            android:background="@drawable/btn_bg_selector"
+            android:text="Vedio 2"
+            android:textSize="20sp"></Button>
+
+        <Button
+            android:id="@+id/btn33"
+            style="@style/MyBtnStyle"
+            android:layout_width="63dp"
+            android:layout_height="68dp"
+            android:layout_below="@+id/btn31"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="8dp"
+            android:layout_toRightOf="@+id/biaoqing"
+            android:background="@drawable/btn_bg_selector"
+            android:text="Vedio 3"
+            android:textSize="20sp"></Button>
+
+        <Button
+            android:id="@+id/btn34"
+            style="@style/MyBtnStyle"
+            android:layout_width="63dp"
+            android:layout_height="68dp"
+            android:layout_below="@+id/btn31"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="8dp"
+            android:layout_toRightOf="@+id/btn33"
+            android:background="@drawable/btn_bg_selector"
+            android:text="Vedio 4"
+            android:textSize="20sp"></Button>
+        <Button
+            android:id="@+id/btn35"
+            style="@style/MyBtnStyle"
+            android:layout_width="65dp"
+            android:layout_height="68dp"
+            android:layout_below="@+id/btn31"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="8dp"
+            android:layout_toRightOf="@+id/btn34"
+            android:background="@drawable/btn_bg_selector"
+            android:text="Vedio 5"
+            android:textSize="20sp"></Button>
+
+        <Button
+            android:id="@+id/btn41"
+            style="@style/MyBtnStyle"
+            android:layout_width="198dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/yuyin"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="-2dp"
+            android:layout_marginRight="13dp"
+            android:layout_toRightOf="@+id/yuyin"
+            android:background="@drawable/btn_bg_selector"
+            android:text="1min水果命名"
+            android:textSize="18sp"></Button>
+
+        <Button
+            android:id="@+id/btn42"
+            style="@style/MyBtnStyle"
+            android:layout_width="205dp"
+            android:layout_height="45dp"
+            android:layout_alignTop="@+id/yuyin"
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="105dp"
+            android:layout_marginRight="13dp"
+            android:layout_toRightOf="@+id/yuyin"
+            android:background="@drawable/btn_bg_selector"
+            android:text="1min图片描述"
+            android:textSize="18sp"></Button>
+
+        <Button
+            android:id="@+id/btn43"
+            style="@style/MyBtnStyle"
+            android:layout_width="197dp"
+            android:layout_height="45dp"
+            android:layout_below="@+id/btn41"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="8dp"
+            android:layout_toRightOf="@+id/yuyin"
+            android:background="@drawable/btn_bg_selector"
+            android:text="3min故事回忆"
+            android:textSize="18sp"></Button>
+    </RelativeLayout>
+
+</LinearLayout>

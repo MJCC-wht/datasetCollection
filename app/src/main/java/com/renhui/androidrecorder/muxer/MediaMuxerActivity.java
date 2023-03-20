@@ -61,7 +61,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     stopCamera();
                     finish();
                 } else {
-                    startCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
+                    startCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
                     view.setTag("stop");
                     ((TextView) view).setText("停止");
                     MediaMuxerThread.startMuxer();
