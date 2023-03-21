@@ -37,7 +37,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     SurfaceTexture surfaceTexture;
 
     // 当前是否有情绪认知部分在播放
-    boolean videoDisplay = true;
+    boolean videoDisplay = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
