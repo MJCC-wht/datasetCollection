@@ -17,29 +17,22 @@ import java.util.Vector;
 public class MediaMuxerThread extends Thread {
 
     private static final String TAG = "MediaMuxerThread";
-
     public static final int TRACK_VIDEO = 0;
-    public static final int TRACK_AUDIO = 1;
-
     private final Object lock = new Object();
-
     private static MediaMuxerThread mediaMuxerThread;
 
-    private AudioEncoderThread audioThread;
     private VideoEncoderThread videoThread;
-
     private MediaMuxer mediaMuxer;
     private Vector<MuxerData> muxerDatas;
-
     private int videoTrackIndex = -1;
-    private int audioTrackIndex = -1;
 
     private FileUtils fileSwapHelper;
+    // 用于上传的文件路径和名字
+    public static String filePath;
+    public static String tagName = "video";
 
-    // 音轨添加状态
+    // 视频轨添加状态
     private volatile boolean isVideoTrackAdd;
-    private volatile boolean isAudioTrackAdd;
-
     private volatile boolean isExit = false;
 
     private MediaMuxerThread() {
@@ -78,28 +71,26 @@ public class MediaMuxerThread extends Thread {
     }
 
     private void readyStart(String filePath) throws IOException {
+        MediaMuxerThread.filePath = filePath;
         isExit = false;
         isVideoTrackAdd = false;
-        isAudioTrackAdd = false;
         muxerDatas.clear();
 
         mediaMuxer = new MediaMuxer(filePath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
-        if (audioThread != null) {
-            audioThread.setMuxerReady(true);
-        }
         if (videoThread != null) {
             videoThread.setMuxerReady(true);
         }
         Log.e(TAG, "readyStart(String filePath, boolean restart) 保存至:" + filePath);
     }
 
-    // 添加视频帧数据
+    // 从预览图中添加视频帧数据
     public static void addVideoFrameData(byte[] data) {
         if (mediaMuxerThread != null) {
             mediaMuxerThread.addVideoData(data);
         }
     }
 
+    // 向Muxer中添加数据
     public void addMuxerData(MuxerData data) {
         if (!isMuxerStart()) {
             return;
@@ -123,7 +114,7 @@ public class MediaMuxerThread extends Thread {
         }
 
         /* 如果已经添加了，就不做处理了 */
-        if ((index == TRACK_AUDIO && isAudioTrackAdd()) || (index == TRACK_VIDEO && isVideoTrackAdd())) {
+        if (index == TRACK_VIDEO && isVideoTrackAdd()) {
             return;
         }
 
@@ -132,7 +123,7 @@ public class MediaMuxerThread extends Thread {
             try {
                 track = mediaMuxer.addTrack(mediaFormat);
             } catch (Exception e) {
-                Log.e(TAG, "addTrack 异常:" + e.toString());
+                Log.e(TAG, "addTrack 异常:" + e);
                 return;
             }
 
@@ -140,17 +131,14 @@ public class MediaMuxerThread extends Thread {
                 videoTrackIndex = track;
                 isVideoTrackAdd = true;
                 Log.e(TAG, "添加视频轨完成");
-            } else {
-                audioTrackIndex = track;
-                isAudioTrackAdd = true;
-                Log.e(TAG, "添加音轨完成");
             }
+
             requestStart();
         }
     }
 
     /**
-     * 请求混合器开始启动
+     * 请求Muxer开始启动
      */
     private void requestStart() {
         synchronized (lock) {
@@ -160,15 +148,6 @@ public class MediaMuxerThread extends Thread {
                 lock.notify();
             }
         }
-    }
-
-    /**
-     * 当前是否添加了音轨
-     *
-     * @return
-     */
-    public boolean isAudioTrackAdd() {
-        return isAudioTrackAdd;
     }
 
     /**
@@ -186,7 +165,6 @@ public class MediaMuxerThread extends Thread {
      * @return
      */
     public boolean isMuxerStart() {
-//        return isAudioTrackAdd && isVideoTrackAdd;
         return isVideoTrackAdd;
     }
 
@@ -201,22 +179,22 @@ public class MediaMuxerThread extends Thread {
     private void initMuxer() {
         muxerDatas = new Vector<>();
         fileSwapHelper = new FileUtils();
-//        audioThread = new AudioEncoderThread((new WeakReference<MediaMuxerThread>(this)));
         videoThread = new VideoEncoderThread(1920, 1080, new WeakReference<MediaMuxerThread>(this));
-//        audioThread.start();
         videoThread.start();
         try {
+            // 对文件进行操作
             readyStart();
         } catch (IOException e) {
-            Log.e(TAG, "initMuxer 异常:" + e.toString());
+            Log.e(TAG, "initMuxer 异常:" + e);
         }
     }
 
     @Override
     public void run() {
         super.run();
-        // 初始化混合器
+        // 初始化Muxer
         initMuxer();
+        // 不断接收数据
         while (!isExit) {
             if (isMuxerStart()) {
                 if (muxerDatas.isEmpty()) {
@@ -231,7 +209,7 @@ public class MediaMuxerThread extends Thread {
                 } else {
                     // VideoThread传来的数据不为空的情况下
                     if (fileSwapHelper.requestSwapFile()) {
-                        //需要切换文件
+                        // TODO:每隔一分钟需要切换文件（后续删掉这个功能）
                         String nextFileName = fileSwapHelper.getNextFileName();
                         Log.e(TAG, "正在重启混合器..." + nextFileName);
                         restart(nextFileName);
@@ -246,6 +224,7 @@ public class MediaMuxerThread extends Thread {
                         }
                         Log.e(TAG, "写入混合数据 " + data.bufferInfo.size);
                         try {
+                            // 写入到本地文件
                             mediaMuxer.writeSampleData(track, data.byteBuf, data.bufferInfo);
                         } catch (Exception e) {
                             Log.e(TAG, "写入混合数据失败!" + e.toString());
@@ -275,7 +254,7 @@ public class MediaMuxerThread extends Thread {
     }
 
     private void restart(String filePath) {
-        restartAudioVideo();
+        restartVideo();
         readyStop();
 
         try {
@@ -306,12 +285,7 @@ public class MediaMuxerThread extends Thread {
         }
     }
 
-    private void restartAudioVideo() {
-        if (audioThread != null) {
-            audioTrackIndex = -1;
-            isAudioTrackAdd = false;
-            audioThread.restart();
-        }
+    private void restartVideo() {
         if (videoThread != null) {
             videoTrackIndex = -1;
             isVideoTrackAdd = false;
@@ -324,14 +298,6 @@ public class MediaMuxerThread extends Thread {
             videoThread.exit();
             try {
                 videoThread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        if (audioThread != null) {
-            audioThread.exit();
-            try {
-                audioThread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

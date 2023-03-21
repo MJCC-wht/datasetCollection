@@ -38,11 +38,11 @@ public class InfoShowActivity extends AppCompatActivity {
         btnOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //点击按钮跳转到注册页面
+                // 点击按钮跳转到录制界面
                 Intent intent = new Intent();
                 intent.setClass(InfoShowActivity.this, MediaMuxerActivity.class);
                 // file name transit
-                //intent.putExtra("complete_info",file_name);
+                // intent.putExtra("complete_info",file_name);
                 startActivity(intent);
             }
         });
