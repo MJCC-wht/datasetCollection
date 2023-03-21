@@ -52,7 +52,7 @@ public class FileUploadThread extends Thread {
     @Override
     public void run() {
         try {
-            Log.w("OkHttpButton", "OkHttpButton Push！");
+            Log.w("OkHttpStart", "OkHttpThread Start！");
             String url = "http://" + serverIp + "/upload";
             String filePath = androidFilePath;
             File file = new File(filePath);
@@ -64,7 +64,7 @@ public class FileUploadThread extends Thread {
 //            RequestBody fileBody = RequestBody.Companion.create(file,mediaType);
 
             String[] buff = filePath.split("/");
-            String fileName = "/" + tagName + buff[buff.length-1];
+            String fileName = "/" + tagName +  "/" + buff[buff.length-1];
 
             RequestBody requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
