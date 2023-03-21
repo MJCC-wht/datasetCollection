@@ -1,5 +1,6 @@
 package com.renhui.androidrecorder.muxer;
 
+import android.annotation.SuppressLint;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaCodecInfo;
@@ -31,6 +32,10 @@ public class AudioEncoderThread extends Thread {
     private AudioRecord audioRecord;
     private FileOutputStream fos;
 
+    // 用于上传的文件路径和名字
+    public static String filePath;
+    public static String tagName = "audio";
+
     public AudioEncoderThread() {
         // 构造函数
     }
@@ -43,7 +48,7 @@ public class AudioEncoderThread extends Thread {
 
                     // 初始化AudioRecord和file
                     audioThread.prepareAudioRecord();
-                    String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/android_records/video/test.wav";
+                    filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/android_records/video/test.wav";
                     File file = new File(filePath);
                     if (file.exists()) {
                         file.delete();
@@ -74,6 +79,7 @@ public class AudioEncoderThread extends Thread {
     }
 
 
+    @SuppressLint("MissingPermission")
     private void prepareAudioRecord() {
         if (audioRecord != null) {
             audioRecord.stop();

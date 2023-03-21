@@ -23,7 +23,7 @@ public class VideoEncoderThread extends Thread {
 
     // 编码相关参数
     private static final String MIME_TYPE = "video/avc"; // H.264 Advanced Video
-    private static final int FRAME_RATE = 60; // 帧率
+    private static final int FRAME_RATE = 30; // 帧率
     private static final int IFRAME_INTERVAL = 10; // I帧间隔（GOP）
     private static final int TIMEOUT_USEC = 10000; // 编码超时时间
 

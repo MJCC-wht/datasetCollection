@@ -3,6 +3,7 @@ package com.renhui.androidrecorder.muxer;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -13,6 +14,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +34,10 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
 
     Camera camera;
     SurfaceHolder surfaceHolder;
+    SurfaceTexture surfaceTexture;
+
+    // 当前是否有情绪认知部分在播放
+    boolean videoDisplay = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,12 +69,15 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     ((TextView) view).setText("录制视频");
                     MediaMuxerThread.stopMuxer();
                     stopCamera();
+                    // 视频录制完，上传文件
+                    FileUploadThread.startUpload(MediaMuxerThread.filePath, MediaMuxerThread.tagName);
 //                    finish();
                 } else {
                     startCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
                     view.setTag("stop");
                     ((TextView) view).setText("停止录制");
                     MediaMuxerThread.startMuxer();
+                    FileUploadThread.stopUpload();
                 }
             }
         });
@@ -80,10 +89,13 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     view.setTag("start");
                     ((TextView) view).setText("录制音频");
                     AudioEncoderThread.stopAudio();
+                    // 音频录制完，上传文件
+                    FileUploadThread.startUpload(AudioEncoderThread.filePath, AudioEncoderThread.tagName);
                 } else {
                     view.setTag("stop");
                     ((TextView) view).setText("停止录制");
                     AudioEncoderThread.startAudio();
+                    FileUploadThread.stopUpload();
                 }
             }
         });
@@ -103,6 +115,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
 
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
+        surfaceTexture = new SurfaceTexture(10);
 
     }
 
@@ -140,13 +153,22 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         camera.setDisplayOrientation(90);
         Camera.Parameters parameters = camera.getParameters();
         parameters.setPreviewFormat(ImageFormat.NV21);
+//        camera.cancelAutoFocus();
+        if (cameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        }
 
         // 这个宽高的设置必须和后面编解码的设置一样，否则不能正常处理
         parameters.setPreviewSize(1920, 1080);
 
         try {
             camera.setParameters(parameters);
-            camera.setPreviewDisplay(surfaceHolder);
+            // 根据情况播放视频
+            if (videoDisplay) {
+                camera.setPreviewTexture(surfaceTexture);
+            } else {
+                camera.setPreviewDisplay(surfaceHolder);
+            }
             camera.setPreviewCallback(MediaMuxerActivity.this);
             camera.startPreview();
         } catch (IOException e) {
@@ -154,11 +176,11 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         }
 
         // 进行自动对焦
-        camera.autoFocus((b, camera) -> {
-            if (b) {
-                Log.w("MainActivity", "autofocus success");
-            }
-        });
+//        camera.autoFocus((b, camera) -> {
+//            if (b) {
+//                Log.w("MainActivity", "autofocus success");
+//            }
+//        });
     }
 
     /**

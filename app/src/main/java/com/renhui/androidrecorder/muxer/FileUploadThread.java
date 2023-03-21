@@ -49,6 +49,10 @@ public class FileUploadThread extends Thread {
         }
     }
 
+    public static void stopUpload() {
+        fileUploadThread = null;
+    }
+
     @Override
     public void run() {
         try {
@@ -64,7 +68,7 @@ public class FileUploadThread extends Thread {
 //            RequestBody fileBody = RequestBody.Companion.create(file,mediaType);
 
             String[] buff = filePath.split("/");
-            String fileName = "/" + tagName + buff[buff.length-1];
+            String fileName = "/" + tagName + "/" + buff[buff.length-1];
 
             RequestBody requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)

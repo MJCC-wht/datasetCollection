@@ -17,25 +17,22 @@ import java.util.Vector;
 public class MediaMuxerThread extends Thread {
 
     private static final String TAG = "MediaMuxerThread";
-
     public static final int TRACK_VIDEO = 0;
-
     private final Object lock = new Object();
-
     private static MediaMuxerThread mediaMuxerThread;
 
     private VideoEncoderThread videoThread;
-
     private MediaMuxer mediaMuxer;
     private Vector<MuxerData> muxerDatas;
-
     private int videoTrackIndex = -1;
 
     private FileUtils fileSwapHelper;
+    // 用于上传的文件路径和名字
+    public static String filePath;
+    public static String tagName = "video";
 
-    // 音轨添加状态
+    // 视频轨添加状态
     private volatile boolean isVideoTrackAdd;
-
     private volatile boolean isExit = false;
 
     private MediaMuxerThread() {
@@ -74,6 +71,7 @@ public class MediaMuxerThread extends Thread {
     }
 
     private void readyStart(String filePath) throws IOException {
+        MediaMuxerThread.filePath = filePath;
         isExit = false;
         isVideoTrackAdd = false;
         muxerDatas.clear();
