@@ -35,7 +35,6 @@ public class VideoEncoderThread extends Thread {
     private Vector<byte[]> frameBytes;
     private byte[] mFrameData;
 
-    private static final int COMPRESS_RATIO = 256;
     private static final int BIT_RATE = IMAGE_HEIGHT * IMAGE_WIDTH * 3; // bit rate CameraWrapper.
 
     private final Object lock = new Object();
@@ -94,7 +93,6 @@ public class VideoEncoderThread extends Thread {
         }
         return null;
     }
-
 
     /**
      * 开始视频编码

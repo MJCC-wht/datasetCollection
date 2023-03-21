@@ -26,7 +26,9 @@ import java.io.IOException;
 public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHolder.Callback, Camera.PreviewCallback {
 
     SurfaceView surfaceView;
-    Button startStopButton;
+    Button videoStartStopButton;
+    Button audioStartStopButton;
+    Button changeCameraButton;
 
     Camera camera;
     SurfaceHolder surfaceHolder;
@@ -49,22 +51,52 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         }
 
         surfaceView = (SurfaceView) findViewById(R.id.surface_view);
-        startStopButton = (Button) findViewById(R.id.startStop);
+        videoStartStopButton = (Button) findViewById(R.id.videoStartStop);
+        audioStartStopButton = (Button) findViewById(R.id.audioStartStop);
+        changeCameraButton = (Button) findViewById(R.id.changeCamera);
 
-        startStopButton.setOnClickListener(new View.OnClickListener() {
+        videoStartStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (view.getTag().toString().equalsIgnoreCase("stop")) {
                     view.setTag("start");
-                    ((TextView) view).setText("开始");
+                    ((TextView) view).setText("录制视频");
                     MediaMuxerThread.stopMuxer();
                     stopCamera();
-                    finish();
+//                    finish();
                 } else {
                     startCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
                     view.setTag("stop");
-                    ((TextView) view).setText("停止");
+                    ((TextView) view).setText("停止录制");
                     MediaMuxerThread.startMuxer();
+                }
+            }
+        });
+
+        audioStartStopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (view.getTag().toString().equalsIgnoreCase("stop")) {
+                    view.setTag("start");
+                    ((TextView) view).setText("录制音频");
+                    AudioEncoderThread.stopAudio();
+                } else {
+                    view.setTag("stop");
+                    ((TextView) view).setText("停止录制");
+                    AudioEncoderThread.startAudio();
+                }
+            }
+        });
+
+        changeCameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (view.getTag().toString().equalsIgnoreCase("front")) {
+                    view.setTag("back");
+                    changeCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
+                } else {
+                    view.setTag("front");
+                    changeCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
                 }
             }
         });
@@ -89,8 +121,8 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         Log.w("MainActivity", "enter surfaceDestroyed method");
         MediaMuxerThread.stopMuxer();
+        AudioEncoderThread.stopAudio();
         stopCamera();
-
     }
 
     @Override
@@ -120,6 +152,13 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // 进行自动对焦
+        camera.autoFocus((b, camera) -> {
+            if (b) {
+                Log.w("MainActivity", "autofocus success");
+            }
+        });
     }
 
     /**
@@ -135,5 +174,14 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         }
     }
 
+    /**
+     * 切换前后摄像头
+     */
+    private void changeCamera(int cameraId) {
+        // 先确认关闭
+        stopCamera();
+        // 然后开启对应Id的camera
+        startCamera(cameraId);
+    }
 
 }
