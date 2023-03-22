@@ -3,6 +3,7 @@ package com.renhui.androidrecorder.muxer;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -40,17 +41,13 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     // 当前是否有情绪认知部分在播放
     boolean videoDisplay = false;
     // 文件名
-    String fileName ;
+    String filePath ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_media_muxer);
-
-        // 接收文件名
-        Intent intent = getIntent();
-        fileName = intent.getStringExtra("complete_info");
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
@@ -62,6 +59,10 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
         }
+
+        // 拿到从上一个页面传过来的文件名
+        Intent intent = getIntent();
+        filePath = intent.getStringExtra("complete_info");
 
         surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         videoStartStopButton = (Button) findViewById(R.id.videoStartStop);
@@ -83,7 +84,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     startCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
                     view.setTag("stop");
                     ((TextView) view).setText("停止录制");
-                    MediaMuxerThread.startMuxer();
+                    MediaMuxerThread.startMuxer(filePath);
                     FileUploadThread.stopUpload();
                 }
             }
@@ -101,7 +102,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                 } else {
                     view.setTag("stop");
                     ((TextView) view).setText("停止录制");
-                    AudioEncoderThread.startAudio();
+                    AudioEncoderThread.startAudio(filePath);
                     FileUploadThread.stopUpload();
                 }
             }
@@ -135,6 +136,15 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
         Log.w("MainActivity", "enter surfaceChanged method");
+//        if (videoDisplay) {
+//            Canvas canvas = surfaceHolder.lockCanvas();
+//            // 绘制图片
+//            if (canvas != null) {
+//                canvas.drawBitmap();
+//            }
+//        }
+
+
     }
 
     @Override
