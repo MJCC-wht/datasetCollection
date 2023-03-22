@@ -1,6 +1,7 @@
 package com.renhui.androidrecorder.muxer;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
@@ -38,12 +39,18 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
 
     // 当前是否有情绪认知部分在播放
     boolean videoDisplay = false;
+    // 文件名
+    String fileName ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_media_muxer);
+
+        // 接收文件名
+        Intent intent = getIntent();
+        fileName = intent.getStringExtra("complete_info");
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
