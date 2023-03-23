@@ -51,13 +51,14 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     // 用于在播放音频时显示的图片
     Bitmap audioBitmap;
     // 文件名
-    String filePath ;
+    String filePath,floatWindow ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_media_muxer);
+
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
@@ -73,6 +74,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         // 拿到从上一个页面传过来的文件名
         Intent intent = getIntent();
         filePath = intent.getStringExtra("complete_info");
+        floatWindow = intent.getStringExtra("float_window");
 
         surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         videoStartStopButton = (Button) findViewById(R.id.videoStartStop);

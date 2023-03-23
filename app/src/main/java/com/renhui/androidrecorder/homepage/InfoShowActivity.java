@@ -14,7 +14,7 @@ public class InfoShowActivity extends AppCompatActivity {
     private Button btnOK;
     private TextView complete_info;
     private String file_name; // 合成文件名
-
+    private String float_window; // floatWindow : yes or no
     public void setFile_name(String file_name) {
         this.file_name = file_name;
     }
@@ -30,6 +30,9 @@ public class InfoShowActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         file_name = intent.getStringExtra("fileName");
+        // yes or no floating window
+        float_window = intent.getStringExtra("floatWindow");
+
         complete_info=(TextView) findViewById(R.id.textView);
         complete_info.setText(this.file_name);
 
@@ -42,6 +45,7 @@ public class InfoShowActivity extends AppCompatActivity {
                 intent.setClass(InfoShowActivity.this, MediaMuxerActivity.class);
                 // file name transit
                 intent.putExtra("complete_info",file_name);
+                intent.putExtra("float_window",float_window);
                 startActivity(intent);
             }
         });
