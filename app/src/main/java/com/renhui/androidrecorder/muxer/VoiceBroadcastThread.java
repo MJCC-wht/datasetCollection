@@ -104,8 +104,6 @@ public class VoiceBroadcastThread extends Thread{
                 // TTS引擎发生错误
             }
         });
-
-
     }
 
     private void startAuto(String data) {
