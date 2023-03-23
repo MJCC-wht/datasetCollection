@@ -58,11 +58,11 @@ public class InfoInputActivity extends AppCompatActivity {
                 age = etAge.getText().toString();
                 condition = etCondition.getText().toString();
                 education = etEducation.getText().toString();
-                if (choice.charAt(0)== 'a'){
+                if (education != ""){
                     Info = number+"-"+name+"-"+gender+"-"+age+"-"+condition+"-"+education;}
                 else
                     Info = number+"-"+name+"-"+gender+"-"+age+"-"+condition;
-                String allInfo = choice+Info;
+                String allInfo = choice+"-"+Info;
                 //点击按钮跳转到注册页面
                 Intent intent = new Intent();
                 intent.setClass(InfoInputActivity.this, InfoShowActivity.class);

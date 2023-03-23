@@ -56,7 +56,7 @@ public class FileUploadThread extends Thread {
     @Override
     public void run() {
         try {
-            Log.w("OkHttpButton", "OkHttpButton Push！");
+            Log.w("OkHttpStart", "OkHttpThread Start！");
             String url = "http://" + serverIp + "/upload";
             String filePath = androidFilePath;
             File file = new File(filePath);
@@ -67,7 +67,8 @@ public class FileUploadThread extends Thread {
 //            //第一层，说明数据为文件，以及文件类型
 //            RequestBody fileBody = RequestBody.Companion.create(file,mediaType);
 
-            String fileName = "/" + tagName;
+            String[] buff = filePath.split("/");
+            String fileName = "/" + tagName + "/" + buff[buff.length-1];
 
             RequestBody requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)

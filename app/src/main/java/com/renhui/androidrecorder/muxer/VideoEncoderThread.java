@@ -120,6 +120,12 @@ public class VideoEncoderThread extends Thread {
         }
     }
 
+    public synchronized void restart() {
+        isStart = false;
+        isMuxerReady = false;
+        frameBytes.clear();
+    }
+
     @Override
     public void run() {
         super.run();
