@@ -24,6 +24,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -36,6 +37,8 @@ import com.renhui.androidrecorder.R;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 音视频混合界面
@@ -59,14 +62,18 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     // 用于显示的图片
     Bitmap audioBitmap;
     // 文件名
-    String filePath,floatWindow;
+    String filePath, floatWindow;
+    String[] filePathList;
     // 判断是否需要摄像头小窗
     boolean cameraWindow = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // 隐藏标题栏
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_media_muxer);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
@@ -83,7 +90,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         // 拿到从上一个页面传过来的文件名
         Intent intent = getIntent();
         filePath = intent.getStringExtra("complete_info");
-        String[] filePathList = filePath.split("/");
+        filePathList = filePath.split("/");
         switch(filePathList[1]) {
             case "action1":
                 VoiceBroadcastThread.stopBroadcast();
@@ -125,7 +132,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         }
         // 选择是否需要小窗口  yes or no
         floatWindow = intent.getStringExtra("cameraWindow") ;
-        if(floatWindow == "no"){
+        if (floatWindow.equals("no")) {
             cameraWindow = false;
         }// default  true
 
@@ -149,7 +156,9 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     MediaMuxerThread.stopMuxer();
                     // 视频录制完，上传文件
                     FileUploadThread.startUpload(MediaMuxerThread.filePath, MediaMuxerThread.tagName);
-                    VideoPlayerThread.stopPlay(mVideo, surfaceView);
+                    if (filePathList[1].startsWith("recognition") || filePathList[1].startsWith("emotion")) {
+                        VideoPlayerThread.stopPlay(mVideo, surfaceView);
+                    }
                     // 恢复摄像头角度设置
                     camera.setDisplayOrientation(90);
                     stopCamera();
@@ -164,7 +173,9 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                         Log.w("MainActivity", "camera gone");
                     }
                     FileUploadThread.stopUpload();
-                    VideoPlayerThread.startPlay(MediaMuxerActivity.this, mVideo);
+                    if (filePathList[1].startsWith("recognition") || filePathList[1].startsWith("emotion")) {
+                        VideoPlayerThread.startPlay(MediaMuxerActivity.this, mVideo);
+                    }
                 }
             }
         });
@@ -198,11 +209,9 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         changeCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (view.getTag().toString().equalsIgnoreCase("front")) {
-                    view.setTag("back");
+                if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
                     changeCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
                 } else {
-                    view.setTag("front");
                     changeCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
                 }
             }
@@ -244,46 +253,52 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // 横屏时给出横屏弹窗、全屏显示
-            Toast.makeText(getApplicationContext(), "横屏", Toast.LENGTH_SHORT).show();
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mVideo.getLayoutParams();
-            // 移除必须在按钮之下的位置设定，让横屏能全屏播放
-            params.removeRule(RelativeLayout.BELOW);
-            mVideo.setLayoutParams(params);
-            Log.e("view change", "横屏");
+        if (filePathList[1].startsWith("recognition") || filePathList[1].startsWith("emotion")) {
+            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                // 横屏时给出横屏弹窗、全屏显示
+                Toast.makeText(getApplicationContext(), "横屏", Toast.LENGTH_SHORT).show();
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mVideo.getLayoutParams();
+                // 移除必须在按钮之下的位置设定，让横屏能全屏播放
+                params.removeRule(RelativeLayout.BELOW);
+                mVideo.setLayoutParams(params);
+                Log.e("view change", "横屏");
 
-            // 横屏时显示摄像头预览窗口
-            if (cameraWindow) {
-                // 设置摄像头小窗置于最高层、不透明、尺寸与nobuttun贴合
-                surfaceView.setAlpha(1);
-                surfaceView.setZOrderOnTop(true);
-                if (camera != null) {
-                    RelativeLayout.LayoutParams cameraparams = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
-                    cameraparams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.noButton);
-                    cameraparams.addRule(RelativeLayout.ALIGN_LEFT, R.id.noButton);
-                    cameraparams.addRule(RelativeLayout.ALIGN_PARENT_TOP, R.id.topButton);
-                    cameraparams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, R.id.video);
+                // 横屏时显示摄像头预览窗口
+                if (cameraWindow) {
+                    // 设置摄像头小窗置于最高层、不透明、尺寸与nobuttun贴合
+                    surfaceView.setAlpha(1);
+                    surfaceView.setZOrderOnTop(true);
+                    // 隐藏状态栏
+                    mVideo.setSystemUiVisibility(View.INVISIBLE);
+                    if (camera != null) {
+                        RelativeLayout.LayoutParams cameraparams = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
+                        cameraparams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.noButton);
+                        cameraparams.addRule(RelativeLayout.ALIGN_LEFT, R.id.noButton);
+                        cameraparams.addRule(RelativeLayout.ALIGN_PARENT_TOP, R.id.topButton);
+                        cameraparams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, R.id.video);
 
-                    // 使摄像头方向为正
-                    camera.setDisplayOrientation(0);
+                        // 使摄像头方向为正
+                        camera.setDisplayOrientation(0);
+                    }
                 }
-            }
-        } else {
-            // 竖屏时给出竖屏弹窗、显示按钮
-            Toast.makeText(getApplicationContext(), "竖屏", Toast.LENGTH_SHORT).show();
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mVideo.getLayoutParams();
-            // 竖屏时恢复在按钮之下的布局设定
-            params.addRule(RelativeLayout.BELOW, R.id.topButton);
-            mVideo.setLayoutParams(params);
-            Log.e("view change", "竖屏");
+            } else {
+                // 竖屏时给出竖屏弹窗、显示按钮
+                Toast.makeText(getApplicationContext(), "竖屏", Toast.LENGTH_SHORT).show();
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mVideo.getLayoutParams();
+                // 竖屏时恢复在按钮之下的布局设定
+                params.addRule(RelativeLayout.BELOW, R.id.topButton);
+                mVideo.setLayoutParams(params);
+                // 显示状态栏
+                mVideo.setSystemUiVisibility(View.VISIBLE);
+                Log.e("view change", "竖屏");
 
-            // 竖屏时不显示摄像头
-            if (cameraWindow) {
-                if (camera != null) {
-                    // 小窗透明、最高层设定取消
-                    surfaceView.setAlpha(0);
-                    surfaceView.setZOrderOnTop(false);
+                // 竖屏时不显示摄像头
+                if (cameraWindow) {
+                    if (camera != null) {
+                        // 小窗透明、最高层设定取消
+                        surfaceView.setAlpha(0);
+                        surfaceView.setZOrderOnTop(false);
+                    }
                 }
             }
         }
