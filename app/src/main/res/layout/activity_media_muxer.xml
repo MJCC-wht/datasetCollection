@@ -3,14 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/noButton"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true">
-    </Button>
-
     <LinearLayout
         android:id="@+id/topButton"
         android:layout_width="wrap_content"
@@ -49,13 +41,8 @@
         android:id="@+id/surface_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/topButton" />
+        android:layout_below="@+id/topButton" />
 
-    <VideoView
-        android:id="@+id/video"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/topButton"
-        android:keepScreenOn="true" />
+
 
 </RelativeLayout>
