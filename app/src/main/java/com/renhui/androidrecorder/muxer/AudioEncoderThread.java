@@ -41,6 +41,11 @@ public class AudioEncoderThread extends Thread {
     }
 
     public static void startAudio(String filePath) {
+        // 判断是否错误
+        if (filePath.startsWith("video")) {
+            Log.e("AudioEncoderThread", "record the audio in the video action!");
+            return;
+        }
         if (audioThread == null) {
             synchronized (AudioEncoderThread.class) {
                 if (audioThread == null) {
