@@ -34,18 +34,13 @@ public class AudioEncoderThread extends Thread {
 
     // 用于上传的文件路径和名字
     public static String filePath;
-    public static String tagName;
+    public static String tagName = "audio";
 
     public AudioEncoderThread() {
         // 构造函数
     }
 
-    public static void startAudio(String filePath) {
-        // 判断是否错误
-        if (filePath.startsWith("video")) {
-            Log.e("AudioEncoderThread", "record the audio in the video action!");
-            return;
-        }
+    public static void startAudio() {
         if (audioThread == null) {
             synchronized (AudioEncoderThread.class) {
                 if (audioThread == null) {
@@ -53,13 +48,13 @@ public class AudioEncoderThread extends Thread {
 
                     // 初始化AudioRecord和file
                     audioThread.prepareAudioRecord();
-                    FileUtils fileSwapHelper = new FileUtils(filePath);
-                    fileSwapHelper.getSaveFilePath();
-                    AudioEncoderThread.filePath = fileSwapHelper.getFullPath();
-                    tagName = fileSwapHelper.getFilePath();
-
+                    filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/android_records/video/test.wav";
+                    File file = new File(filePath);
+                    if (file.exists()) {
+                        file.delete();
+                    }
                     try {
-                        audioThread.fos = new FileOutputStream(AudioEncoderThread.filePath);
+                        audioThread.fos = new FileOutputStream(filePath);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
