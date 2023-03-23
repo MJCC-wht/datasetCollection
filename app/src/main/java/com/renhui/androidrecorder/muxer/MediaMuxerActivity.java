@@ -2,7 +2,9 @@ package com.renhui.androidrecorder.muxer;
 
 import android.Manifest;
 import android.content.Intent;
+import android.app.ActionBar;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -21,10 +23,13 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.renhui.androidrecorder.R;
 
@@ -38,20 +43,25 @@ import java.io.InputStream;
 public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHolder.Callback, Camera.PreviewCallback {
 
     SurfaceView surfaceView;
+    VideoView mVideo;
     Button videoStartStopButton;
     Button audioStartStopButton;
     Button changeCameraButton;
+    Button noButton;
 
     Camera camera;
+    int cameraId;
     SurfaceHolder surfaceHolder;
     SurfaceTexture surfaceTexture;
 
     // 当前是否有情绪认知部分在播放
-    boolean videoDisplay = false;
+    boolean videoDisplay = true;
     // 用于显示的图片
     Bitmap audioBitmap;
     // 文件名
     String filePath ;
+    // 判断是否需要摄像头小窗
+    boolean cameraWindow = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +74,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "申请权限", Toast.LENGTH_SHORT).show();
-            // 申请相机、麦克风和存储
+            // 申请相机、麦克风和存储权限
             ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
@@ -78,6 +88,12 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         videoStartStopButton = (Button) findViewById(R.id.videoStartStop);
         audioStartStopButton = (Button) findViewById(R.id.audioStartStop);
         changeCameraButton = (Button) findViewById(R.id.changeCamera);
+        mVideo = (VideoView) findViewById(R.id.video);
+
+        // 摄像头小窗位置标定
+        noButton = (Button) findViewById(R.id.noButton);
+        noButton.setVisibility(View.INVISIBLE);
+
 
         videoStartStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,13 +102,16 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     view.setTag("start");
                     ((TextView) view).setText("录制视频");
                     MediaMuxerThread.stopMuxer();
-                    stopCamera();
                     // 视频录制完，上传文件
                     FileUploadThread.startUpload(MediaMuxerThread.filePath, MediaMuxerThread.tagName);
+                    VideoPlayerThread.stopPlay(mVideo, surfaceView);
+                    // 恢复摄像头角度设置
+                    camera.setDisplayOrientation(90);
+                    stopCamera();
                 } else {
-                    startCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
+                    startCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
+                    // 一开始为竖屏的时候，摄像头小窗透明
                     surfaceView.setAlpha(0);
-                    surfaceView.setTranslationZ(0);
                     view.setTag("stop");
                     ((TextView) view).setText("停止录制");
                     MediaMuxerThread.startMuxer(filePath);
@@ -100,6 +119,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                         Log.w("MainActivity", "camera gone");
                     }
                     FileUploadThread.stopUpload();
+                    VideoPlayerThread.startPlay(MediaMuxerActivity.this, mVideo);
                 }
             }
         });
@@ -145,7 +165,6 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
 
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
-        surfaceTexture = new SurfaceTexture(10);
 
     }
 
@@ -158,15 +177,6 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
         Log.w("MainActivity", "enter surfaceChanged method");
-//        if (videoDisplay) {
-//            Canvas canvas = surfaceHolder.lockCanvas();
-//            // 绘制图片
-//            if (canvas != null) {
-//                canvas.drawBitmap();
-//            }
-//        }
-
-
     }
 
     @Override
@@ -182,12 +192,61 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         MediaMuxerThread.addVideoFrameData(bytes);
     }
 
-    // ----------------------- 摄像头操作相关 --------------------------------------
+    // 重写onConfigurationChanged监听屏幕方向的改变
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // 横屏时给出横屏弹窗、全屏显示
+            Toast.makeText(getApplicationContext(), "横屏", Toast.LENGTH_SHORT).show();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mVideo.getLayoutParams();
+            // 移除必须在按钮之下的位置设定，让横屏能全屏播放
+            params.removeRule(RelativeLayout.BELOW);
+            mVideo.setLayoutParams(params);
+            Log.e("view change", "横屏");
+
+            // 横屏时显示摄像头预览窗口
+            if (cameraWindow) {
+                // 设置摄像头小窗置于最高层、不透明、尺寸与nobuttun贴合
+                surfaceView.setAlpha(1);
+                surfaceView.setZOrderOnTop(true);
+                if (camera != null) {
+                    RelativeLayout.LayoutParams cameraparams = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
+                    cameraparams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.noButton);
+                    cameraparams.addRule(RelativeLayout.ALIGN_LEFT, R.id.noButton);
+                    cameraparams.addRule(RelativeLayout.ALIGN_PARENT_TOP, R.id.topButton);
+                    cameraparams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, R.id.video);
+
+                    // 使摄像头方向为正
+                    camera.setDisplayOrientation(0);
+                }
+            }
+        } else {
+            // 竖屏时给出竖屏弹窗、显示按钮
+            Toast.makeText(getApplicationContext(), "竖屏", Toast.LENGTH_SHORT).show();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mVideo.getLayoutParams();
+            // 竖屏时恢复在按钮之下的布局设定
+            params.addRule(RelativeLayout.BELOW, R.id.topButton);
+            mVideo.setLayoutParams(params);
+            Log.e("view change", "竖屏");
+
+            // 竖屏时不显示摄像头
+            if (cameraWindow) {
+                if (camera != null) {
+                    // 小窗透明、最高层设定取消
+                    surfaceView.setAlpha(0);
+                    surfaceView.setZOrderOnTop(false);
+                }
+            }
+        }
+    }
+    //----------------------- 摄像头操作相关 --------------------------------------
 
     /**
      * 打开摄像头
      */
     private void startCamera(int cameraId) {
+        this.cameraId = cameraId;
         camera = Camera.open(cameraId);
         camera.setDisplayOrientation(90);
         Camera.Parameters parameters = camera.getParameters();
@@ -202,12 +261,6 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
 
         try {
             camera.setParameters(parameters);
-            // 根据情况播放视频
-//            if (videoDisplay) {
-//                camera.setPreviewTexture(surfaceTexture);
-//            } else {
-//                camera.setPreviewDisplay(surfaceHolder);
-//            }
             camera.setPreviewDisplay(surfaceHolder);
             camera.setPreviewCallback(MediaMuxerActivity.this);
             camera.startPreview();
