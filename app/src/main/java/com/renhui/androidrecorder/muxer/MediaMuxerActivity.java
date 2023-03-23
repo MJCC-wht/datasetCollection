@@ -36,6 +36,8 @@ import com.renhui.androidrecorder.R;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 音视频混合界面
@@ -125,10 +127,9 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         }
         // 选择是否需要小窗口  yes or no
         floatWindow = intent.getStringExtra("cameraWindow") ;
-        if(floatWindow == "no"){
+        if (floatWindow.equals("no")) {
             cameraWindow = false;
         }// default  true
-
 
         surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         videoStartStopButton = (Button) findViewById(R.id.videoStartStop);
@@ -150,7 +151,9 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     MediaMuxerThread.stopMuxer();
                     // 视频录制完，上传文件
                     FileUploadThread.startUpload(MediaMuxerThread.filePath, MediaMuxerThread.tagName);
-                    VideoPlayerThread.stopPlay(mVideo, surfaceView);
+                    if (filePathList[1].startsWith("recognition") || filePathList[1].startsWith("emotion")) {
+                        VideoPlayerThread.stopPlay(mVideo, surfaceView);
+                    }
                     // 恢复摄像头角度设置
                     camera.setDisplayOrientation(90);
                     stopCamera();
@@ -165,7 +168,9 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                         Log.w("MainActivity", "camera gone");
                     }
                     FileUploadThread.stopUpload();
-                    VideoPlayerThread.startPlay(MediaMuxerActivity.this, mVideo);
+                    if (filePathList[1].startsWith("recognition") || filePathList[1].startsWith("emotion")) {
+                        VideoPlayerThread.startPlay(MediaMuxerActivity.this, mVideo);
+                    }
                 }
             }
         });
@@ -199,11 +204,9 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         changeCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (view.getTag().toString().equalsIgnoreCase("front")) {
-                    view.setTag("back");
+                if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
                     changeCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
                 } else {
-                    view.setTag("front");
                     changeCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
                 }
             }
