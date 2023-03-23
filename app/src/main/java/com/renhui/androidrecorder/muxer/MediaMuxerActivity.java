@@ -227,6 +227,8 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         MediaMuxerThread.stopMuxer();
         AudioEncoderThread.stopAudio();
         VoiceBroadcastThread.stopBroadcast();
+        VideoPlayerThread.stopPlay(mVideo, surfaceView);
+        FileUploadThread.stopUpload();
         stopCamera();
     }
 
