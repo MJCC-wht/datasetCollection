@@ -68,6 +68,7 @@ public class InfoInputActivity extends AppCompatActivity {
                 intent.setClass(InfoInputActivity.this, InfoShowActivity.class);
                 intent.putExtra("fileName",allInfo);
                 startActivity(intent);
+
             }
         });
     }
