@@ -34,119 +34,119 @@ public class HomepageActivity extends AppCompatActivity {
         btn11.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("动作1") ;
+                setChoice("video/action1/") ;
                 jump_to();
             }
         });
         btn12.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("动作2") ;
+                setChoice("video/action2/") ;
                 jump_to();
             }
         });
         btn13.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("动作3") ;
+                setChoice("video/action3/") ;
                 jump_to();
             }
         });
         btn14.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("动作4") ;
+                setChoice("video/action4/") ;
                 jump_to();
             }
         });
         btn21.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("认知视频1") ;
+                setChoice("video/recoginiton1/") ;
                 jump_to();
             }
         });
         btn22.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("认知视频2") ;
+                setChoice("video/recoginiton2/") ;
                 jump_to();
             }
         });
         btn23.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("认知视频3") ;
+                setChoice("video/recoginiton3/") ;
                 jump_to();
             }
         });
         btn24.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("认知视频4") ;
+                setChoice("video/recoginiton4/") ;
                 jump_to();
             }
         });
         btn25.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("认知视频5") ;
+                setChoice("video/recoginiton5/") ;
                 jump_to();
             }
         });
         btn31.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("情绪视频1") ;
+                setChoice("video/emotion1/") ;
                 jump_to();
             }
         });
         btn32.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("情绪视频2") ;
+                setChoice("video/emotion2/") ;
                 jump_to();
             }
         });
         btn33.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("情绪视频3") ;
+                setChoice("video/emotion3/") ;
                 jump_to();
             }
         });
         btn34.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("情绪视频4") ;
+                setChoice("video/emotion4/") ;
                 jump_to();
             }
         });
         btn35.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("情绪视频5") ;
+                setChoice("video/emotion5/") ;
                 jump_to();
             }
         });
         btn41.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("语音任务1") ;
+                setChoice("audio/description1/") ;
                 jump_to();
             }
         });
         btn42.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("语音任务2") ;
+                setChoice("audio/description2/") ;
                 jump_to();
             }
         });
         btn43.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("语音任务3") ;
+                setChoice("audio/description3/") ;
                 jump_to();
             }
         });
