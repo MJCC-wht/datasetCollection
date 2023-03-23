@@ -50,7 +50,7 @@ public class VideoPlayerThread extends Thread{
         Log.e("tag","播放手动停止");
         // 在任何状态下释放媒体播放器
         mVideo.suspend();
-        // 移除对Surfaceview的布局位置调整
+        // 移除对Surfaceview的布局位置调整和设置
         RelativeLayout.LayoutParams cameraparams = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
         cameraparams.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         cameraparams.removeRule(RelativeLayout.ALIGN_PARENT_TOP);

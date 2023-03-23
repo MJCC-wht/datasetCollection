@@ -45,7 +45,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
 
     // 当前是否有情绪认知部分在播放
     boolean videoDisplay = true;
-    // 判断是否需要摄像头小窗
+    // 判断是否需要摄像头小窗播放
     boolean cameraWindow = true;
 
     @Override
