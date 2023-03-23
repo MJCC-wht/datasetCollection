@@ -48,7 +48,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
 
     // 当前是否有情绪认知部分在播放
     boolean videoDisplay = false;
-    // 用于显示的图片
+    // 用于在播放音频时显示的图片
     Bitmap audioBitmap;
     // 文件名
     String filePath ;
