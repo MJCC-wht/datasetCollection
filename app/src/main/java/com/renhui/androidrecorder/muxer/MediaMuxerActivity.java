@@ -1,13 +1,21 @@
 package com.renhui.androidrecorder.muxer;
 
 import android.Manifest;
+import android.content.Intent;
 import android.app.ActionBar;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
+import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -25,7 +33,9 @@ import android.widget.VideoView;
 
 import com.renhui.androidrecorder.R;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 音视频混合界面
@@ -42,10 +52,15 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     Camera camera;
     int cameraId;
     SurfaceHolder surfaceHolder;
+    SurfaceTexture surfaceTexture;
 
     // 当前是否有情绪认知部分在播放
     boolean videoDisplay = true;
-    // 判断是否需要摄像头小窗播放
+    // 用于显示的图片
+    Bitmap audioBitmap;
+    // 文件名
+    String filePath ;
+    // 判断是否需要摄像头小窗
     boolean cameraWindow = true;
 
     @Override
@@ -64,6 +79,10 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
         }
+
+        // 拿到从上一个页面传过来的文件名
+        Intent intent = getIntent();
+        filePath = intent.getStringExtra("complete_info");
 
         surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         videoStartStopButton = (Button) findViewById(R.id.videoStartStop);
@@ -95,7 +114,10 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     surfaceView.setAlpha(0);
                     view.setTag("stop");
                     ((TextView) view).setText("停止录制");
-                    MediaMuxerThread.startMuxer();
+                    MediaMuxerThread.startMuxer(filePath);
+                    if (camera == null) {
+                        Log.w("MainActivity", "camera gone");
+                    }
                     FileUploadThread.stopUpload();
                     VideoPlayerThread.startPlay(MediaMuxerActivity.this, mVideo);
                 }
@@ -105,17 +127,25 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         audioStartStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // 停止录制
                 if (view.getTag().toString().equalsIgnoreCase("stop")) {
                     view.setTag("start");
                     ((TextView) view).setText("录制音频");
                     AudioEncoderThread.stopAudio();
                     // 音频录制完，上传文件
                     FileUploadThread.startUpload(AudioEncoderThread.filePath, AudioEncoderThread.tagName);
+                    updateImage(null);
                 } else {
+                    // 开始录制
                     view.setTag("stop");
                     ((TextView) view).setText("停止录制");
-                    AudioEncoderThread.startAudio();
+                    AudioEncoderThread.startAudio(filePath);
                     FileUploadThread.stopUpload();
+                    try {
+                        updateImage(getLocalImage("file://" + Environment.getExternalStorageDirectory().getPath() + "/android_records/audioImage/1.png"));
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -237,13 +267,6 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        // 进行自动对焦
-//        camera.autoFocus((b, camera) -> {
-//            if (b) {
-//                Log.w("MainActivity", "autofocus success");
-//            }
-//        });
     }
 
     /**
@@ -269,6 +292,48 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         startCamera(cameraId);
     }
 
+    // ----------------------- 在SurfaceView上显示图片 --------------------------------------
 
+    private Bitmap getLocalImage(String imagePath) throws FileNotFoundException {
+        Uri imageUri = Uri.parse(imagePath);
+        InputStream imageStream = getContentResolver().openInputStream(imageUri);
+        return BitmapFactory.decodeStream(imageStream);
+    }
 
+    /**
+     * 画图
+     */
+    private void drawImage() {
+        Canvas canvas = surfaceHolder.lockCanvas();
+        if (canvas != null && audioBitmap != null) {
+            canvas.drawBitmap(audioBitmap, 0, 0, null);
+            surfaceHolder.unlockCanvasAndPost(canvas);
+        } else if (canvas != null) {
+            canvas.drawColor(Color.BLACK);
+            surfaceHolder.unlockCanvasAndPost(canvas);
+        }
+    }
+
+    /**
+     * 更新图片
+     */
+    private void updateImage(Bitmap bitmap) {
+        // 释放原有的Bitmap
+        if (audioBitmap != null) {
+            audioBitmap.recycle();
+        }
+        if (bitmap != null) {
+            int surfaceWidth = surfaceView.getWidth();
+            int surfaceHeight = surfaceView.getHeight();
+
+            float widthRatio = (float) surfaceWidth / bitmap.getWidth();
+            float heightRatio = (float) surfaceHeight / bitmap.getHeight();
+            float ratio = Math.min(widthRatio, heightRatio);
+
+            audioBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * ratio), (int) (bitmap.getHeight() * ratio), false);
+        } else {
+            audioBitmap = null;
+        }
+        drawImage();
+    }
 }

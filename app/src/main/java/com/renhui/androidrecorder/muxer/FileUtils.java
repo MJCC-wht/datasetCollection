@@ -15,66 +15,57 @@ import java.util.List;
  */
 public class FileUtils {
 
+    // 文件路径
     private static final String MAIN_DIR_NAME = "/android_records";
     private static final String BASE_VIDEO = "/video/";
-    private static final String BASE_EXT = ".mp4";
+    private static final String BASE_AUDIO = "/audio/";
+    private static final String BASE_VIDEO_EXT = ".mp4";
+    private static final String BASE_AUDIO_EXT = ".wav";
 
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
-    private String currentFileName = "-";
-    private String nextFileName;
+    private String currentFilePath;
+    private String currentFullPath;
 
-    public FileUtils() {
+    public FileUtils(String filePath) {
+        currentFilePath = filePath;
     }
 
-    public boolean requestSwapFile() {
-        return requestSwapFile(false);
+    public String getFilePath() {
+        return this.currentFilePath;
     }
 
-    public boolean requestSwapFile(boolean force) {
-        //SD 卡可读写
-        String fileName = getFileName();
-        boolean isChanged = false;
-
-        if (!currentFileName.equalsIgnoreCase(fileName)) {
-            isChanged = true;
-        }
-
-        if (isChanged || force) {
-            nextFileName = getSaveFilePath(fileName);
-            return true;
-        }
-
-        return false;
+    public String getFullPath() {
+        return this.currentFullPath;
     }
 
-    public String getNextFileName() {
-        return nextFileName;
-    }
 
-    private String getFileName() {
-        String format = simpleDateFormat.format(System.currentTimeMillis());
-        return format;
-    }
+    public void getSaveFilePath() {
+        // 先检查SD卡剩余空间
+        checkSpace();
 
-    private String getSaveFilePath(String fileName) {
-        currentFileName = fileName;
         StringBuilder fullPath = new StringBuilder();
         fullPath.append(getExternalStorageDirectory());
-        //检查内置卡剩余空间容量,并清理
-        checkSpace();
+        String[] filePathList = currentFilePath.split("/");
+        if (filePathList.length < 3) {
+            return;
+        }
         fullPath.append(MAIN_DIR_NAME);
-        fullPath.append(BASE_VIDEO);
-        fullPath.append(fileName);
-        fullPath.append(BASE_EXT);
+        fullPath.append(filePathList[0].equals("video") ? BASE_VIDEO : BASE_AUDIO);
+        fullPath.append(filePathList[filePathList.length - 1]);
+        fullPath.append(filePathList[0].equals("video") ? BASE_VIDEO_EXT : BASE_AUDIO_EXT);
 
-        String string = fullPath.toString();
-        File file = new File(string);
+        currentFullPath = fullPath.toString();
+        File file = new File(currentFullPath);
         File parentFile = file.getParentFile();
+        assert parentFile != null;
         if (!parentFile.exists()) {
             parentFile.mkdirs();
         }
+        // 如果当前文件已经存在，删除原有的，进行覆盖
+        if (file.exists()) {
+            file.delete();
+        }
 
-        return string;
+        currentFilePath = currentFilePath + (filePathList[0].equals("video") ? BASE_VIDEO_EXT : BASE_AUDIO_EXT);
     }
 
     /**
@@ -83,10 +74,16 @@ public class FileUtils {
     private void checkSpace() {
         StringBuilder fullPath = new StringBuilder();
         String checkPath = getExternalStorageDirectory();
+        // 赋予文件名
+        String[] filePathList = currentFilePath.split("/");
+        if (filePathList.length < 3) {
+            return;
+        }
         fullPath.append(checkPath);
         fullPath.append(MAIN_DIR_NAME);
-        fullPath.append(BASE_VIDEO);
+        fullPath.append(filePathList[0].equals("video") ? BASE_VIDEO : BASE_AUDIO);
 
+        // 检查SD卡是否还有剩余空间，如果剩余空间过小，进行清理
         if (checkCardSpace(checkPath)) {
             File file = new File(fullPath.toString());
 
@@ -133,5 +130,6 @@ public class FileUtils {
     public static String getExternalStorageDirectory() {
         return Environment.getExternalStorageDirectory().getPath();
     }
+
 
 }

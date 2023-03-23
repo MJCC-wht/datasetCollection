@@ -45,6 +45,7 @@
 
     </LinearLayout>
 
+    <!--用于显示预览-->
     <SurfaceView
         android:id="@+id/surface_view"
         android:layout_width="match_parent"
