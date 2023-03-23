@@ -59,7 +59,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     // 用于显示的图片
     Bitmap audioBitmap;
     // 文件名
-    String filePath ;
+    String filePath,floatWindow;
     // 判断是否需要摄像头小窗
     boolean cameraWindow = true;
 
@@ -123,7 +123,11 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
             default:
                 break;
         }
-
+        // 选择是否需要小窗口  yes or no
+        floatWindow = intent.getStringExtra("cameraWindow") ;
+        if(floatWindow == "no"){
+            cameraWindow = false;
+        }// default  true
 
 
         surfaceView = (SurfaceView) findViewById(R.id.surface_view);
