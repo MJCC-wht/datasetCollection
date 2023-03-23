@@ -34,14 +34,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".muxer.MediaMuxerActivity"
-            android:configChanges="orientation|keyboard|layoutDirection|screenSize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <activity
+            android:name=".muxer.MediaMuxerActivity"
+            android:screenOrientation="portrait" />
 
-        </activity>
     </application>
 
 </manifest>

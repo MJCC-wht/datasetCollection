@@ -4,6 +4,7 @@ package com.renhui.androidrecorder.muxer;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.IOException;
@@ -21,15 +22,20 @@ public class MediaMuxerThread extends Thread {
     private final Object lock = new Object();
     private static MediaMuxerThread mediaMuxerThread;
 
+    private static final String MAIN_DIR_NAME = "/android_records";
+    private static final String BASE_VIDEO = "/video/";
+    private static final String BASE_AUDIO = "/audio/";
+    private static final String BASE_VIDEO_EXT = ".mp4";
+    private static final String BASE_AUDIO_EXT = ".wav";
+
     private VideoEncoderThread videoThread;
     private MediaMuxer mediaMuxer;
     private Vector<MuxerData> muxerDatas;
     private int videoTrackIndex = -1;
 
-    private FileUtils fileSwapHelper;
     // 用于上传的文件路径和名字
     public static String filePath;
-    public static String tagName = "video";
+    public static String tagName;
 
     // 视频轨添加状态
     private volatile boolean isVideoTrackAdd;
@@ -40,11 +46,12 @@ public class MediaMuxerThread extends Thread {
     }
 
     // 开始音视频混合任务
-    public static void startMuxer() {
+    public static void startMuxer(String filePath) {
         if (mediaMuxerThread == null) {
             synchronized (MediaMuxerThread.class) {
                 if (mediaMuxerThread == null) {
                     mediaMuxerThread = new MediaMuxerThread();
+                    MediaMuxerThread.filePath = filePath;
                     Log.e("111", "mediaMuxerThread.start();");
                     mediaMuxerThread.start();
                 }
@@ -65,13 +72,8 @@ public class MediaMuxerThread extends Thread {
         }
     }
 
-    private void readyStart() throws IOException {
-        fileSwapHelper.requestSwapFile(true);
-        readyStart(fileSwapHelper.getNextFileName());
-    }
 
-    private void readyStart(String filePath) throws IOException {
-        MediaMuxerThread.filePath = filePath;
+    private void readyStart() throws IOException {
         isExit = false;
         isVideoTrackAdd = false;
         muxerDatas.clear();
@@ -178,7 +180,10 @@ public class MediaMuxerThread extends Thread {
 
     private void initMuxer() {
         muxerDatas = new Vector<>();
-        fileSwapHelper = new FileUtils();
+        FileUtils fileSwapHelper = new FileUtils(filePath);
+        fileSwapHelper.getSaveFilePath();
+        filePath = fileSwapHelper.getFullPath();
+        tagName = fileSwapHelper.getFilePath();
         videoThread = new VideoEncoderThread(1920, 1080, new WeakReference<MediaMuxerThread>(this));
         videoThread.start();
         try {
@@ -207,28 +212,20 @@ public class MediaMuxerThread extends Thread {
                         }
                     }
                 } else {
-                    // VideoThread传来的数据不为空的情况下
-                    if (fileSwapHelper.requestSwapFile()) {
-                        // TODO:每隔一分钟需要切换文件（后续删掉这个功能）
-                        String nextFileName = fileSwapHelper.getNextFileName();
-                        Log.e(TAG, "正在重启混合器..." + nextFileName);
-                        restart(nextFileName);
+                    // VideoThread传来的数据不为空的情况下，取出队首
+                    MuxerData data = muxerDatas.remove(0);
+                    int track = -1;
+                    if (data.trackIndex == TRACK_VIDEO) {
+                        track = videoTrackIndex;
                     } else {
-                        // 取出队首
-                        MuxerData data = muxerDatas.remove(0);
-                        int track = -1;
-                        if (data.trackIndex == TRACK_VIDEO) {
-                            track = videoTrackIndex;
-                        } else {
-                            Log.e(TAG, "视频轨道数据出现错误");
-                        }
-                        Log.e(TAG, "写入混合数据 " + data.bufferInfo.size);
-                        try {
-                            // 写入到本地文件
-                            mediaMuxer.writeSampleData(track, data.byteBuf, data.bufferInfo);
-                        } catch (Exception e) {
-                            Log.e(TAG, "写入混合数据失败!" + e.toString());
-                        }
+                        Log.e(TAG, "视频轨道数据出现错误");
+                    }
+                    Log.e(TAG, "写入混合数据 " + data.bufferInfo.size);
+                    try {
+                        // 写入到本地文件
+                        mediaMuxer.writeSampleData(track, data.byteBuf, data.bufferInfo);
+                    } catch (Exception e) {
+                        Log.e(TAG, "写入混合数据失败!" + e.toString());
                     }
                 }
             } else {
@@ -247,27 +244,6 @@ public class MediaMuxerThread extends Thread {
         Log.e(TAG, "混合器退出...");
     }
 
-    private void restart() {
-        fileSwapHelper.requestSwapFile(true);
-        String nextFileName = fileSwapHelper.getNextFileName();
-        restart(nextFileName);
-    }
-
-    private void restart(String filePath) {
-        restartVideo();
-        readyStop();
-
-        try {
-            readyStart(filePath);
-        } catch (Exception e) {
-            Log.e(TAG, "readyStart(filePath, true) " + "重启混合器失败 尝试再次重启!" + e.toString());
-            restart();
-            return;
-        }
-        Log.e(TAG, "重启混合器完成");
-    }
-
-
     private void readyStop() {
         if (mediaMuxer != null) {
             try {
@@ -282,14 +258,6 @@ public class MediaMuxerThread extends Thread {
 
             }
             mediaMuxer = null;
-        }
-    }
-
-    private void restartVideo() {
-        if (videoThread != null) {
-            videoTrackIndex = -1;
-            isVideoTrackAdd = false;
-            videoThread.restart();
         }
     }
 
