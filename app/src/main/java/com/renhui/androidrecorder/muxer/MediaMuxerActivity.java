@@ -129,7 +129,6 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
             cameraWindow = false;
         }// default  true
 
-
         surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         videoStartStopButton = (Button) findViewById(R.id.videoStartStop);
         audioStartStopButton = (Button) findViewById(R.id.audioStartStop);

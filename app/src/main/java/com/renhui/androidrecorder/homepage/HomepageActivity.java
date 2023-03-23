@@ -170,8 +170,8 @@ public class HomepageActivity extends AppCompatActivity {
         btn24=findViewById(R.id.btn24);
         btn25=findViewById(R.id.btn25);
 
-        btn31=findViewById(R.id.btn21);
-        btn32=findViewById(R.id.btn22);
+        btn31=findViewById(R.id.btn31);
+        btn32=findViewById(R.id.btn32);
         btn33=findViewById(R.id.btn33);
         btn34=findViewById(R.id.btn34);
         btn35=findViewById(R.id.btn35);
