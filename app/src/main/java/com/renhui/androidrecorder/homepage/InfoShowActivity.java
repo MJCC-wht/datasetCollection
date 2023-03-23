@@ -32,6 +32,7 @@ public class InfoShowActivity extends AppCompatActivity {
         file_name = intent.getStringExtra("fileName");
         complete_info=(TextView) findViewById(R.id.textView);
         complete_info.setText(this.file_name);
+        // 后面还要加条件判断。。。
 
         btnOK = (Button) findViewById(R.id.btnOK);
         btnOK.setOnClickListener(new View.OnClickListener() {
@@ -41,7 +42,7 @@ public class InfoShowActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.setClass(InfoShowActivity.this, MediaMuxerActivity.class);
                 // file name transit
-                intent.putExtra("complete_info",file_name);
+                // intent.putExtra("complete_info",file_name);
                 startActivity(intent);
             }
         });
