@@ -16,7 +16,7 @@ import com.renhui.androidrecorder.R;
 
 public class InfoInputActivity extends AppCompatActivity {
     private Button btnBack, btnSave;
-    private EditText etNumber,etName,etGender,etAge,etCondition,etEducation;
+    private EditText etNumber,etName,etAge,etCondition;
     private String allInfo;
     private String number = "",name= "",gender = "",age="",condition="",education="";
     private String floatWindow = "";

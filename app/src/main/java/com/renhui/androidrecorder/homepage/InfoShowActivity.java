@@ -46,7 +46,7 @@ public class InfoShowActivity extends AppCompatActivity {
                 // file name transit
                 intent.putExtra("complete_info",file_name);
                 intent.putExtra("cameraWindow",camera_window);
-                intent.putExtra("jump","yes");
+
                 startActivity(intent);
             }
         });

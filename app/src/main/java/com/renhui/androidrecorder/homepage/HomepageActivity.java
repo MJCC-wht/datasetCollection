@@ -19,7 +19,7 @@ public class HomepageActivity extends AppCompatActivity {
             btn41,btn42,btn43;
     private String choice; // 选择的是哪个项目？
 
-    private String filePath = " ",camera_window = "",jump = "";
+    private String filePath, camera_window = "", jump = "";
 
     public void setChoice(String choice) {
         this.choice = choice;
@@ -35,10 +35,10 @@ public class HomepageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_homepage);
 
         initView();
-        // ???
+
         Intent intent = getIntent();
-        filePath = intent.getStringExtra("jump");
-        if (jump == "yes"){
+
+        if (intent != null) {
             filePath = intent.getStringExtra("complete_info");
             camera_window = intent.getStringExtra("cameraWindow");
         }
@@ -72,8 +72,6 @@ public class HomepageActivity extends AppCompatActivity {
             }
         });
 
-
-
         btn11 = (Button) findViewById(R.id.btn11);
         btn11.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,7 +92,6 @@ public class HomepageActivity extends AppCompatActivity {
             public void onClick(View view) {
                 setChoice("video/action3/") ;
                 jump_to_collect();
-
             }
         });
         btn14.setOnClickListener(new View.OnClickListener() {

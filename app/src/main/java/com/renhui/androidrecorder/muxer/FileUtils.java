@@ -42,6 +42,8 @@ public class FileUtils {
     public void getSaveFilePath() {
         // 先检查SD卡剩余空间
         checkSpace();
+        // 添加时间戳
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.CHINA);
 
         StringBuilder fullPath = new StringBuilder();
         fullPath.append(getExternalStorageDirectory());
@@ -52,6 +54,7 @@ public class FileUtils {
         fullPath.append(MAIN_DIR_NAME);
         fullPath.append(filePathList[0].equals("video") ? BASE_VIDEO : BASE_AUDIO);
         fullPath.append(filePathList[filePathList.length - 1]);
+        fullPath.append("-" + simpleDateFormat.format(System.currentTimeMillis()));
         fullPath.append(filePathList[0].equals("video") ? BASE_VIDEO_EXT : BASE_AUDIO_EXT);
 
         currentFullPath = fullPath.toString();
@@ -62,9 +65,7 @@ public class FileUtils {
             parentFile.mkdirs();
         }
 
-        // 添加时间戳
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CHINA);
-        currentFilePath = currentFilePath + "_" + simpleDateFormat.format(System.currentTimeMillis()) +
+        currentFilePath = currentFilePath + "-" + simpleDateFormat.format(System.currentTimeMillis()) +
                 (filePathList[0].equals("video") ? BASE_VIDEO_EXT : BASE_AUDIO_EXT);
     }
 
