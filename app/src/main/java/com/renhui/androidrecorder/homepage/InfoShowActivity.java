@@ -42,13 +42,13 @@ public class InfoShowActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // 点击按钮跳转到录制界面
                 Intent intent = new Intent();
-                intent.setClass(InfoShowActivity.this, MediaMuxerActivity.class);
+                intent.setClass(InfoShowActivity.this, HomepageActivity.class);
                 // file name transit
                 intent.putExtra("complete_info",file_name);
                 intent.putExtra("cameraWindow",camera_window);
+                intent.putExtra("jump","yes");
                 startActivity(intent);
             }
         });
-
     }
 }
