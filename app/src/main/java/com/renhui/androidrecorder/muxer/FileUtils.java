@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 文件处理工具类
@@ -60,12 +61,11 @@ public class FileUtils {
         if (!parentFile.exists()) {
             parentFile.mkdirs();
         }
-        // 如果当前文件已经存在，删除原有的，进行覆盖
-        if (file.exists()) {
-            file.delete();
-        }
 
-        currentFilePath = currentFilePath + (filePathList[0].equals("video") ? BASE_VIDEO_EXT : BASE_AUDIO_EXT);
+        // 添加时间戳
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CHINA);
+        currentFilePath = currentFilePath + "_" + simpleDateFormat.format(System.currentTimeMillis()) +
+                (filePathList[0].equals("video") ? BASE_VIDEO_EXT : BASE_AUDIO_EXT);
     }
 
     /**
