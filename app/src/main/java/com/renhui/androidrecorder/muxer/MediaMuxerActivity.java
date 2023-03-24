@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.app.ActionBar;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -100,45 +101,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         Intent intent = getIntent();
         filePath = intent.getStringExtra("complete_info");
         filePathList = filePath.split("/");
-        switch (filePathList[1]) {
-            case "action1":
-                VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请正常行走，维持十秒左右");
-                break;
-            case "action2":
-                VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请从椅子上站起，再坐下。");
-                break;
-            case "action3":
-                VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请上台阶，维持十秒左右。");
-                break;
-            case "action4":
-                VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请顺时针三百六十度转身，再逆时针三百六十度转身。");
-                break;
-            case "recognition1": case "recognition2": case "recognition3":
-            case "recognition4": case "recognition5":
-            case "emotion1": case "emotion2": case "emotion3":
-            case "emotion4": case "emotion5":
-                VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请完整观看目标视频。");
-                break;
-            case "description1":
-                VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请在一分钟内，说出尽可能多的水果名称。");
-                break;
-            case "description2":
-                VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请在一分钟内，描述目标图片的场景。");
-                break;
-            case "description3":
-                VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请在三分钟内，回忆并简述刚才听到的故事。");
-                break;
-            default:
-                break;
-        }
+        switchBroadcast(filePathList[1]);
 
         // 选择是否需要小窗口  yes or no
         floatWindow = intent.getStringExtra("cameraWindow") ;
@@ -192,7 +155,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     }
                     FileUploadThread.stopUpload();
                     if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
-                        VideoPlayerThread.startPlay(MediaMuxerActivity.this, mVideo);
+                        VideoPlayerThread.startPlay(MediaMuxerActivity.this, mVideo, filePathList[1]);
                     }
                 }
             }
@@ -220,11 +183,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     ((TextView) view).setText("停止录制");
                     AudioEncoderThread.startAudio(filePath);
                     FileUploadThread.stopUpload();
-                    try {
-                        updateImage(getLocalImage("file://" + Environment.getExternalStorageDirectory().getPath() + "/android_records/audioImage/1.png"));
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                    updateImage(getImageFromAssetsFile(switchImage(filePathList[1])));
                 }
             }
         });
@@ -437,4 +396,78 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
             return WRONG_TYPE;
         }
     }
+
+    // 检测需要播报的内容
+    private void switchBroadcast(String text) {
+        switch (text) {
+            case "action1":
+                VoiceBroadcastThread.stopBroadcast();
+                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请正常行走，维持十秒左右");
+                break;
+            case "action2":
+                VoiceBroadcastThread.stopBroadcast();
+                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请从椅子上站起，再坐下。");
+                break;
+            case "action3":
+                VoiceBroadcastThread.stopBroadcast();
+                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请上台阶，维持十秒左右。");
+                break;
+            case "action4":
+                VoiceBroadcastThread.stopBroadcast();
+                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请顺时针三百六十度转身，再逆时针三百六十度转身。");
+                break;
+            case "recognition1": case "recognition2": case "recognition3":
+            case "recognition4": case "recognition5":
+            case "emotion1": case "emotion2": case "emotion3":
+            case "emotion4": case "emotion5":
+                VoiceBroadcastThread.stopBroadcast();
+                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请完整观看目标视频。");
+                break;
+            case "description1":
+                VoiceBroadcastThread.stopBroadcast();
+                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请在一分钟内，说出尽可能多的水果名称。");
+                break;
+            case "description2":
+                VoiceBroadcastThread.stopBroadcast();
+                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请在一分钟内，描述目标图片的场景。");
+                break;
+            case "description3":
+                VoiceBroadcastThread.stopBroadcast();
+                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请在三分钟内，回忆并简述刚才听到的故事。");
+                break;
+            default:
+                break;
+        }
+    }
+
+    // 根据点击的按钮呈现不同的图片
+    public String switchImage(String imagetext){
+        switch(imagetext) {
+            case "description1":
+                imagetext = "fruits.jpg";
+                break;
+            case "description2":
+                imagetext = "family.jpg";
+                break;
+            default:
+                break;
+        }
+        return imagetext;
+    }
+
+    // 获取assets中的图片
+    private Bitmap getImageFromAssetsFile(String fileName) {
+        Bitmap image = null;
+        AssetManager am = getResources().getAssets();
+        try {
+            InputStream is = am.open(fileName);
+            image = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (IOException e) {
+            Log.e("error", "getImageFromAssetsFile: IOException!");
+        }
+        return image;
+    }
+
+
 }
