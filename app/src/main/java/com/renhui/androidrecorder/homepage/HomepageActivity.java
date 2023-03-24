@@ -62,35 +62,35 @@ public class HomepageActivity extends AppCompatActivity {
         btn21.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("video/recoginiton1/") ;
+                setChoice("video/recognition1/") ;
                 jump_to();
             }
         });
         btn22.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("video/recoginiton2/") ;
+                setChoice("video/recognition2/") ;
                 jump_to();
             }
         });
         btn23.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("video/recoginiton3/") ;
+                setChoice("video/recognition3/") ;
                 jump_to();
             }
         });
         btn24.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("video/recoginiton4/") ;
+                setChoice("video/recognition4/") ;
                 jump_to();
             }
         });
         btn25.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setChoice("video/recoginiton5/") ;
+                setChoice("video/recognition5/") ;
                 jump_to();
             }
         });

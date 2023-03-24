@@ -45,6 +45,7 @@ import java.util.Set;
  */
 public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHolder.Callback, Camera.PreviewCallback {
 
+    static MediaMuxerActivity mainActivity;
     SurfaceView surfaceView;
     VideoView mVideo;
     Button videoStartStopButton;
@@ -66,11 +67,19 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     String[] filePathList;
     // 判断是否需要摄像头小窗
     boolean cameraWindow = true;
+    // 任务类型的宏参数
+    int ACTION_TYPE = 0;
+    int RECOGNITION_TYPE = 1;
+    int EMOTION_TYPE = 3;
+    int DESCRIPTION_TYPE = 4;
+    int WRONG_TYPE = 5;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mainActivity = this;
 
         // 隐藏标题栏
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -91,7 +100,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         Intent intent = getIntent();
         filePath = intent.getStringExtra("complete_info");
         filePathList = filePath.split("/");
-        switch(filePathList[1]) {
+        switch (filePathList[1]) {
             case "action1":
                 VoiceBroadcastThread.stopBroadcast();
                 VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请正常行走，维持十秒左右");
@@ -130,6 +139,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
             default:
                 break;
         }
+
         // 选择是否需要小窗口  yes or no
         floatWindow = intent.getStringExtra("cameraWindow") ;
         if (floatWindow.equals("no")) {
@@ -153,17 +163,25 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                 if (view.getTag().toString().equalsIgnoreCase("stop")) {
                     view.setTag("start");
                     ((TextView) view).setText("录制视频");
+                    Toast.makeText(MediaMuxerActivity.this, "拍摄完成", Toast.LENGTH_SHORT).show();
                     MediaMuxerThread.stopMuxer();
                     // 视频录制完，上传文件
                     FileUploadThread.startUpload(MediaMuxerThread.filePath, MediaMuxerThread.tagName);
-                    if (filePathList[1].startsWith("recognition") || filePathList[1].startsWith("emotion")) {
+                    if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
                         VideoPlayerThread.stopPlay(mVideo, surfaceView);
                     }
                     // 恢复摄像头角度设置
                     camera.setDisplayOrientation(90);
                     stopCamera();
                 } else {
-                    startCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
+                    if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
+                        startCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
+                    } else if (confirmType(filePathList[1]) == ACTION_TYPE) {
+                        startCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
+                    } else if (confirmType(filePathList[1]) == DESCRIPTION_TYPE) {
+                        Toast.makeText(MediaMuxerActivity.this, "禁止录制视频", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     // 一开始为竖屏的时候，摄像头小窗透明
                     surfaceView.setAlpha(0);
                     view.setTag("stop");
@@ -173,7 +191,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                         Log.w("MainActivity", "camera gone");
                     }
                     FileUploadThread.stopUpload();
-                    if (filePathList[1].startsWith("recognition") || filePathList[1].startsWith("emotion")) {
+                    if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
                         VideoPlayerThread.startPlay(MediaMuxerActivity.this, mVideo);
                     }
                 }
@@ -187,11 +205,16 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                 if (view.getTag().toString().equalsIgnoreCase("stop")) {
                     view.setTag("start");
                     ((TextView) view).setText("录制音频");
+                    Toast.makeText(MediaMuxerActivity.this, "录音完成", Toast.LENGTH_SHORT).show();
                     AudioEncoderThread.stopAudio();
                     // 音频录制完，上传文件
                     FileUploadThread.startUpload(AudioEncoderThread.filePath, AudioEncoderThread.tagName);
                     updateImage(null);
                 } else {
+                    if (confirmType(filePathList[1]) != DESCRIPTION_TYPE) {
+                        Toast.makeText(MediaMuxerActivity.this, "禁止录制视频", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     // 开始录制
                     view.setTag("stop");
                     ((TextView) view).setText("停止录制");
@@ -343,6 +366,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
             camera.release();
             camera = null;
         }
+        updateImage(null);
     }
 
     /**
@@ -398,5 +422,19 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
             audioBitmap = null;
         }
         drawImage();
+    }
+
+    private int confirmType(String name) {
+        if (name.startsWith("action")) {
+            return ACTION_TYPE;
+        } else if (name.startsWith("recognition")) {
+            return RECOGNITION_TYPE;
+        } else if (name.startsWith("emotion")) {
+            return EMOTION_TYPE;
+        } else if (name.startsWith("description")) {
+            return DESCRIPTION_TYPE;
+        } else {
+            return WRONG_TYPE;
+        }
     }
 }

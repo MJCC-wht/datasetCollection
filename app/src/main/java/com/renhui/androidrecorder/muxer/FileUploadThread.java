@@ -1,6 +1,7 @@
 package com.renhui.androidrecorder.muxer;
 
 import android.os.Looper;
+import android.speech.tts.Voice;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -89,13 +90,20 @@ public class FileUploadThread extends Thread {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure( Call call, IOException e) {
-                    Log.d("failureresult","网络错误！");
+                    Toast.makeText(MediaMuxerActivity.mainActivity, "网络错误，请先连接网络！", Toast.LENGTH_SHORT).show();
+                    Log.d("failureResult", "网络错误！");
                 }
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
-                    if (response.body()!=null){
-                        Log.d("theresult",response.body().string());
+                    if (response.body() != null){
+                        Looper.prepare();
+                        String result = response.body().string();
+                        Toast.makeText(MediaMuxerActivity.mainActivity, result, Toast.LENGTH_SHORT).show();
+                        Log.d("theResult", result);
+                        VoiceBroadcastThread.stopBroadcast();
+                        VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.mainActivity, "拍摄完成，" + result);
+                        Looper.loop();
                     }
                 }
             });
