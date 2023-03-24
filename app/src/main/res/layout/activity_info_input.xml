@@ -84,7 +84,7 @@
                 android:id="@+id/txt5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="病症/评估程度： "
+                android:text="文化程度： "
                 android:layout_marginTop="25dp"
                 android:layout_marginLeft="30dp"
                 android:textColor="#000000"
@@ -94,12 +94,13 @@
                 android:id="@+id/txt6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="文化程度： "
+                android:text="病症/评估程度： "
                 android:layout_marginTop="25dp"
                 android:layout_marginLeft="30dp"
                 android:textColor="#000000"
                 android:layout_below="@+id/txt5"
                 android:textSize="20sp"></TextView>
+
             <TextView
                 android:id="@+id/txt7"
                 android:layout_width="wrap_content"
@@ -145,7 +146,7 @@
                 android:layout_marginTop="-10dp"
                 android:layout_toRightOf="@+id/txt1"
                 android:background="@drawable/edit_text_bg"
-                android:hint="nubmer"
+
                 android:inputType="number"
                 android:textSize="20sp"></EditText>
             <EditText
@@ -158,20 +159,19 @@
                 android:layout_below="@+id/number"
                 android:inputType="text"
                 android:background="@drawable/edit_text_bg"
-                android:hint="name"
                 android:textSize="20sp"></EditText>
-            <EditText
+            <Spinner
                 android:id="@+id/gender"
-                style="@style/MyEditStyle"
-                android:layout_width="250dp"
-                android:layout_marginLeft="9dp"
-                android:layout_marginTop="10dp"
-                android:layout_toRightOf="@+id/txt2"
-                android:layout_below="@+id/name"
-                android:background="@drawable/edit_text_bg"
-                android:hint="gender"
-                android:inputType="text"
-                android:textSize="20sp"></EditText>
+                android:layout_width="164dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txt2"
+                android:layout_alignTop="@+id/txt3"
+                android:layout_alignBottom="@+id/txt3"
+                android:layout_marginLeft="30dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toRightOf="@+id/txt7"
+                android:contentDescription="Enter Your Choice"
+                android:hint="yes" />
             <EditText
                 android:id="@+id/age"
                 style="@style/MyEditStyle"
@@ -181,33 +181,30 @@
                 android:layout_toRightOf="@+id/txt2"
                 android:layout_below="@+id/gender"
                 android:background="@drawable/edit_text_bg"
-                android:hint="age"
                 android:inputType="number"
                 android:textSize="20sp"></EditText>
+            <Spinner
+                android:id="@+id/education"
+                android:layout_width="164dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txt4"
+                android:layout_alignTop="@+id/txt5"
+                android:layout_alignBottom="@+id/txt5"
+                android:layout_marginLeft="30dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toRightOf="@+id/txt7"
+                android:contentDescription="Enter Your Choice"
+                android:hint="yes" />
             <EditText
                 android:id="@+id/condition"
                 style="@style/MyEditStyle"
                 android:layout_width="173dp"
                 android:layout_height="42dp"
                 android:layout_alignTop="@+id/txt1"
-                android:layout_marginLeft="-3dp"
-                android:layout_marginTop="213dp"
+                android:layout_marginLeft="47dp"
+                android:layout_marginTop="267dp"
                 android:layout_toRightOf="@+id/txt5"
                 android:background="@drawable/edit_text_bg"
-                android:hint="condition"
-                android:inputType="text"
-                android:textSize="20sp"></EditText>
-            <EditText
-                android:id="@+id/education"
-                style="@style/MyEditStyle"
-                android:layout_width="220dp"
-                android:layout_height="39dp"
-                android:layout_alignTop="@+id/txt1"
-                android:layout_marginLeft="-2dp"
-                android:layout_marginTop="265dp"
-                android:layout_toRightOf="@+id/txt6"
-                android:background="@drawable/edit_text_bg"
-                android:hint="education"
                 android:inputType="text"
                 android:textSize="20sp"></EditText>
         </RelativeLayout>
