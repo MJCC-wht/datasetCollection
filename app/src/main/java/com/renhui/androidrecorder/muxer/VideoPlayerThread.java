@@ -74,7 +74,7 @@ public class VideoPlayerThread extends Thread{
                 videotext = "02maiche.mp4";
                 break;
             case "recognition3": case "emotion3":
-                videotext = "03mancai.mp4";
+                videotext = "03lixueqin.mp4";
                 break;
             case "recognition4": case "emotion4":
                 videotext = "04zhangerda.mp4";
