@@ -204,7 +204,7 @@ public class HomepageActivity extends AppCompatActivity {
         Intent intent = new Intent();
         if(filePath == null){
             Toast.makeText(HomepageActivity.this, "请点击左图，输入受试者信息",
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_SHORT).show();
         } else {
             intent.setClass(HomepageActivity.this, MediaMuxerActivity.class);
             intent.putExtra("complete_info",choice + filePath);

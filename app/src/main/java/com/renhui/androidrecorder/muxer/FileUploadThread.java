@@ -102,7 +102,8 @@ public class FileUploadThread extends Thread {
                         Toast.makeText(MediaMuxerActivity.mainActivity, result, Toast.LENGTH_SHORT).show();
                         Log.d("theResult", result);
                         VoiceBroadcastThread.stopBroadcast();
-                        VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.mainActivity, "拍摄完成，" + result);
+                        String action = tagName.endsWith("mp4") ? "拍摄" : "录制";
+                        VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.mainActivity, action + "完成，" + result);
                         Looper.loop();
                     }
                 }

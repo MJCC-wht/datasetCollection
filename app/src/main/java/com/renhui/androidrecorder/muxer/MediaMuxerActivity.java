@@ -1,6 +1,7 @@
 package com.renhui.androidrecorder.muxer;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.app.ActionBar;
 import android.content.pm.PackageManager;
@@ -21,6 +22,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.OrientationEventListener;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -56,6 +59,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
 
     Camera camera;
     int cameraId;
+    boolean occupiedByCanvas = false;
     SurfaceHolder surfaceHolder;
     SurfaceTexture surfaceTexture;
 
@@ -133,8 +137,6 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
                         VideoPlayerThread.stopPlay(mVideo, surfaceView);
                     }
-                    // 恢复摄像头角度设置
-                    camera.setDisplayOrientation(90);
                     stopCamera();
                 } else {
                     if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
@@ -191,17 +193,21 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         changeCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                    changeCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
+                if (camera != null) {
+                    if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                        changeCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
+                    } else {
+                        changeCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
+                    }
                 } else {
-                    changeCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
+                    Toast.makeText(MediaMuxerActivity.this, "相机未开启", Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
 
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
-
     }
 
     @Override
@@ -291,12 +297,12 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
      * 打开摄像头
      */
     private void startCamera(int cameraId) {
+        resumePreview();
         this.cameraId = cameraId;
         camera = Camera.open(cameraId);
         camera.setDisplayOrientation(90);
         Camera.Parameters parameters = camera.getParameters();
         parameters.setPreviewFormat(ImageFormat.NV21);
-//        camera.cancelAutoFocus();
         if (cameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
             parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         }
@@ -328,14 +334,33 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         updateImage(null);
     }
 
+    private void stopCameraWithoutStopPreview() {
+        // 停止预览并释放资源
+        if (camera != null) {
+            camera.setPreviewCallback(null);
+            camera.stopPreview();
+            camera.release();
+            camera = null;
+        }
+    }
+
     /**
      * 切换前后摄像头
      */
     private void changeCamera(int cameraId) {
         // 先确认关闭
-        stopCamera();
+        stopCameraWithoutStopPreview();
         // 然后开启对应Id的camera
         startCamera(cameraId);
+    }
+
+    private void resumePreview() {
+        if (occupiedByCanvas) {
+            // 被占用
+            surfaceView.setVisibility(View.GONE);
+            surfaceView.setVisibility(View.VISIBLE);
+            occupiedByCanvas = false;
+        }
     }
 
     // ----------------------- 在SurfaceView上显示图片 --------------------------------------
@@ -351,12 +376,14 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
      */
     private void drawImage() {
         Canvas canvas = surfaceHolder.lockCanvas();
-        if (canvas != null && audioBitmap != null) {
-            canvas.drawBitmap(audioBitmap, 0, 0, null);
+        if (canvas != null) {
+            if (audioBitmap != null) {
+                canvas.drawBitmap(audioBitmap, 0, 0, null);
+            } else {
+                canvas.drawColor(Color.BLACK);
+            }
             surfaceHolder.unlockCanvasAndPost(canvas);
-        } else if (canvas != null) {
-            canvas.drawColor(Color.BLACK);
-            surfaceHolder.unlockCanvasAndPost(canvas);
+            occupiedByCanvas = true;
         }
     }
 

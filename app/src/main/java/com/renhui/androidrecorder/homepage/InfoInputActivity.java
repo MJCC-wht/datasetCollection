@@ -109,7 +109,7 @@ public class InfoInputActivity extends AppCompatActivity {
         // 选择事件的处理方法，其中arg2代表选择项的序号
         public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 //            Toast.makeText(InfoInputActivity.this, "您选择的是" + starArray[arg2],
-//                    Toast.LENGTH_LONG).show();
+//                    Toast.LENGTH_SHORT).show();
             if(starArray[arg2] == "否"){
                 floatWindow = "no";
             } else {
