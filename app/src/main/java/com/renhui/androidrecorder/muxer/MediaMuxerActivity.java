@@ -234,6 +234,11 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
 
     @Override
     public void onPreviewFrame(byte[] bytes, Camera camera) {
+        if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            int width = camera.getParameters().getPreviewSize().width;
+            int height = camera.getParameters().getPreviewSize().height;
+            bytes = rotateYUV420Degree180(bytes, width, height);
+        }
         MediaMuxerThread.addVideoFrameData(bytes);
     }
 
@@ -241,6 +246,10 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        // 先设置旋转角度
+        if (camera != null) {
+            camera.setDisplayOrientation(getCameraRotation());
+        }
         if (filePathList[1].startsWith("recognition") || filePathList[1].startsWith("emotion")) {
             if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 // 横屏时给出横屏弹窗、全屏显示
@@ -264,9 +273,6 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                         cameraparams.addRule(RelativeLayout.ALIGN_LEFT, R.id.noButton);
                         cameraparams.addRule(RelativeLayout.ALIGN_PARENT_TOP, R.id.topButton);
                         cameraparams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, R.id.video);
-
-                        // 使摄像头方向为正
-                        camera.setDisplayOrientation(0);
                     }
                 }
             } else {
@@ -291,6 +297,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
             }
         }
     }
+
     //----------------------- 摄像头操作相关 --------------------------------------
 
     /**
@@ -300,7 +307,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         resumePreview();
         this.cameraId = cameraId;
         camera = Camera.open(cameraId);
-        camera.setDisplayOrientation(90);
+        camera.setDisplayOrientation(getCameraRotation());
         Camera.Parameters parameters = camera.getParameters();
         parameters.setPreviewFormat(ImageFormat.NV21);
         if (cameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
@@ -361,6 +368,34 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
             surfaceView.setVisibility(View.VISIBLE);
             occupiedByCanvas = false;
         }
+    }
+
+    private int getCameraRotation() {
+        int rotation = getWindowManager().getDefaultDisplay().getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        Camera.getCameraInfo(cameraId, info);
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360;
+        } else {
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        return result;
     }
 
     // ----------------------- 在SurfaceView上显示图片 --------------------------------------
@@ -496,5 +531,22 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         return image;
     }
 
+    // 对OnPreviewFrame中的byte数组进行上下翻转（前置摄像头）
+    private  byte[] rotateYUV420Degree180(byte[] data, int imageWidth, int imageHeight) {
+        byte[] yuv = new byte[imageWidth * imageHeight * 3 / 2];
+        int i = 0;
+        int count = 0;
+        for (i = imageWidth * imageHeight - 1; i >= 0; i--) {
+            yuv[count] = data[i];
+            count++;
+        }
+        i = imageWidth * imageHeight * 3 / 2 - 1;
+        for (i = imageWidth * imageHeight * 3 / 2 - 1; i >= imageWidth
+                * imageHeight; i -= 2) {
+            yuv[count++] = data[i - 1];
+            yuv[count++] = data[i];
+        }
+        return yuv;
+    }
 
 }
