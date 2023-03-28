@@ -13,6 +13,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.net.Uri;
@@ -219,6 +221,10 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
         Log.w("MainActivity", "enter surfaceChanged method");
+        // 横竖屏切换显示图片
+        if (occupiedByCanvas) {
+            adaptImage();
+        }
     }
 
     @Override
@@ -415,7 +421,15 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         Canvas canvas = surfaceHolder.lockCanvas();
         if (canvas != null) {
             if (audioBitmap != null) {
-                canvas.drawBitmap(audioBitmap, 0, 0, null);
+                int bitmapWidth = audioBitmap.getWidth();
+                int bitmapHeight = audioBitmap.getHeight();
+                int canvasWidth = canvas.getWidth();
+                int canvasHeight = canvas.getHeight();
+                float left = (canvasWidth - bitmapWidth) / 2f;
+                float top = (canvasHeight - bitmapHeight) / 2f;
+                Rect mSrcRect = new Rect(0, 0, bitmapWidth, bitmapHeight);
+                RectF mDstRect = new RectF(left, top, left + bitmapWidth, top + bitmapHeight);
+                canvas.drawBitmap(audioBitmap, mSrcRect, mDstRect, null);
             } else {
                 canvas.drawColor(Color.BLACK);
             }
@@ -445,6 +459,21 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
             audioBitmap = null;
         }
         drawImage();
+    }
+
+    private void adaptImage() {
+        if (audioBitmap != null) {
+            int surfaceWidth = surfaceView.getWidth();
+            int surfaceHeight = surfaceView.getHeight();
+
+            float widthRatio = (float) surfaceWidth / audioBitmap.getWidth();
+            float heightRatio = (float) surfaceHeight / audioBitmap.getHeight();
+            float ratio = Math.min(widthRatio, heightRatio);
+
+            audioBitmap = Bitmap.createScaledBitmap(audioBitmap, (int) (audioBitmap.getWidth() * ratio),
+                    (int) (audioBitmap.getHeight() * ratio), false);
+            drawImage();
+        }
     }
 
     private int confirmType(String name) {
@@ -506,14 +535,15 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
 
     // 根据点击的按钮呈现不同的图片
     public String switchImage(String imagetext){
-        switch(imagetext) {
+        switch (imagetext) {
             case "description1":
-                imagetext = "fruits.jpg";
+                imagetext = "fruit.jpg";
                 break;
             case "description2":
                 imagetext = "family.jpg";
                 break;
             default:
+                imagetext = "story.jpg";
                 break;
         }
         return imagetext;

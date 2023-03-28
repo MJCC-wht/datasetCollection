@@ -202,7 +202,7 @@ public class HomepageActivity extends AppCompatActivity {
     }
     private void jump_to_collect(){
         Intent intent = new Intent();
-        if (filePath == null) {
+        if (filePath == null || filePath.equals(" ")) {
             Toast.makeText(HomepageActivity.this, "请点击左图，输入受试者信息",
                     Toast.LENGTH_SHORT).show();
         } else {

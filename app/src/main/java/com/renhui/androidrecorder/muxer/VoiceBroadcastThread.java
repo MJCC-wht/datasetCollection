@@ -55,6 +55,7 @@ public class VoiceBroadcastThread extends Thread{
             @Override
             public void onInit(int status) {
                 if (status == textToSpeech.SUCCESS) {
+
                     //判断是否支持下面两种语言
                     int result1 = textToSpeech.setLanguage(Locale.US);
                     int result2 = textToSpeech.setLanguage(Locale.SIMPLIFIED_CHINESE);
