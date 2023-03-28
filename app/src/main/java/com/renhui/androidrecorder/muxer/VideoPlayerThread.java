@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Camera;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Environment;
 import android.os.Handler;
@@ -57,6 +58,8 @@ public class VideoPlayerThread extends Thread{
         Log.e("tag","播放手动停止");
         // 在任何状态下释放媒体播放器
         mVideo.suspend();
+        // 将屏幕设置为黑
+        mVideo.setBackgroundColor(Color.BLACK);
         // 移除对Surfaceview的布局位置调整和设置
         RelativeLayout.LayoutParams cameraparams = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
         cameraparams.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
