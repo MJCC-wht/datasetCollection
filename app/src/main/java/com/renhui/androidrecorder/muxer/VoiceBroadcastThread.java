@@ -55,20 +55,10 @@ public class VoiceBroadcastThread extends Thread{
             @Override
             public void onInit(int status) {
                 if (status == textToSpeech.SUCCESS) {
-                    // Toast.makeText(MainActivity.this,"成功输出语音",
-                    // Toast.LENGTH_SHORT).show();
-                    // Locale loc1=new Locale("us");
-                    // Locale loc2=new Locale("china");
-
-                    // 方法用来控制音调
-                    textToSpeech.setPitch(1.0f);
-                    // 用来控制语速
-                    textToSpeech.setSpeechRate(1.0f);
-
                     //判断是否支持下面两种语言
                     int result1 = textToSpeech.setLanguage(Locale.US);
-                    int result2 = textToSpeech.setLanguage(Locale.
-                            SIMPLIFIED_CHINESE);
+                    int result2 = textToSpeech.setLanguage(Locale.SIMPLIFIED_CHINESE);
+
                     boolean a = !(result1 == TextToSpeech.LANG_MISSING_DATA || result1 == TextToSpeech.LANG_NOT_SUPPORTED);
                     boolean b = !(result2 == TextToSpeech.LANG_MISSING_DATA || result2 == TextToSpeech.LANG_NOT_SUPPORTED);
 

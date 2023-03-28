@@ -90,8 +90,12 @@ public class FileUploadThread extends Thread {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure( Call call, IOException e) {
+                    Looper.prepare();
                     Toast.makeText(MediaMuxerActivity.mainActivity, "网络错误，请先连接网络！", Toast.LENGTH_SHORT).show();
+                    VoiceBroadcastThread.stopBroadcast();
+                    VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.mainActivity, "网络错误，请先连接网络！");
                     Log.d("failureResult", "网络错误！");
+                    Looper.loop();
                 }
 
                 @Override

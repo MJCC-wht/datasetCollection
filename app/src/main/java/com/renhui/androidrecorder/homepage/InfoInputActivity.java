@@ -58,8 +58,12 @@ public class InfoInputActivity extends AppCompatActivity {
                 name = etName.getText().toString();
                 age = etAge.getText().toString();
                 condition = etCondition.getText().toString();
-                allInfo = number+"-"+name+"-"+gender+"-"+age+"-"+education+"-"+condition;
-                //点击按钮跳转到页面
+                allInfo = number + "-" + name + "-" + gender + "-" + age + "-" + education + "-" + condition;
+                if (!pathCompleted(allInfo)) {
+                    Toast.makeText(InfoInputActivity.this, "请完整填写信息！", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                // 点击按钮跳转到页面
                 Intent intent = new Intent();
                 intent.setClass(InfoInputActivity.this, InfoShowActivity.class);
                 intent.putExtra("fileName",allInfo);
@@ -69,6 +73,21 @@ public class InfoInputActivity extends AppCompatActivity {
             }
         });
     }
+
+    // 用于判断文件路径是否合法
+    private boolean pathCompleted(String filePath) {
+        if (filePath.endsWith("-")) {
+            return false;
+        }
+        String[] list = filePath.split("-");
+        for (String s : list) {
+            if (s.equals("")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     // 初始化下拉模式的列表框
     private void initSpinnerForDropdown() {
         // 声明一个下拉列表的数组适配器

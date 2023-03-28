@@ -109,7 +109,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
 
         // 选择是否需要小窗口  yes or no
         floatWindow = intent.getStringExtra("cameraWindow") ;
-        if (floatWindow.equals("no")) {
+        if (floatWindow != null &&  floatWindow.equals("no")) {
             cameraWindow = false;
         }// default  true
 
@@ -237,7 +237,9 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
             int width = camera.getParameters().getPreviewSize().width;
             int height = camera.getParameters().getPreviewSize().height;
-            bytes = rotateYUV420Degree180(bytes, width, height);
+            if (!isTablet(MediaMuxerActivity.this)) {
+                bytes = rotateYUV420Degree180(bytes, width, height);
+            }
         }
         MediaMuxerThread.addVideoFrameData(bytes);
     }
@@ -464,7 +466,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         switch (text) {
             case "action1":
                 VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请正常行走，维持十秒左右");
+                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请正常行走，持续十秒左右");
                 break;
             case "action2":
                 VoiceBroadcastThread.stopBroadcast();
@@ -472,7 +474,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                 break;
             case "action3":
                 VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请上台阶，维持十秒左右。");
+                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请抬腿走台阶，持续五到十秒。");
                 break;
             case "action4":
                 VoiceBroadcastThread.stopBroadcast();
@@ -547,6 +549,10 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
             yuv[count++] = data[i];
         }
         return yuv;
+    }
+
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
 }

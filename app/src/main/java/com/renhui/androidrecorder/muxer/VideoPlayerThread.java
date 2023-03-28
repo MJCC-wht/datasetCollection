@@ -8,6 +8,7 @@ import android.graphics.Camera;
 import android.media.MediaPlayer;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -178,6 +179,9 @@ public class VideoPlayerThread extends Thread{
                         @Override
                         public void onCompletion(MediaPlayer mp) {
                             Log.e("tag","播放完成");
+                            Toast.makeText(MediaMuxerActivity.mainActivity, "播放完成，请恢复竖屏并停止录制", Toast.LENGTH_SHORT).show();
+                            VoiceBroadcastThread.stopBroadcast();
+                            VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.mainActivity, "播放完成，请恢复竖屏并停止录制");
 //                            //停止播放视频,并且释放
 //                            mVideoView.stopPlayback();
                             //在任何状态下释放媒体播放器

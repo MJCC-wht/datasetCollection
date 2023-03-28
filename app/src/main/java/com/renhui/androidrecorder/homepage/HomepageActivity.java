@@ -202,7 +202,7 @@ public class HomepageActivity extends AppCompatActivity {
     }
     private void jump_to_collect(){
         Intent intent = new Intent();
-        if(filePath == null){
+        if (filePath == null) {
             Toast.makeText(HomepageActivity.this, "请点击左图，输入受试者信息",
                     Toast.LENGTH_SHORT).show();
         } else {
@@ -212,6 +212,7 @@ public class HomepageActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
+
     private void initView(){
         imgbtn1 = findViewById(R.id.yundong);
         imgbtn2 = findViewById(R.id.renzhi);
