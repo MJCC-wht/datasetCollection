@@ -17,7 +17,7 @@ public class HomepageActivity extends AppCompatActivity {
             btn21,btn22,btn23,btn24,btn25,
             btn31,btn32,btn33,btn34,btn35,
             btn41,btn42,btn43;
-    private String choice; // 选择的是哪个项目？
+    private String choice, choice2; // 选择的是哪个项目？
 
     private String filePath, camera_window = "";
 
@@ -41,6 +41,8 @@ public class HomepageActivity extends AppCompatActivity {
         if (intent != null) {
             filePath = intent.getStringExtra("complete_info");
             camera_window = intent.getStringExtra("cameraWindow");
+            choice2 = intent.getStringExtra("choice2");
+
         }
 
         imgbtn1 = (ImageButton) findViewById(R.id.yundong);
@@ -81,119 +83,119 @@ public class HomepageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setChoice("video/action1/") ;
-                jump_to_collect();
+                judge1();
             }
         });
         btn12.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("video/action2/") ;
-                jump_to_collect();
+                judge1();
             }
         });
         btn13.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("video/action3/") ;
-                jump_to_collect();
+                judge1();
             }
         });
         btn14.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("video/action4/") ;
-                jump_to_collect();
+                judge1();
             }
         });
         btn21.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("video/recognition1/") ;
-                jump_to_collect();
+                judge2();
             }
         });
         btn22.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("video/recognition2/") ;
-                jump_to_collect();
+                judge2();
             }
         });
         btn23.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("video/recognition3/") ;
-                jump_to_collect();
+                judge2();
             }
         });
         btn24.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("video/recognition4/") ;
-                jump_to_collect();
+                judge2();
             }
         });
         btn25.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("video/recognition5/") ;
-                jump_to_collect();
+                judge2();
             }
         });
         btn31.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("video/emotion1/") ;
-                jump_to_collect();
+                judge3();
             }
         });
         btn32.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("video/emotion2/") ;
-                jump_to_collect();
+                judge3();
             }
         });
         btn33.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("video/emotion3/") ;
-                jump_to_collect();
+                judge3();
             }
         });
         btn34.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("video/emotion4/") ;
-                jump_to_collect();
+                judge3();
             }
         });
         btn35.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("video/emotion5/") ;
-                jump_to_collect();
+                judge3();
             }
         });
         btn41.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("audio/description1/") ;
-                jump_to_collect();
+                judge4();
             }
         });
         btn42.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("audio/description2/") ;
-                jump_to_collect();
+                judge4();
             }
         });
         btn43.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setChoice("audio/description3/") ;
-                jump_to_collect();
+                judge4();
             }
         });
     }
@@ -215,6 +217,38 @@ public class HomepageActivity extends AppCompatActivity {
             intent.putExtra("complete_info",choice + filePath);
             intent.putExtra("cameraWindow",camera_window);
             startActivity(intent);
+        }
+    }
+    private void judge1(){
+        if (choice2 == null || choice2.charAt(0) != 'm') {
+            Toast.makeText(HomepageActivity.this, "请正确选择 采集动作",
+                    Toast.LENGTH_SHORT).show();
+        } else if (choice2.equals("motion")){
+            jump_to_collect();
+        }
+    }
+    private void judge2(){
+        if (choice2 == null || choice2.charAt(0) != 'r') {
+            Toast.makeText(HomepageActivity.this, "请正确选择 认知视频",
+                    Toast.LENGTH_SHORT).show();
+        } else if (choice2.equals("recognition")) {
+            jump_to_collect();
+        }
+    }
+    private void judge3(){
+        if (choice2 == null || choice2.charAt(0) != 'e') {
+            Toast.makeText(HomepageActivity.this, "请正确选择 情绪视频",
+                    Toast.LENGTH_SHORT).show();
+        } else if (choice2.equals("emotion")){
+            jump_to_collect();
+        }
+    }
+    private void judge4(){
+        if (choice2 == null || choice2.charAt(0) != 'd') {
+            Toast.makeText(HomepageActivity.this, "请正确选择 语音任务",
+                    Toast.LENGTH_SHORT).show();
+        } else if (choice2.equals("audio")){
+            jump_to_collect();
         }
     }
 

@@ -17,7 +17,7 @@ import com.renhui.androidrecorder.R;
 public class InfoInputActivity extends AppCompatActivity {
     private Button btnBack, btnSave;
     private EditText etNumber,etName,etAge;
-    private String allInfo;
+    private String allInfo,func;
     private String number = "",name= "",gender = "",age="",condition="",education="";
     private String floatWindow = "";
 
@@ -41,7 +41,7 @@ public class InfoInputActivity extends AppCompatActivity {
         setContentView(R.layout.activity_info_input);
 
         Intent intent = getIntent();
-        String func = intent.getStringExtra("choice");
+        func = intent.getStringExtra("choice");
         if (func.equals("motion")){
             conditionArray = level_motion_Array;
         } else if (func.equals("recognition") || func.equals("emotion")){
@@ -83,6 +83,7 @@ public class InfoInputActivity extends AppCompatActivity {
                 intent.setClass(InfoInputActivity.this, InfoShowActivity.class);
                 intent.putExtra("fileName",allInfo);
                 intent.putExtra("floatWindow",floatWindow);
+                intent.putExtra("choice",func);
                 startActivity(intent);
 
             }
