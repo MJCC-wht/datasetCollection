@@ -45,6 +45,12 @@
 
     </LinearLayout>
 
+    <Chronometer
+        android:id="@+id/chronometer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"/>
+
     <!--用于显示预览-->
     <SurfaceView
         android:id="@+id/surface_view"

@@ -20,6 +20,7 @@ import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -57,11 +59,13 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     Button videoStartStopButton;
     Button audioStartStopButton;
     Button changeCameraButton;
+    Chronometer chronometer;
     Button noButton;
 
     Camera camera;
     int cameraId;
     boolean occupiedByCanvas = false;
+    boolean running = false;
     SurfaceHolder surfaceHolder;
     SurfaceTexture surfaceTexture;
 
@@ -119,6 +123,9 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         videoStartStopButton = (Button) findViewById(R.id.videoStartStop);
         audioStartStopButton = (Button) findViewById(R.id.audioStartStop);
         changeCameraButton = (Button) findViewById(R.id.changeCamera);
+        chronometer = (Chronometer) findViewById(R.id.chronometer);
+        // 默认不可见
+        chronometer.setVisibility(View.INVISIBLE);
         mVideo = (VideoView) findViewById(R.id.video);
 
         // 摄像头小窗位置标定
@@ -177,6 +184,14 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     // 音频录制完，上传文件
                     FileUploadThread.startUpload(AudioEncoderThread.filePath, AudioEncoderThread.tagName);
                     updateImage(null);
+                    // 停止计时器
+                    if (running) {
+                        chronometer.stop();
+                        running = false;
+                        chronometer.setVisibility(View.INVISIBLE);
+                        videoStartStopButton.setVisibility(View.VISIBLE);
+                        changeCameraButton.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     if (confirmType(filePathList[1]) != DESCRIPTION_TYPE) {
                         Toast.makeText(MediaMuxerActivity.this, "禁止录制视频", Toast.LENGTH_SHORT).show();
@@ -188,6 +203,15 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     AudioEncoderThread.startAudio(filePath);
                     FileUploadThread.stopUpload();
                     updateImage(getImageFromAssetsFile(switchImage(filePathList[1])));
+                    // 开始计时器
+                    if (!running) {
+                        chronometer.setVisibility(View.VISIBLE);
+                        videoStartStopButton.setVisibility(View.INVISIBLE);
+                        changeCameraButton.setVisibility(View.INVISIBLE);
+                        chronometer.setBase(SystemClock.elapsedRealtime());
+                        chronometer.start();
+                        running = true;
+                    }
                 }
             }
         });
@@ -534,19 +558,21 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     }
 
     // 根据点击的按钮呈现不同的图片
-    public String switchImage(String imagetext){
-        switch (imagetext) {
+    public String switchImage(String imageText){
+        switch (imageText) {
             case "description1":
-                imagetext = "fruit.jpg";
+                imageText = "fruit.jpg";
                 break;
             case "description2":
-                imagetext = "family.jpg";
+                imageText = "family.jpg";
+                break;
+            case "description3":
+                imageText = "story.jpg";
                 break;
             default:
-                imagetext = "story.jpg";
                 break;
         }
-        return imagetext;
+        return imageText;
     }
 
     // 获取assets中的图片
