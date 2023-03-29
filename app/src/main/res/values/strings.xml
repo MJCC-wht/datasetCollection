@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">老年失能评估 浙江大学</string>
+    <string name="app_name">老年人失能评估数据采集App 浙江大学</string>
     <string name="video">录制视频</string>
     <string name="audio">录制音频</string>
     <string name="camera">切换相机</string>

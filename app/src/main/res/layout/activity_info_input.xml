@@ -128,14 +128,14 @@
                 android:id="@+id/txt8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="填写说明：\n1.“病症/程度”：\n   运动维度：优秀/合格/不合格\n   认知维度：如正常/轻度认知障碍/重度等
-\n   情绪病症评级，如轻度抑郁等\n   语音维度：填写病症如痴呆
+                android:text="填写说明：\n1.“病症/程度”：\n   认知/情绪： 编号第1个数字表示类型，如
+\n   抑郁 001，002...\n   狂躁 101，102...
 \n2. 文化程度 只需 采集“语音”时填写\n3. “认知”或“情绪”录制视频时，可选择是否需要浮窗播放录制实况"
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="15dp"
                 android:textColor="#000000"
                 android:layout_below="@+id/txt7"
-                android:textSize="20sp"></TextView>
+                android:textSize="18sp"></TextView>
 
             <EditText
                 android:id="@+id/number"
@@ -183,6 +183,7 @@
                 android:background="@drawable/edit_text_bg"
                 android:inputType="number"
                 android:textSize="20sp"></EditText>
+
             <Spinner
                 android:id="@+id/education"
                 android:layout_width="164dp"
@@ -190,23 +191,23 @@
                 android:layout_below="@+id/txt4"
                 android:layout_alignTop="@+id/txt5"
                 android:layout_alignBottom="@+id/txt5"
-                android:layout_marginLeft="30dp"
-                android:layout_marginBottom="0dp"
+                android:layout_marginLeft="36dp"
+                android:layout_marginTop="-1dp"
+                android:layout_marginBottom="1dp"
                 android:layout_toRightOf="@+id/txt7"
-                android:contentDescription="Enter Your Choice"
-                android:hint="yes" />
-            <EditText
+                android:contentDescription="Enter Your Choice" />
+            <Spinner
                 android:id="@+id/condition"
-                style="@style/MyEditStyle"
                 android:layout_width="173dp"
                 android:layout_height="42dp"
+                android:layout_below="@+id/txt4"
                 android:layout_alignTop="@+id/txt1"
-                android:layout_marginLeft="47dp"
+                android:layout_alignBottom="@+id/txt6"
+                android:layout_marginLeft="-1dp"
                 android:layout_marginTop="267dp"
-                android:layout_toRightOf="@+id/txt5"
-                android:background="@drawable/edit_text_bg"
-                android:inputType="text"
-                android:textSize="20sp"></EditText>
+                android:layout_toRightOf="@+id/txt6"
+                android:contentDescription="Enter Your Choice"
+                android:hint="yes" />
         </RelativeLayout>
     </ScrollView>
 </LinearLayout>

@@ -19,7 +19,7 @@ public class HomepageActivity extends AppCompatActivity {
             btn41,btn42,btn43;
     private String choice; // 选择的是哪个项目？
 
-    private String filePath, camera_window = "", jump = "";
+    private String filePath, camera_window = "";
 
     public void setChoice(String choice) {
         this.choice = choice;
@@ -47,6 +47,7 @@ public class HomepageActivity extends AppCompatActivity {
         imgbtn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                choice = "motion";
                 jump_to_input();
             }
         });
@@ -54,6 +55,7 @@ public class HomepageActivity extends AppCompatActivity {
         imgbtn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                choice = "recognition";
                 jump_to_input();
             }
         });
@@ -61,6 +63,7 @@ public class HomepageActivity extends AppCompatActivity {
         imgbtn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                choice = "emotion";
                 jump_to_input();
             }
         });
@@ -68,6 +71,7 @@ public class HomepageActivity extends AppCompatActivity {
         imgbtn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                choice = "audio";
                 jump_to_input();
             }
         });
@@ -198,6 +202,7 @@ public class HomepageActivity extends AppCompatActivity {
         filePath = " ";
         Intent intent = new Intent();
         intent.setClass(HomepageActivity.this, InfoInputActivity.class);
+        intent.putExtra("choice",choice);
         startActivity(intent);
     }
     private void jump_to_collect(){

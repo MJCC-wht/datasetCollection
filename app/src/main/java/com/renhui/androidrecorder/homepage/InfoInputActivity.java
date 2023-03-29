@@ -16,10 +16,19 @@ import com.renhui.androidrecorder.R;
 
 public class InfoInputActivity extends AppCompatActivity {
     private Button btnBack, btnSave;
-    private EditText etNumber,etName,etAge,etCondition;
+    private EditText etNumber,etName,etAge;
     private String allInfo;
     private String number = "",name= "",gender = "",age="",condition="",education="";
     private String floatWindow = "";
+
+    // 定义下拉列表需要显示的文本数组
+    private String[] starArray = {"是", "否"};
+    private String[] conditionArray = {};
+    private String[] genderArray = {"男", "女"};
+    private String[] eduArray = {"小学", "初中", "高中", "大学","其他"};
+    private String[] level_motion_Array = {"平衡功能差", "有一定平衡能力","平衡功能较好"};
+    private String[] level_recognition_Array = {"正常","轻度","中度","重度"};
+    private String[] level_audio_Array = {"正常","轻度认知障碍","痴呆"};
     public void setAllInfo(String allInfo) {
         this.allInfo = allInfo;
     }
@@ -30,13 +39,20 @@ public class InfoInputActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_input);
-        initView();
+
         Intent intent = getIntent();
         String func = intent.getStringExtra("choice");
+        if (func.equals("motion")){
+            conditionArray = level_motion_Array;
+        } else if (func.equals("recognition") || func.equals("emotion")){
+            conditionArray = level_recognition_Array;
+        } else if (func.equals("audio")){
+            conditionArray = level_audio_Array;
+        }
+        initView();
         etNumber=(EditText) findViewById(R.id.number);
         etName=(EditText) findViewById(R.id.name);
         etAge=(EditText) findViewById(R.id.age);
-        etCondition=(EditText) findViewById(R.id.condition);
         btnBack = (Button) findViewById(R.id.btnback);
         btnSave = (Button) findViewById(R.id.btnsave);
 
@@ -57,7 +73,6 @@ public class InfoInputActivity extends AppCompatActivity {
                 number = etNumber.getText().toString();
                 name = etName.getText().toString();
                 age = etAge.getText().toString();
-                condition = etCondition.getText().toString();
                 allInfo = number + "-" + name + "-" + gender + "-" + age + "-" + education + "-" + condition;
                 if (!pathCompleted(allInfo)) {
                     Toast.makeText(InfoInputActivity.this, "请完整填写信息！", Toast.LENGTH_SHORT).show();
@@ -97,10 +112,13 @@ public class InfoInputActivity extends AppCompatActivity {
                 R.layout.floatingwindow_select, genderArray);
         ArrayAdapter<String> starAdapter3 = new ArrayAdapter<String>(this,
                 R.layout.floatingwindow_select, eduArray);
+        ArrayAdapter<String> starAdapter4 = new ArrayAdapter<String>(this,
+                R.layout.floatingwindow_select, conditionArray);
         // 从布局文件中获取名叫sp_dropdown的下拉框
         Spinner sp_dropdown = findViewById(R.id.spinner1);
         Spinner sp_gender = findViewById(R.id.gender);
         Spinner sp_edu = findViewById(R.id.education);
+        Spinner sp_cond = findViewById(R.id.condition);
         // 设置下拉框的标题。对话框模式才显示标题，下拉模式不显示标题
         //sp_dropdown.setPrompt("请选择是否需要浮窗");
         sp_dropdown.setAdapter(starAdapter); // 设置下拉框的数组适配器
@@ -113,16 +131,13 @@ public class InfoInputActivity extends AppCompatActivity {
 
         sp_edu.setAdapter(starAdapter3); // 设置下拉框的数组适配器
         sp_edu.setSelection(0); // 设置下拉框默认显示第一项
-        // 给下拉框设置选择监听器，一旦用户选中某一项，就触发监听器的onItemSelected方法
         sp_edu.setOnItemSelectedListener(new MySelectedListener3());
 
-
+        sp_cond.setAdapter(starAdapter4); // 设置下拉框的数组适配器
+        sp_cond.setSelection(0); // 设置下拉框默认显示第一项
+        sp_cond.setOnItemSelectedListener(new MySelectedListener4());
     }
 
-    // 定义下拉列表需要显示的文本数组
-    private String[] starArray = {"是", "否"};
-    private String[] genderArray = {"男", "女"};
-    private String[] eduArray = {"小学", "初中", "高中", "大学"};
     // 定义一个选择监听器，它实现了接口OnItemSelectedListener
     class MySelectedListener implements OnItemSelectedListener {
         // 选择事件的处理方法，其中arg2代表选择项的序号
@@ -154,11 +169,18 @@ public class InfoInputActivity extends AppCompatActivity {
         public void onNothingSelected(AdapterView<?> arg0) {
         }
     }
+    class MySelectedListener4 implements OnItemSelectedListener {
+        // 选择事件的处理方法，其中arg2代表选择项的序号
+        public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+            condition = conditionArray[arg2];
+        }
+        public void onNothingSelected(AdapterView<?> arg0) {
+        }
+    }
     private void initView(){
         etNumber=findViewById(R.id.number);
         etName=findViewById(R.id.name);
         etAge=findViewById(R.id.age);
-        etCondition=findViewById(R.id.condition);
         initSpinnerForDropdown(); // 初始化下拉模式的列表框
     }
 }

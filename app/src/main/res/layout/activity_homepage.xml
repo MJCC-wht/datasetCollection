@@ -88,7 +88,7 @@
             android:textColor="#000000"
             android:textSize="18sp"></TextView>
         <TextView
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="60px"
             android:layout_marginLeft="50dp"
             android:id="@+id/txt"
             android:layout_width="wrap_content"
@@ -168,7 +168,7 @@
         <Button
             android:id="@+id/btn21"
             style="@style/MyBtnStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/renzhi"
             android:layout_marginLeft="8dp"
@@ -182,7 +182,7 @@
         <Button
             android:id="@+id/btn22"
             style="@style/MyBtnStyle"
-            android:layout_width="96dp"
+            android:layout_width="80dp"
             android:layout_height="49dp"
             android:layout_alignTop="@+id/renzhi"
             android:layout_marginLeft="115dp"
@@ -190,13 +190,13 @@
             android:layout_marginRight="13dp"
             android:layout_toRightOf="@+id/renzhi"
             android:background="@drawable/btn_bg_selector"
-            android:text="视频 2"
+            android:text="视频2"
             android:textSize="18sp"></Button>
 
         <Button
             android:id="@+id/btn23"
             style="@style/MyBtnStyle"
-            android:layout_width="63dp"
+            android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_below="@+id/btn21"
             android:layout_marginLeft="8dp"
@@ -204,39 +204,39 @@
             android:layout_marginRight="8dp"
             android:layout_toRightOf="@+id/renzhi"
             android:background="@drawable/btn_bg_selector"
-            android:text="视频 3"
+            android:text="视频3"
             android:textSize="18sp"></Button>
 
         <Button
             android:id="@+id/btn24"
             style="@style/MyBtnStyle"
-            android:layout_width="63dp"
+            android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_below="@+id/btn21"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="15dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="5dp"
             android:layout_toRightOf="@+id/btn23"
             android:background="@drawable/btn_bg_selector"
-            android:text="视频 4"
+            android:text="视频4"
             android:textSize="18sp"></Button>
         <Button
             android:id="@+id/btn25"
             style="@style/MyBtnStyle"
-            android:layout_width="65dp"
+            android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_below="@+id/btn21"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="8dp"
             android:layout_toRightOf="@+id/btn24"
             android:background="@drawable/btn_bg_selector"
-            android:text="视频 5"
+            android:text="视频5"
             android:textSize="18sp"></Button>
         <Button
             android:id="@+id/btn31"
             style="@style/MyBtnStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/biaoqing"
             android:layout_marginLeft="8dp"
@@ -250,7 +250,7 @@
         <Button
             android:id="@+id/btn32"
             style="@style/MyBtnStyle"
-            android:layout_width="96dp"
+            android:layout_width="80dp"
             android:layout_height="49dp"
             android:layout_alignTop="@+id/biaoqing"
             android:layout_marginLeft="115dp"
@@ -264,7 +264,7 @@
         <Button
             android:id="@+id/btn33"
             style="@style/MyBtnStyle"
-            android:layout_width="63dp"
+            android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_below="@+id/btn31"
             android:layout_marginLeft="8dp"
@@ -272,34 +272,34 @@
             android:layout_marginRight="8dp"
             android:layout_toRightOf="@+id/biaoqing"
             android:background="@drawable/btn_bg_selector"
-            android:text="视频 3"
+            android:text="视频3"
             android:textSize="18sp"></Button>
 
         <Button
             android:id="@+id/btn34"
             style="@style/MyBtnStyle"
-            android:layout_width="63dp"
+            android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_below="@+id/btn31"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="8dp"
             android:layout_toRightOf="@+id/btn33"
             android:background="@drawable/btn_bg_selector"
-            android:text="视频 4"
+            android:text="视频4"
             android:textSize="18sp"></Button>
         <Button
             android:id="@+id/btn35"
             style="@style/MyBtnStyle"
-            android:layout_width="65dp"
+            android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_below="@+id/btn31"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="8dp"
             android:layout_toRightOf="@+id/btn34"
             android:background="@drawable/btn_bg_selector"
-            android:text="视频 5"
+            android:text="视频5"
             android:textSize="18sp"></Button>
 
         <Button
