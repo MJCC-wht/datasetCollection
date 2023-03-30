@@ -244,7 +244,7 @@ public class HomepageActivity extends AppCompatActivity {
         }
     }
     private void judge4(){
-        if (choice2 == null || choice2.charAt(0) != 'd') {
+        if (choice2 == null || choice2.charAt(0) != 'a') {
             Toast.makeText(HomepageActivity.this, "请正确选择 语音任务",
                     Toast.LENGTH_SHORT).show();
         } else if (choice2.equals("audio")){

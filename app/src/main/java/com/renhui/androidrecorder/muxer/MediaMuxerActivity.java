@@ -132,7 +132,6 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         noButton = (Button) findViewById(R.id.noButton);
         noButton.setVisibility(View.INVISIBLE);
 
-
         videoStartStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -150,20 +149,17 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                 } else {
                     if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
                         startCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
+                        // 一开始为竖屏的时候，摄像头小窗透明
+                        surfaceView.setAlpha(0);
                     } else if (confirmType(filePathList[1]) == ACTION_TYPE) {
                         startCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
                     } else if (confirmType(filePathList[1]) == DESCRIPTION_TYPE) {
                         Toast.makeText(MediaMuxerActivity.this, "禁止录制视频", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    // 一开始为竖屏的时候，摄像头小窗透明
-                    surfaceView.setAlpha(0);
                     view.setTag("stop");
                     ((TextView) view).setText("停止录制");
                     MediaMuxerThread.startMuxer(filePath);
-                    if (camera == null) {
-                        Log.w("MainActivity", "camera gone");
-                    }
                     FileUploadThread.stopUpload();
                     if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
                         VideoPlayerThread.startPlay(MediaMuxerActivity.this, mVideo, filePathList[1]);
@@ -183,7 +179,9 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     AudioEncoderThread.stopAudio();
                     // 音频录制完，上传文件
                     FileUploadThread.startUpload(AudioEncoderThread.filePath, AudioEncoderThread.tagName);
-                    updateImage(null);
+                    if (filePathList[1] != null && filePathList[1].equals("description2")) {
+                        updateImage(null);
+                    }
                     // 停止计时器
                     if (running) {
                         chronometer.stop();
@@ -239,7 +237,9 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         Log.w("MainActivity", "enter surfaceCreated method");
-        this.surfaceHolder = surfaceHolder;
+        if (filePathList[1] != null && (filePathList[1].equals("description1") || filePathList[1].equals("description3"))) {
+            updateImage(getImageFromAssetsFile(switchImage(filePathList[1])));
+        }
     }
 
     @Override
@@ -369,6 +369,8 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
             camera.stopPreview();
             camera.release();
             camera = null;
+            // 处理surfaceHolder
+            surfaceHolder.removeCallback(this);
         }
         updateImage(null);
     }

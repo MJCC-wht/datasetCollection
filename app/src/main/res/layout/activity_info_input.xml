@@ -129,7 +129,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="填写说明：\n1.“病症/程度”：\n   认知/情绪： 编号第1个数字表示类型，如
-\n   抑郁 001，002...\n   狂躁 101，102...
+\n   抑郁单独测试 001，002...\n   狂躁单独测试 101，102...\n   AD单独测试 301，302...\n   抑郁AD合并测试 401，402...\n   狂躁AD合并测试 501，502...
 \n2. 文化程度 只需 采集“语音”时填写\n3. “认知”或“情绪”录制视频时，可选择是否需要浮窗播放录制实况"
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="15dp"

@@ -174,6 +174,8 @@ public class VideoPlayerThread extends Thread{
                     mVideo.setVideoPath(videoPath);
                     //获取焦点
                     mVideo.requestFocus();
+                    //将屏幕设置为透明
+                    mVideo.setBackgroundColor(Color.parseColor("#00000000"));
                     //播放视频
                     mVideo.start();
 
