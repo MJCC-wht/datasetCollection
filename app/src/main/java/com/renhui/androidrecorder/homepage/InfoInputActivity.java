@@ -25,7 +25,7 @@ public class InfoInputActivity extends AppCompatActivity {
     private String[] starArray = {"是", "否"};
     private String[] conditionArray = {};
     private String[] genderArray = {"男", "女"};
-    private String[] eduArray = {"小学", "初中", "高中", "大学","其他"};
+    private String[] eduArray = {"小学", "初中", "高中", "大学","硕士","博士","其他"};
     private String[] level_motion_Array = {"平衡功能差", "有一定平衡能力","平衡功能较好"};
     private String[] level_recognition_Array = {"正常","轻度","中度","重度"};
     private String[] level_audio_Array = {"正常","轻度认知障碍","痴呆"};

@@ -196,6 +196,7 @@
                 android:layout_marginBottom="1dp"
                 android:layout_toRightOf="@+id/txt7"
                 android:contentDescription="Enter Your Choice" />
+
             <Spinner
                 android:id="@+id/condition"
                 android:layout_width="173dp"
@@ -204,7 +205,8 @@
                 android:layout_alignTop="@+id/txt1"
                 android:layout_alignBottom="@+id/txt6"
                 android:layout_marginLeft="-1dp"
-                android:layout_marginTop="267dp"
+                android:layout_marginTop="266dp"
+                android:layout_marginBottom="1dp"
                 android:layout_toRightOf="@+id/txt6"
                 android:contentDescription="Enter Your Choice"
                 android:hint="yes" />
