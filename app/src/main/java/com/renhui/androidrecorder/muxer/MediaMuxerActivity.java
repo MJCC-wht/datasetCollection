@@ -552,7 +552,10 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                 break;
             case "description3":
                 VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请在三分钟内，回忆并简述刚才听到的故事。");
+                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请子细听接下来讲述的故事。 ...... " +
+                        "从前有一个皇帝，要他的大臣在明天上朝时献上公鸡蛋。大臣很着急，因为知道没有公鸡蛋。大臣有一个儿子，十二岁，知道此事。安慰了父亲，" +
+                        "自己去见皇帝。对皇帝说，父亲在家正要生孩子了，所以不能上朝。皇帝很生气，说男人哪能生孩子？儿子说，你既然知道男人不能生孩子，那么，" +
+                        "为什么要公鸡生蛋？皇帝知道理亏，便不再提公鸡蛋了。      故事结束，请在三分钟内复述一遍听到的内容，尽量使用相同的词语。");
                 break;
             default:
                 break;
