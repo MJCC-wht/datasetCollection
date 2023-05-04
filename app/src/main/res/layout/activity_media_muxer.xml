@@ -35,11 +35,11 @@
             android:layout_marginStart="50dp"/>
 
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/changeCamera"
+            android:id="@+id/reUpload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:tag="back"
-            android:text="@string/camera"
+            android:text="@string/reupload"
             android:textAllCaps="false"
             android:layout_marginStart="50dp" />
 
@@ -65,5 +65,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/topButton"
         android:keepScreenOn="true" />
+
+    <ProgressBar
+        android:id="@+id/upload_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/surface_view" />
 
 </RelativeLayout>

@@ -1,13 +1,16 @@
 package com.renhui.androidrecorder.muxer;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Looper;
-import android.speech.tts.Voice;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import com.renhui.androidrecorder.R;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +23,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okio.Buffer;
+import okio.BufferedSink;
+import okio.ForwardingSink;
+import okio.Okio;
 
 public class FileUploadThread extends Thread {
 
@@ -54,9 +61,24 @@ public class FileUploadThread extends Thread {
         fileUploadThread = null;
     }
 
+
     @Override
     public void run() {
         try {
+            // TODO：添加一个开始上传的弹窗，最好显示进度
+            ProgressBar uploadProgress = MediaMuxerActivity.mainActivity.findViewById(R.id.upload_progress);
+//            AlertDialog alertDialog = new AlertDialog.Builder(MediaMuxerActivity.mainActivity)
+//                    .setTitle("上传文件提示：")
+//                    .setMessage("文件正在上传，请点击确定后在下方查看上传进度条")
+//                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            Looper.prepare();
+//                            Log.e("ProgressBar", "正在上传");
+//                            Looper.loop();
+//                        }
+//                    }).create();
+
             Log.w("OkHttpButton", "OkHttpButton Push！");
             String url = "http://" + serverIp + "/upload";
             String filePath = androidFilePath;
@@ -74,11 +96,27 @@ public class FileUploadThread extends Thread {
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("file", fileName, fileBody)
                     .build();
+            // 创建自己的requestBody，用于显示进度条
+            ProgressRequestBody progressRequestBody = new ProgressRequestBody(requestBody, new ProgressListener() {
+                @Override
+                public void onProgress(long bytesWritten, long contentLength) {
+                    Log.e("ProgressBar", bytesWritten + "/" + contentLength);
+                    int progress = (int) (((double) bytesWritten / contentLength) * 100);
+                    MediaMuxerActivity.mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            uploadProgress.setProgress(progress);
+                        }
+                    });
+                }
+            });
+
+            // 其中使用progressRequestBody代表显示进度条
             Request request = new Request.Builder()
                     .url(url)
-                    .post(requestBody)
+                    .post(progressRequestBody)
                     .build();
-//            OkHttpClient okHttpClient = new OkHttpClient();
+
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
                     .writeTimeout(25, java.util.concurrent.TimeUnit.SECONDS)
@@ -91,7 +129,21 @@ public class FileUploadThread extends Thread {
                 @Override
                 public void onFailure( Call call, IOException e) {
                     Looper.prepare();
-                    Toast.makeText(MediaMuxerActivity.mainActivity, "网络错误，请先连接网络！", Toast.LENGTH_SHORT).show();
+                    MediaMuxerActivity.mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog failDialog = new AlertDialog.Builder(MediaMuxerActivity.mainActivity)
+                                    .setTitle("文件上传失败：")
+                                    .setMessage("由于网络错误，请确认网络连接正常后重新上传")
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Log.e("ProgressBar", "上传失败");
+                                        }
+                                    }).create();
+                            failDialog.show();
+                        }
+                    });
                     VoiceBroadcastThread.stopBroadcast();
                     VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.mainActivity, "网络错误，请先连接网络！");
                     Log.d("failureResult", "网络错误！");
@@ -102,8 +154,23 @@ public class FileUploadThread extends Thread {
                 public void onResponse(Call call, Response response) throws IOException {
                     if (response.body() != null){
                         Looper.prepare();
+
                         String result = response.body().string();
-                        Toast.makeText(MediaMuxerActivity.mainActivity, result, Toast.LENGTH_SHORT).show();
+                        MediaMuxerActivity.mainActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                AlertDialog successDialog = new AlertDialog.Builder(MediaMuxerActivity.mainActivity)
+                                        .setTitle("文件上传成功：")
+                                        .setMessage("请点击确定以明确文件上传成功")
+                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Log.e("ProgressBar", "上传成功");
+                                            }
+                                        }).create();
+                                successDialog.show();
+                            }
+                        });
                         Log.d("theResult", result);
                         VoiceBroadcastThread.stopBroadcast();
                         String action = tagName.endsWith("mp4") ? "拍摄" : "录制";
@@ -128,9 +195,51 @@ public class FileUploadThread extends Thread {
 //                } else {
 //                    Log.w("OkHttpStr", "response.isSuccessful() False");
 //                            }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 }
+
+class ProgressRequestBody extends RequestBody {
+
+    private RequestBody requestBody;
+    private long currentLength;
+    private long totalLength;
+    private ProgressListener progressListener;
+
+    public ProgressRequestBody(RequestBody requestBody, ProgressListener progressListener) {
+        this.requestBody = requestBody;
+        this.progressListener = progressListener;
+    }
+
+    @Nullable
+    @Override
+    public MediaType contentType() {
+        return requestBody.contentType();
+    }
+
+    @Override
+    public long contentLength() throws IOException {
+        return requestBody.contentLength();
+    }
+
+    @Override
+    public void writeTo(@NotNull BufferedSink bufferedSink) throws IOException {
+        totalLength = contentLength();
+        ForwardingSink forwardingSink = new ForwardingSink(bufferedSink) {
+            @Override
+            public void write(@NotNull Buffer source, long byteCount) throws IOException {
+                currentLength += byteCount;
+                if (progressListener != null) {
+                    progressListener.onProgress(currentLength, totalLength);
+                }
+                super.write(source, byteCount);
+            }
+        };
+        BufferedSink buffer = Okio.buffer(forwardingSink);
+        requestBody.writeTo(buffer);
+        buffer.flush();
+    }
+}
+

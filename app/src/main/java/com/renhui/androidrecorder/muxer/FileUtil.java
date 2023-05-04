@@ -14,7 +14,7 @@ import java.util.Locale;
  * 文件处理工具类
  * Created by renhui on 2017/9/25.
  */
-public class FileUtils {
+public class FileUtil {
 
     // 文件路径
     private static final String MAIN_DIR_NAME = "/android_records";
@@ -26,7 +26,7 @@ public class FileUtils {
     private String currentFilePath;
     private String currentFullPath;
 
-    public FileUtils(String filePath) {
+    public FileUtil(String filePath) {
         currentFilePath = filePath;
     }
 

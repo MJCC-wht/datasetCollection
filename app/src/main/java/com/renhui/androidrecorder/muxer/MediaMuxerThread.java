@@ -4,7 +4,6 @@ package com.renhui.androidrecorder.muxer;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.IOException;
@@ -180,7 +179,7 @@ public class MediaMuxerThread extends Thread {
 
     private void initMuxer() {
         muxerDatas = new Vector<>();
-        FileUtils fileSwapHelper = new FileUtils(filePath);
+        FileUtil fileSwapHelper = new FileUtil(filePath);
         fileSwapHelper.getSaveFilePath();
         filePath = fileSwapHelper.getFullPath();
         tagName = fileSwapHelper.getFilePath();

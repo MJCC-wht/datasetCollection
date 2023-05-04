@@ -184,13 +184,19 @@ public class VideoPlayerThread extends Thread{
                         @Override
                         public void onCompletion(MediaPlayer mp) {
                             Log.e("tag","播放完成");
-                            Toast.makeText(MediaMuxerActivity.mainActivity, "播放完成，请恢复竖屏并停止录制", Toast.LENGTH_SHORT).show();
-                            VoiceBroadcastThread.stopBroadcast();
-                            VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.mainActivity, "播放完成，请恢复竖屏并停止录制");
+//                            Toast.makeText(MediaMuxerActivity.mainActivity, "播放完成，请恢复竖屏并停止录制", Toast.LENGTH_SHORT).show();
+//                            VoiceBroadcastThread.stopBroadcast();
+//                            VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.mainActivity, "播放完成，请恢复竖屏并停止录制");
 //                            //停止播放视频,并且释放
 //                            mVideoView.stopPlayback();
                             //在任何状态下释放媒体播放器
                             mVideo.suspend();
+                            MediaMuxerActivity.mainActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MediaMuxerActivity.mainActivity.videoStartStopButton.performClick();
+                                }
+                            });
                         }
                     });
                     break;

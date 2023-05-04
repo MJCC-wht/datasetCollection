@@ -35,6 +35,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +43,7 @@ import android.widget.VideoView;
 
 import com.renhui.androidrecorder.R;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,8 +61,10 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     Button videoStartStopButton;
     Button audioStartStopButton;
     Button changeCameraButton;
+    Button reUploadButton;
     Chronometer chronometer;
     Button noButton;
+    ProgressBar uploadProgress;
 
     Camera camera;
     int cameraId;
@@ -107,6 +111,10 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
         }
 
+        // 刚进入页面给文件名置空，防止重新上传错误的文件
+        MediaMuxerThread.filePath = null;
+        AudioEncoderThread.filePath = null;
+
         // 拿到从上一个页面传过来的文件名
         Intent intent = getIntent();
         filePath = intent.getStringExtra("complete_info");
@@ -122,7 +130,8 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         videoStartStopButton = (Button) findViewById(R.id.videoStartStop);
         audioStartStopButton = (Button) findViewById(R.id.audioStartStop);
-        changeCameraButton = (Button) findViewById(R.id.changeCamera);
+//        changeCameraButton = (Button) findViewById(R.id.changeCamera);
+        reUploadButton = (Button) findViewById(R.id.reUpload);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
         // 默认不可见
         chronometer.setVisibility(View.INVISIBLE);
@@ -131,6 +140,10 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         // 摄像头小窗位置标定
         noButton = (Button) findViewById(R.id.noButton);
         noButton.setVisibility(View.INVISIBLE);
+
+        // 上传进度条
+        uploadProgress = (ProgressBar) findViewById(R.id.upload_progress);
+        uploadProgress.setVisibility(View.INVISIBLE);
 
         videoStartStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,12 +154,14 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     Toast.makeText(MediaMuxerActivity.this, "拍摄完成", Toast.LENGTH_SHORT).show();
                     MediaMuxerThread.stopMuxer();
                     // 视频录制完，上传文件
+                    uploadProgress.setVisibility(View.VISIBLE);
                     FileUploadThread.startUpload(MediaMuxerThread.filePath, MediaMuxerThread.tagName);
                     if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
                         VideoPlayerThread.stopPlay(mVideo, surfaceView);
                     }
                     stopCamera();
                 } else {
+                    uploadProgress.setVisibility(View.INVISIBLE);
                     if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
                         startCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
                         // 一开始为竖屏的时候，摄像头小窗透明
@@ -178,6 +193,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     Toast.makeText(MediaMuxerActivity.this, "录音完成", Toast.LENGTH_SHORT).show();
                     AudioEncoderThread.stopAudio();
                     // 音频录制完，上传文件
+                    uploadProgress.setVisibility(View.VISIBLE);
                     FileUploadThread.startUpload(AudioEncoderThread.filePath, AudioEncoderThread.tagName);
                     if (filePathList[1] != null && filePathList[1].equals("description2")) {
                         updateImage(null);
@@ -188,9 +204,10 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                         running = false;
                         chronometer.setVisibility(View.INVISIBLE);
                         videoStartStopButton.setVisibility(View.VISIBLE);
-                        changeCameraButton.setVisibility(View.VISIBLE);
+                        reUploadButton.setVisibility(View.VISIBLE);
                     }
                 } else {
+                    uploadProgress.setVisibility(View.INVISIBLE);
                     if (confirmType(filePathList[1]) != DESCRIPTION_TYPE) {
                         Toast.makeText(MediaMuxerActivity.this, "禁止录制视频", Toast.LENGTH_SHORT).show();
                         return;
@@ -205,7 +222,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     if (!running) {
                         chronometer.setVisibility(View.VISIBLE);
                         videoStartStopButton.setVisibility(View.INVISIBLE);
-                        changeCameraButton.setVisibility(View.INVISIBLE);
+                        reUploadButton.setVisibility(View.INVISIBLE);
                         chronometer.setBase(SystemClock.elapsedRealtime());
                         chronometer.start();
                         running = true;
@@ -214,21 +231,38 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
             }
         });
 
-        changeCameraButton.setOnClickListener(new View.OnClickListener() {
+        reUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                if (camera != null) {
-                    if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                        changeCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
-                    } else {
-                        changeCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
-                    }
-                } else {
-                    Toast.makeText(MediaMuxerActivity.this, "相机未开启", Toast.LENGTH_SHORT).show();
+            public void onClick(View v) {
+                if (MediaMuxerThread.filePath == null || AudioEncoderThread.filePath == null) {
+                    Toast.makeText(MediaMuxerActivity.this, "还没有录制过，请进行录制", Toast.LENGTH_SHORT).show();
                 }
-
+                // 重新上传最近的文件
+                uploadProgress.setVisibility(View.VISIBLE);
+                FileUploadThread.stopUpload();
+                if (confirmType(filePathList[1]) != DESCRIPTION_TYPE) {
+                    FileUploadThread.startUpload(MediaMuxerThread.filePath, MediaMuxerThread.tagName);
+                } else {
+                    FileUploadThread.startUpload(AudioEncoderThread.filePath, AudioEncoderThread.tagName);
+                }
             }
         });
+
+//        changeCameraButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (camera != null) {
+//                    if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+//                        changeCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
+//                    } else {
+//                        changeCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
+//                    }
+//                } else {
+//                    Toast.makeText(MediaMuxerActivity.this, "相机未开启", Toast.LENGTH_SHORT).show();
+//                }
+//
+//            }
+//        });
 
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
@@ -525,37 +559,23 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                 break;
             case "action2":
                 VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请从椅子上站起，再坐下。");
+                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请从椅子上站起，再坐下");
                 break;
             case "action3":
                 VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请抬腿走台阶，持续五到十秒。");
+                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请顺时针三百六十度转身，再逆时针三百六十度转身");
                 break;
-            case "action4":
-                VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请顺时针三百六十度转身，再逆时针三百六十度转身。");
-                break;
-            case "recognition1": case "recognition2": case "recognition3":
-            case "recognition4": case "recognition5":
-            case "emotion1": case "emotion2": case "emotion3":
-            case "emotion4": case "emotion5":
+            case "recognition1": case "recognition2":
                 VoiceBroadcastThread.stopBroadcast();
                 VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请完整观看目标视频。");
                 break;
             case "description1":
                 VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请在一分钟内，说出尽可能多的水果名称。");
+                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请朗读图中的文字。");
                 break;
             case "description2":
                 VoiceBroadcastThread.stopBroadcast();
                 VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请在一分钟内，描述目标图片的场景。");
-                break;
-            case "description3":
-                VoiceBroadcastThread.stopBroadcast();
-                VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.this, "请子细听接下来讲述的故事。 ...... " +
-                        "从前有一个皇帝，要他的大臣在明天上朝时献上公鸡蛋。大臣很着急，因为知道没有公鸡蛋。大臣有一个儿子，十二岁，知道此事。安慰了父亲，" +
-                        "自己去见皇帝。对皇帝说，父亲在家正要生孩子了，所以不能上朝。皇帝很生气，说男人哪能生孩子？儿子说，你既然知道男人不能生孩子，那么，" +
-                        "为什么要公鸡生蛋？皇帝知道理亏，便不再提公鸡蛋了。      故事结束，请在三分钟内复述一遍听到的内容，尽量使用相同的词语。");
                 break;
             default:
                 break;
@@ -566,12 +586,9 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     public String switchImage(String imageText){
         switch (imageText) {
             case "description1":
-                imageText = "fruit.jpg";
+                imageText = "text.jpg";
                 break;
             case "description2":
-                imageText = "family.jpg";
-                break;
-            case "description3":
                 imageText = "story.jpg";
                 break;
             default:

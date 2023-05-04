@@ -51,7 +51,7 @@ public class VoiceBroadcastThread extends Thread{
 
     private void initTTS(Context mContext) {
         //实例化自带语音对象
-        textToSpeech = new TextToSpeech(mContext, new TextToSpeech.OnInitListener() {
+        textToSpeech = new TextToSpeech(mContext.getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if (status == textToSpeech.SUCCESS) {
