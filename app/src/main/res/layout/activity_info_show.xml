@@ -20,11 +20,22 @@
         app:layout_constraintTop_toTopOf="parent"></TextView>
 
     <Button
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="224dp"
+        android:layout_marginBottom="216dp"
+        android:text="返回修改"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"></Button>
+
+    <Button
         android:id="@+id/btnOK"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="36dp"
-        android:layout_marginBottom="212dp"
+        android:layout_marginBottom="216dp"
         android:text="开始采集"
         android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="parent"

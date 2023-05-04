@@ -26,7 +26,7 @@
             android:layout_below="@+id/yundong"
             android:layout_marginLeft="65dp"
             android:layout_marginTop="7dp"
-            android:text="4个动作"
+            android:text="3个动作"
             android:textColor="#000000"
             android:textSize="18sp"></TextView>
 
@@ -36,7 +36,7 @@
             android:layout_height="120dp"
             android:layout_below="@+id/yundong"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="43dp"
+            android:layout_marginTop="70dp"
             android:background="@drawable/renzhi"></ImageButton>
 
         <TextView
@@ -46,35 +46,17 @@
             android:layout_below="@+id/renzhi"
             android:layout_marginLeft="65dp"
             android:layout_marginTop="7dp"
-            android:text="5个视频"
+            android:text="2个视频"
             android:textColor="#000000"
             android:textSize="18sp"></TextView>
 
         <ImageButton
-            android:id="@+id/biaoqing"
+            android:id="@+id/yuyin"
             android:layout_width="170dp"
             android:layout_height="120dp"
             android:layout_below="@+id/renzhi"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="40dp"
-            android:background="@drawable/biaoqing"></ImageButton>
-        <TextView
-            android:id="@+id/txt3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/biaoqing"
-            android:layout_marginLeft="65dp"
-            android:layout_marginTop="7dp"
-            android:text="5个视频"
-            android:textColor="#000000"
-            android:textSize="18sp"></TextView>
-        <ImageButton
-            android:id="@+id/yuyin"
-            android:layout_width="170dp"
-            android:layout_height="120dp"
-            android:layout_below="@+id/biaoqing"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="31dp"
+            android:layout_marginTop="70dp"
             android:background="@drawable/yuyin"></ImageButton>
 
         <TextView
@@ -84,11 +66,11 @@
             android:layout_below="@+id/yuyin"
             android:layout_marginLeft="55dp"
             android:layout_marginTop="7dp"
-            android:text="3个语音任务"
+            android:text="2个语音任务"
             android:textColor="#000000"
             android:textSize="18sp"></TextView>
         <TextView
-            android:layout_marginTop="60px"
+            android:layout_marginTop="70px"
             android:layout_marginLeft="50dp"
             android:id="@+id/txt"
             android:layout_width="wrap_content"
@@ -102,21 +84,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="133dp"
-            android:layout_marginTop="20dp"
             android:layout_toRightOf="@+id/txt"
-            android:text="采集动作"
+            android:layout_alignTop="@+id/txt"
+            android:text="数据采集"
             android:textColor="#000000"
             android:textSize="18sp"></TextView>
+
 
         <Button
             android:id="@+id/btn11"
             style="@style/MyBtnStyle"
-            android:layout_width="77dp"
-            android:layout_height="wrap_content"
+            android:layout_width="166dp"
+            android:layout_height="35dp"
             android:layout_below="@+id/txtx"
             android:layout_alignTop="@+id/yundong"
-            android:layout_marginLeft="13dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginLeft="21dp"
+            android:layout_marginTop="3dp"
             android:layout_marginRight="10dp"
             android:layout_toRightOf="@+id/yundong"
             android:background="@drawable/btn_bg_selector"
@@ -126,53 +109,40 @@
         <Button
             android:id="@+id/btn12"
             style="@style/MyBtnStyle"
-            android:layout_width="106dp"
-            android:layout_height="wrap_content"
+            android:layout_width="166dp"
+            android:layout_height="35dp"
             android:layout_below="@+id/btn11"
-            android:layout_marginLeft="98dp"
-            android:layout_marginTop="-48dp"
+            android:layout_marginLeft="21dp"
+            android:layout_marginTop="12dp"
             android:layout_marginRight="10dp"
             android:layout_toRightOf="@+id/yundong"
             android:background="@drawable/btn_bg_selector"
-            android:text="从椅子上\n站起坐下"
+            android:text="从椅子上站起坐下"
             android:textSize="18sp"></Button>
 
         <Button
             android:id="@+id/btn13"
             style="@style/MyBtnStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/btn11"
-            android:layout_marginLeft="13dp"
-            android:layout_marginTop="15dp"
+            android:layout_width="166dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="21dp"
+            android:layout_marginTop="12dp"
             android:layout_marginRight="10dp"
+            android:layout_below="@+id/btn12"
             android:layout_toRightOf="@+id/yundong"
             android:background="@drawable/btn_bg_selector"
-            android:text="左右抬腿"
+            android:text="360度转身"
             android:textSize="18sp"></Button>
 
-        <Button
-            android:id="@+id/btn14"
-            style="@style/MyBtnStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/btn12"
-            android:layout_marginLeft="6dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="13dp"
-            android:layout_toRightOf="@+id/btn13"
-            android:background="@drawable/btn_bg_selector"
-            android:text="360转身"
-            android:textSize="18sp"></Button>
 
         <Button
             android:id="@+id/btn21"
             style="@style/MyBtnStyle"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
+            android:layout_width="166dp"
+            android:layout_height="35dp"
             android:layout_alignTop="@+id/renzhi"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="1dp"
+            android:layout_marginLeft="21dp"
+            android:layout_marginTop="15dp"
             android:layout_marginRight="13dp"
             android:layout_toRightOf="@+id/renzhi"
             android:background="@drawable/btn_bg_selector"
@@ -182,166 +152,43 @@
         <Button
             android:id="@+id/btn22"
             style="@style/MyBtnStyle"
-            android:layout_width="80dp"
-            android:layout_height="49dp"
-            android:layout_alignTop="@+id/renzhi"
-            android:layout_marginLeft="115dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginRight="13dp"
-            android:layout_toRightOf="@+id/renzhi"
-            android:background="@drawable/btn_bg_selector"
-            android:text="视频2"
-            android:textSize="18sp"></Button>
-
-        <Button
-            android:id="@+id/btn23"
-            style="@style/MyBtnStyle"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="166dp"
+            android:layout_height="35dp"
             android:layout_below="@+id/btn21"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginLeft="21dp"
+            android:layout_marginTop="22dp"
+            android:layout_marginRight="10dp"
             android:layout_toRightOf="@+id/renzhi"
-            android:background="@drawable/btn_bg_selector"
-            android:text="视频3"
-            android:textSize="18sp"></Button>
-
-        <Button
-            android:id="@+id/btn24"
-            style="@style/MyBtnStyle"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/btn21"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="5dp"
-            android:layout_toRightOf="@+id/btn23"
-            android:background="@drawable/btn_bg_selector"
-            android:text="视频4"
-            android:textSize="18sp"></Button>
-        <Button
-            android:id="@+id/btn25"
-            style="@style/MyBtnStyle"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/btn21"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="8dp"
-            android:layout_toRightOf="@+id/btn24"
-            android:background="@drawable/btn_bg_selector"
-            android:text="视频5"
-            android:textSize="18sp"></Button>
-        <Button
-            android:id="@+id/btn31"
-            style="@style/MyBtnStyle"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/biaoqing"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="13dp"
-            android:layout_toRightOf="@+id/renzhi"
-            android:background="@drawable/btn_bg_selector"
-            android:text="视频 1"
-            android:textSize="18sp"></Button>
-
-        <Button
-            android:id="@+id/btn32"
-            style="@style/MyBtnStyle"
-            android:layout_width="80dp"
-            android:layout_height="49dp"
-            android:layout_alignTop="@+id/biaoqing"
-            android:layout_marginLeft="115dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginRight="13dp"
-            android:layout_toRightOf="@+id/biaoqing"
             android:background="@drawable/btn_bg_selector"
             android:text="视频 2"
             android:textSize="18sp"></Button>
 
         <Button
-            android:id="@+id/btn33"
+            android:id="@+id/btn31"
             style="@style/MyBtnStyle"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/btn31"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="8dp"
-            android:layout_toRightOf="@+id/biaoqing"
-            android:background="@drawable/btn_bg_selector"
-            android:text="视频3"
-            android:textSize="18sp"></Button>
-
-        <Button
-            android:id="@+id/btn34"
-            style="@style/MyBtnStyle"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/btn31"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="8dp"
-            android:layout_toRightOf="@+id/btn33"
-            android:background="@drawable/btn_bg_selector"
-            android:text="视频4"
-            android:textSize="18sp"></Button>
-        <Button
-            android:id="@+id/btn35"
-            style="@style/MyBtnStyle"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/btn31"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="8dp"
-            android:layout_toRightOf="@+id/btn34"
-            android:background="@drawable/btn_bg_selector"
-            android:text="视频5"
-            android:textSize="18sp"></Button>
-
-        <Button
-            android:id="@+id/btn41"
-            style="@style/MyBtnStyle"
-            android:layout_width="170dp"
-            android:layout_height="wrap_content"
+            android:layout_width="166dp"
+            android:layout_height="35dp"
             android:layout_alignTop="@+id/yuyin"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="-1dp"
+            android:layout_marginLeft="21dp"
+            android:layout_marginTop="15dp"
             android:layout_marginRight="13dp"
             android:layout_toRightOf="@+id/yuyin"
             android:background="@drawable/btn_bg_selector"
-            android:text="1分钟水果命名"
+            android:text="任务 1"
             android:textSize="18sp"></Button>
 
         <Button
-            android:id="@+id/btn42"
+            android:id="@+id/btn32"
             style="@style/MyBtnStyle"
-            android:layout_width="170dp"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/yuyin"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="117dp"
+            android:layout_width="166dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="21dp"
+            android:layout_marginTop="22dp"
+            android:layout_below="@+id/btn31"
             android:layout_marginRight="13dp"
             android:layout_toRightOf="@+id/yuyin"
             android:background="@drawable/btn_bg_selector"
-            android:text="1分钟图片描述"
-            android:textSize="18sp"></Button>
-
-        <Button
-            android:id="@+id/btn43"
-            style="@style/MyBtnStyle"
-            android:layout_width="170dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/btn41"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="8dp"
-            android:layout_toRightOf="@+id/yuyin"
-            android:background="@drawable/btn_bg_selector"
-            android:text="3分钟故事回忆"
+            android:text="任务 2"
             android:textSize="18sp"></Button>
     </RelativeLayout>
 

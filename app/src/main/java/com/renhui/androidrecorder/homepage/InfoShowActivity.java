@@ -11,7 +11,7 @@ import com.renhui.androidrecorder.R;
 import com.renhui.androidrecorder.muxer.MediaMuxerActivity;
 
 public class InfoShowActivity extends AppCompatActivity {
-    private Button btnOK;
+    private Button btnOK, btnBack;
     private TextView complete_info;
     private String file_name,choice; // 合成文件名
     private String camera_window;
@@ -32,7 +32,6 @@ public class InfoShowActivity extends AppCompatActivity {
         Intent intent = getIntent();
         file_name = intent.getStringExtra("fileName");
         camera_window = intent.getStringExtra("floatWindow");
-        choice = intent.getStringExtra("choice");
         complete_info=(TextView) findViewById(R.id.textView);
         complete_info.setText(this.file_name);
 
@@ -46,7 +45,17 @@ public class InfoShowActivity extends AppCompatActivity {
                 // file name transit
                 intent.putExtra("complete_info",file_name);
                 intent.putExtra("cameraWindow",camera_window);
-                intent.putExtra("choice2",choice);
+                startActivity(intent);
+            }
+        });
+        btnBack = (Button) findViewById(R.id.btnBack);
+        //return back
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //点击按钮跳转到页面
+                Intent intent = new Intent();
+                intent.setClass(InfoShowActivity.this, InfoInputActivity.class);
                 startActivity(intent);
             }
         });
