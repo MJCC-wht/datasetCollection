@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.renhui.androidrecorder.R;
 import com.renhui.androidrecorder.muxer.MediaMuxerActivity;
+import com.renhui.androidrecorder.survey.GDSSurveyActivity;
 
 public class HomepageActivity extends AppCompatActivity {
     private Button btn11,btn12,btn13,
@@ -103,7 +104,7 @@ public class HomepageActivity extends AppCompatActivity {
             Toast.makeText(HomepageActivity.this, "请点击左图，输入受试者信息",
                     Toast.LENGTH_SHORT).show();
         } else {
-            intent.setClass(HomepageActivity.this, MediaMuxerActivity.class);
+            intent.setClass(HomepageActivity.this, GDSSurveyActivity.class);
             intent.putExtra("complete_info",choice + filePath);
             intent.putExtra("cameraWindow",camera_window);
             startActivity(intent);
