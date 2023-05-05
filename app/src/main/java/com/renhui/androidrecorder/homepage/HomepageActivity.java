@@ -114,7 +114,7 @@ public class HomepageActivity extends AppCompatActivity {
         btn41.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent.setClass(HomepageActivity.this, HealthSurveyActivity.class);
+                intent.setClass(HomepageActivity.this, GDSSurveyActivity.class);
                 startActivity(intent);
                 btnChange(flag, btn41, 7);
             }
@@ -123,7 +123,7 @@ public class HomepageActivity extends AppCompatActivity {
         btn42.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent.setClass(HomepageActivity.this, GDSSurveyActivity.class);
+                intent.setClass(HomepageActivity.this, HealthSurveyActivity.class);
                 startActivity(intent);
                 btnChange(flag, btn42, 8);//
             }
@@ -172,10 +172,10 @@ public class HomepageActivity extends AppCompatActivity {
             btn.setBackgroundColor(Color.parseColor("#C5C5C5"));
             flag[i] = 1;
         }//选中
-        else {
-            btn.setBackgroundColor(Color.parseColor("#E4EEE5"));
-            flag[i] = 0;
-        }//取消
+//        else {
+//            btn.setBackgroundColor(Color.parseColor("#E4EEE5"));
+//            flag[i] = 0;
+//        }//取消
     }
     private void initView(){
 
