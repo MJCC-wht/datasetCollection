@@ -77,15 +77,6 @@ public class VideoPlayerThread extends Thread{
             case "recognition2": case "emotion2":
                 videotext = "02maiche.mp4";
                 break;
-            case "recognition3": case "emotion3":
-                videotext = "03lixueqin.mp4";
-                break;
-            case "recognition4": case "emotion4":
-                videotext = "04zhangerda.mp4";
-                break;
-            case "recognition5": case "emotion5":
-                videotext = "05twins.mp4";
-                break;
             default:
                 break;
         }
