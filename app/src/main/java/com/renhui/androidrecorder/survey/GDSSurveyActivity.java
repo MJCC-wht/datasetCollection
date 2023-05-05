@@ -2,6 +2,7 @@ package com.renhui.androidrecorder.survey;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,8 +15,19 @@ import android.widget.Toast;
 
 import com.renhui.androidrecorder.R;
 import com.renhui.androidrecorder.homepage.HomepageActivity;
+import com.renhui.androidrecorder.muxer.AudioEncoderThread;
+import com.renhui.androidrecorder.muxer.FileUploadThread;
+import com.renhui.androidrecorder.muxer.FileUtil;
 import com.renhui.androidrecorder.muxer.MediaMuxerActivity;
+import com.renhui.androidrecorder.muxer.MediaMuxerThread;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +39,9 @@ public class GDSSurveyActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gdssurvey);
+
+        Intent intent = getIntent();
+        String filePath = intent.getStringExtra("complete_info");
 
         int[] questionScore = new int[]{1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,
                 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1};
@@ -64,13 +79,16 @@ public class GDSSurveyActivity extends AppCompatActivity {
         groupList.add(findViewById(R.id.button30));
 
         Button isFinished = findViewById(R.id.isfinished);
+        Button reUpload = findViewById(R.id.reUpload);
+        FileUtil fileSwapHelper = new FileUtil(filePath);
+
         isFinished.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 List<Integer> unfinished = new ArrayList<>();
                 int sumScore = 0;
                 for (int i = 0; i < 30; i++) {
-                    // 生成两个groupbutton
+                    // 生成两个groupButton
                     String firstName = "button" + (i + 1) + '_' + 0;
                     String secondName = "button" + (i + 1) + '_' + 1;
                     int firstId = getResources().getIdentifier(firstName, "id", getPackageName());
@@ -113,10 +131,46 @@ public class GDSSurveyActivity extends AppCompatActivity {
                 }
                 else {
                     Log.i("tag", String.valueOf(sumScore));
-                    Toast.makeText(GDSSurveyActivity.this, "您的得分是：" + String.valueOf(sumScore) + "分",
-                            Toast.LENGTH_SHORT).show();
+                    String message = "您在GDS问卷中的得分是：" + sumScore + "分";
+                    AlertDialog scoreDialog = new AlertDialog.Builder(GDSSurveyActivity.this)
+                            .setTitle("问卷未全部作答！")
+                            .setMessage(message)
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // 点击确定后保存到txt文件中并上传
+                                    fileSwapHelper.getSaveFilePath();
+                                    File file = new File(fileSwapHelper.getFullPath());
+                                    try {
+                                        FileOutputStream fos = new FileOutputStream(file);
+                                        OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+                                        BufferedWriter bw = new BufferedWriter(osw);
+                                        bw.write(message);
+                                        bw.close();
+                                        osw.close();
+                                        fos.close();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    // 上传文件
+                                    FileUploadThread.stopUpload();
+                                    FileUploadThread.startUpload(GDSSurveyActivity.this, fileSwapHelper.getFullPath(), fileSwapHelper.getFilePath());
+                                }
+                            }).create();
+                    scoreDialog.show();
                 }
+            }
+        });
 
+        reUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (fileSwapHelper.getFullPath() == null) {
+                    Toast.makeText(GDSSurveyActivity.this, "还没有填写完问卷并提交", Toast.LENGTH_SHORT).show();
+                }
+                // 重新上传最近的文件
+                FileUploadThread.stopUpload();
+                FileUploadThread.startUpload(GDSSurveyActivity.this, fileSwapHelper.getFullPath(), fileSwapHelper.getFilePath());
             }
         });
     }
