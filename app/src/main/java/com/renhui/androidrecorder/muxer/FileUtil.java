@@ -20,8 +20,10 @@ public class FileUtil {
     private static final String MAIN_DIR_NAME = "/android_records";
     private static final String BASE_VIDEO = "/video/";
     private static final String BASE_AUDIO = "/audio/";
+    private static final String BASE_TEXT = "/text/";
     private static final String BASE_VIDEO_EXT = ".mp4";
     private static final String BASE_AUDIO_EXT = ".wav";
+    private static final String BASE_TEXT_EXT = ".txt";
 
     private String currentFilePath;
     private String currentFullPath;
@@ -52,10 +54,10 @@ public class FileUtil {
             return;
         }
         fullPath.append(MAIN_DIR_NAME);
-        fullPath.append(filePathList[0].equals("video") ? BASE_VIDEO : BASE_AUDIO);
+        fullPath.append(filePathList[0].equals("video") ? BASE_VIDEO : (filePathList[0].equals("audio") ? BASE_AUDIO : BASE_TEXT));
         fullPath.append(filePathList[filePathList.length - 1]);
-        fullPath.append("-" + simpleDateFormat.format(System.currentTimeMillis()));
-        fullPath.append(filePathList[0].equals("video") ? BASE_VIDEO_EXT : BASE_AUDIO_EXT);
+        fullPath.append("-").append(simpleDateFormat.format(System.currentTimeMillis()));
+        fullPath.append(filePathList[0].equals("video") ? BASE_VIDEO_EXT : (filePathList[0].equals("audio") ? BASE_AUDIO_EXT : BASE_TEXT_EXT));
 
         currentFullPath = fullPath.toString();
         File file = new File(currentFullPath);
@@ -66,7 +68,7 @@ public class FileUtil {
         }
 
         currentFilePath = currentFilePath + "-" + simpleDateFormat.format(System.currentTimeMillis()) +
-                (filePathList[0].equals("video") ? BASE_VIDEO_EXT : BASE_AUDIO_EXT);
+                (filePathList[0].equals("video") ? BASE_VIDEO_EXT : (filePathList[0].equals("audio") ? BASE_AUDIO_EXT : BASE_TEXT_EXT));
     }
 
     /**

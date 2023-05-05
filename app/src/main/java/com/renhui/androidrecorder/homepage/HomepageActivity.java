@@ -55,6 +55,7 @@ public class HomepageActivity extends AppCompatActivity {
         btn11.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // TODO:为了测试临时修改的，记得改回去，改为 "video/action1/"
                 setChoice("video/action1/") ;
                 choice2 = "motion";
                 judge1(flag, btn11,0);

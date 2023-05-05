@@ -1,6 +1,8 @@
 package com.renhui.androidrecorder.muxer;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Looper;
 import android.util.Log;
@@ -34,22 +36,25 @@ public class FileUploadThread extends Thread {
     private final String serverIp = "124.222.64.141:8080";
     private static FileUploadThread fileUploadThread;
 
+    // 页面的上下文
+    private Context mContext;
     // 本地文件地址
     private String androidFilePath;
     // 传输到云服务器的文件名
     private String tagName;
 
-    public FileUploadThread(String androidFilePath, String tagName) {
+    public FileUploadThread(Context mContext, String androidFilePath, String tagName) {
         // 初始化相关对象和参数
         this.androidFilePath = androidFilePath;
         this.tagName = tagName;
+        this.mContext = mContext;
     }
 
-    public static void startUpload(String androidFilePath, String tagName) {
+    public static void startUpload(Context mContext, String androidFilePath, String tagName) {
         if (fileUploadThread == null) {
             synchronized (FileUploadThread.class) {
                 if (fileUploadThread == null) {
-                    fileUploadThread = new FileUploadThread(androidFilePath, tagName);
+                    fileUploadThread = new FileUploadThread(mContext, androidFilePath, tagName);
 
                     fileUploadThread.start();
                 }
@@ -66,7 +71,6 @@ public class FileUploadThread extends Thread {
     public void run() {
         try {
             // TODO：添加一个开始上传的弹窗，最好显示进度
-            ProgressBar uploadProgress = MediaMuxerActivity.mainActivity.findViewById(R.id.upload_progress);
 //            AlertDialog alertDialog = new AlertDialog.Builder(MediaMuxerActivity.mainActivity)
 //                    .setTitle("上传文件提示：")
 //                    .setMessage("文件正在上传，请点击确定后在下方查看上传进度条")
@@ -102,10 +106,14 @@ public class FileUploadThread extends Thread {
                 public void onProgress(long bytesWritten, long contentLength) {
                     Log.e("ProgressBar", bytesWritten + "/" + contentLength);
                     int progress = (int) (((double) bytesWritten / contentLength) * 100);
-                    MediaMuxerActivity.mainActivity.runOnUiThread(new Runnable() {
+                    ((Activity) mContext).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            uploadProgress.setProgress(progress);
+                            // 如果是txt，不要显示进度条
+                            if (!filePath.endsWith("txt")) {
+                                ProgressBar uploadProgress = MediaMuxerActivity.mainActivity.findViewById(R.id.upload_progress);
+                                uploadProgress.setProgress(progress);
+                            }
                         }
                     });
                 }
@@ -129,10 +137,10 @@ public class FileUploadThread extends Thread {
                 @Override
                 public void onFailure( Call call, IOException e) {
                     Looper.prepare();
-                    MediaMuxerActivity.mainActivity.runOnUiThread(new Runnable() {
+                    ((Activity) mContext).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            AlertDialog failDialog = new AlertDialog.Builder(MediaMuxerActivity.mainActivity)
+                            AlertDialog failDialog = new AlertDialog.Builder(mContext)
                                     .setTitle("文件上传失败：")
                                     .setMessage("由于网络错误，请确认网络连接正常后重新上传")
                                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -145,7 +153,7 @@ public class FileUploadThread extends Thread {
                         }
                     });
                     VoiceBroadcastThread.stopBroadcast();
-                    VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.mainActivity, "网络错误，请先连接网络！");
+                    VoiceBroadcastThread.startBroadcast(mContext, "网络错误，请先连接网络！");
                     Log.d("failureResult", "网络错误！");
                     Looper.loop();
                 }
@@ -156,10 +164,10 @@ public class FileUploadThread extends Thread {
                         Looper.prepare();
 
                         String result = response.body().string();
-                        MediaMuxerActivity.mainActivity.runOnUiThread(new Runnable() {
+                        ((Activity) mContext).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                AlertDialog successDialog = new AlertDialog.Builder(MediaMuxerActivity.mainActivity)
+                                AlertDialog successDialog = new AlertDialog.Builder(mContext)
                                         .setTitle("文件上传成功：")
                                         .setMessage("请点击确定以明确文件上传成功")
                                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -174,7 +182,7 @@ public class FileUploadThread extends Thread {
                         Log.d("theResult", result);
                         VoiceBroadcastThread.stopBroadcast();
                         String action = tagName.endsWith("mp4") ? "拍摄" : "录制";
-                        VoiceBroadcastThread.startBroadcast(MediaMuxerActivity.mainActivity, action + "完成，" + result);
+                        VoiceBroadcastThread.startBroadcast(mContext, action + "完成，" + result);
                         Looper.loop();
                     }
                 }

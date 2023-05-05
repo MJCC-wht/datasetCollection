@@ -155,7 +155,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     MediaMuxerThread.stopMuxer();
                     // 视频录制完，上传文件
                     uploadProgress.setVisibility(View.VISIBLE);
-                    FileUploadThread.startUpload(MediaMuxerThread.filePath, MediaMuxerThread.tagName);
+                    FileUploadThread.startUpload(MediaMuxerActivity.this, MediaMuxerThread.filePath, MediaMuxerThread.tagName);
                     if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
                         VideoPlayerThread.stopPlay(mVideo, surfaceView);
                     }
@@ -194,7 +194,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     AudioEncoderThread.stopAudio();
                     // 音频录制完，上传文件
                     uploadProgress.setVisibility(View.VISIBLE);
-                    FileUploadThread.startUpload(AudioEncoderThread.filePath, AudioEncoderThread.tagName);
+                    FileUploadThread.startUpload(MediaMuxerActivity.this, AudioEncoderThread.filePath, AudioEncoderThread.tagName);
                     if (filePathList[1] != null && filePathList[1].equals("description2")) {
                         updateImage(null);
                     }
@@ -241,9 +241,9 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                 uploadProgress.setVisibility(View.VISIBLE);
                 FileUploadThread.stopUpload();
                 if (confirmType(filePathList[1]) != DESCRIPTION_TYPE) {
-                    FileUploadThread.startUpload(MediaMuxerThread.filePath, MediaMuxerThread.tagName);
+                    FileUploadThread.startUpload(MediaMuxerActivity.this, MediaMuxerThread.filePath, MediaMuxerThread.tagName);
                 } else {
-                    FileUploadThread.startUpload(AudioEncoderThread.filePath, AudioEncoderThread.tagName);
+                    FileUploadThread.startUpload(MediaMuxerActivity.this, AudioEncoderThread.filePath, AudioEncoderThread.tagName);
                 }
             }
         });
