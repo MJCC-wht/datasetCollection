@@ -1096,11 +1096,12 @@
                     />
             </RadioGroup>
 
-            <TextView
+            <Button
                 android:id="@+id/isfinished"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="已完成题目："
+                android:background="#ffcc99"
+                android:text="确认提交"
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
