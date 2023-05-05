@@ -25,7 +25,14 @@
             android:name=".homepage.InfoShowActivity"
             android:exported="false" />
         <activity
+            android:name=".survey.GDSSurveyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".survey.HealthSurveyActivity"
+            android:exported="false" />
+        <activity
             android:name=".homepage.HomepageActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
             android:exported="false" />
         <activity android:name=".homepage.InfoInputActivity">
             <intent-filter>
