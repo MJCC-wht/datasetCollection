@@ -143,7 +143,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
 
         // 上传进度条
         uploadProgress = (ProgressBar) findViewById(R.id.upload_progress);
-        uploadProgress.setVisibility(View.INVISIBLE);
+        uploadProgress.setVisibility(View.GONE);
 
         videoStartStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,7 +161,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     }
                     stopCamera();
                 } else {
-                    uploadProgress.setVisibility(View.INVISIBLE);
+                    uploadProgress.setVisibility(View.GONE);
                     if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
                         startCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
                         // 一开始为竖屏的时候，摄像头小窗透明
@@ -207,7 +207,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                         reUploadButton.setVisibility(View.VISIBLE);
                     }
                 } else {
-                    uploadProgress.setVisibility(View.INVISIBLE);
+                    uploadProgress.setVisibility(View.GONE);
                     if (confirmType(filePathList[1]) != DESCRIPTION_TYPE) {
                         Toast.makeText(MediaMuxerActivity.this, "禁止录制视频", Toast.LENGTH_SHORT).show();
                         return;
@@ -234,8 +234,10 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         reUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (MediaMuxerThread.filePath == null || AudioEncoderThread.filePath == null) {
+                if ((MediaMuxerThread.filePath == null && confirmType(filePathList[1]) == ACTION_TYPE) ||
+                        (AudioEncoderThread.filePath == null && confirmType(filePathList[1]) == DESCRIPTION_TYPE)) {
                     Toast.makeText(MediaMuxerActivity.this, "还没有录制过，请进行录制", Toast.LENGTH_SHORT).show();
+                    return;
                 }
                 // 重新上传最近的文件
                 uploadProgress.setVisibility(View.VISIBLE);
@@ -316,7 +318,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         if (camera != null) {
             camera.setDisplayOrientation(getCameraRotation());
         }
-        if (filePathList[1].startsWith("recognition") || filePathList[1].startsWith("emotion")) {
+        if (filePathList[1].startsWith("recognition")) {
             if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 // 横屏时给出横屏弹窗、全屏显示
                 Toast.makeText(getApplicationContext(), "横屏", Toast.LENGTH_SHORT).show();
@@ -370,7 +372,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
      * 打开摄像头
      */
     private void startCamera(int cameraId) {
-        resumePreview();
+//        resumePreview();
         this.cameraId = cameraId;
         camera = Camera.open(cameraId);
         camera.setDisplayOrientation(getCameraRotation());
@@ -384,6 +386,8 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         parameters.setPreviewSize(1920, 1080);
 
         try {
+            surfaceView.setBackgroundColor(Color.parseColor("#00000000"));
+            mVideo.setBackgroundColor(Color.parseColor("#00000000"));
             camera.setParameters(parameters);
             camera.setPreviewDisplay(surfaceHolder);
             camera.setPreviewCallback(MediaMuxerActivity.this);
@@ -400,13 +404,15 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         // 停止预览并释放资源
         if (camera != null) {
             camera.setPreviewCallback(null);
+            surfaceView.setBackgroundColor(Color.BLACK);
+            mVideo.setBackgroundColor(Color.BLACK);
             camera.stopPreview();
             camera.release();
             camera = null;
             // 处理surfaceHolder
             surfaceHolder.removeCallback(this);
         }
-        updateImage(null);
+//        updateImage(null);
     }
 
     private void stopCameraWithoutStopPreview() {

@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -55,7 +56,6 @@ public class HomepageActivity extends AppCompatActivity {
         btn11.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO:为了测试临时修改的，记得改回去，改为 "video/action1/"
                 setChoice("video/action1/") ;
                 choice2 = "motion";
                 judge1(flag, btn11,0);
@@ -115,6 +115,8 @@ public class HomepageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 intent.setClass(HomepageActivity.this, GDSSurveyActivity.class);
+                setChoice("text/gds/");
+                intent.putExtra("complete_info",choice + filePath);
                 startActivity(intent);
                 btnChange(flag, btn41, 7);
             }
@@ -124,6 +126,8 @@ public class HomepageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 intent.setClass(HomepageActivity.this, HealthSurveyActivity.class);
+                setChoice("text/health/");
+                intent.putExtra("complete_info",choice + filePath);
                 startActivity(intent);
                 btnChange(flag, btn42, 8);//
             }

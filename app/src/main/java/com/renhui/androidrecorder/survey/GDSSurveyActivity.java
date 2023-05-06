@@ -133,7 +133,7 @@ public class GDSSurveyActivity extends AppCompatActivity {
                     Log.i("tag", String.valueOf(sumScore));
                     String message = "您在GDS问卷中的得分是：" + sumScore + "分";
                     AlertDialog scoreDialog = new AlertDialog.Builder(GDSSurveyActivity.this)
-                            .setTitle("问卷未全部作答！")
+                            .setTitle("问卷已完成！")
                             .setMessage(message)
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override

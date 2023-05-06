@@ -5,6 +5,7 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.SystemClock;
+import android.os.Trace;
 import android.util.Log;
 
 import java.io.FileNotFoundException;
@@ -132,12 +133,6 @@ public class AudioEncoderThread extends Thread {
     @Override
     public void run() {
         encode();
-        MediaMuxerActivity.mainActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                MediaMuxerActivity.mainActivity.audioStartStopButton.performClick();
-            }
-        });
     }
 
     private void encode() {
@@ -154,6 +149,12 @@ public class AudioEncoderThread extends Thread {
                 long elapsedTime = SystemClock.elapsedRealtime() - MediaMuxerActivity.mainActivity.chronometer.getBase();
                 if (elapsedTime > 60 * 1000) {
                     isExit = true;
+                    MediaMuxerActivity.mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            MediaMuxerActivity.mainActivity.audioStartStopButton.performClick();
+                        }
+                    });
                 }
             }
         } catch (IOException e) {

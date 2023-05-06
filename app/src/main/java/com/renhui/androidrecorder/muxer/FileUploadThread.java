@@ -70,19 +70,6 @@ public class FileUploadThread extends Thread {
     @Override
     public void run() {
         try {
-            // TODO：添加一个开始上传的弹窗，最好显示进度
-//            AlertDialog alertDialog = new AlertDialog.Builder(MediaMuxerActivity.mainActivity)
-//                    .setTitle("上传文件提示：")
-//                    .setMessage("文件正在上传，请点击确定后在下方查看上传进度条")
-//                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            Looper.prepare();
-//                            Log.e("ProgressBar", "正在上传");
-//                            Looper.loop();
-//                        }
-//                    }).create();
-
             Log.w("OkHttpButton", "OkHttpButton Push！");
             String url = "http://" + serverIp + "/upload";
             String filePath = androidFilePath;
@@ -109,8 +96,8 @@ public class FileUploadThread extends Thread {
                     ((Activity) mContext).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            // 如果是txt，不要显示进度条
-                            if (!filePath.endsWith("txt")) {
+                            // 如果是txt或csv，不要显示进度条
+                            if (!filePath.endsWith("txt") && !filePath.endsWith("csv")) {
                                 ProgressBar uploadProgress = MediaMuxerActivity.mainActivity.findViewById(R.id.upload_progress);
                                 uploadProgress.setProgress(progress);
                             }

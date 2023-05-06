@@ -60,7 +60,7 @@ public class VideoPlayerThread extends Thread{
         mVideo.suspend();
         // 将屏幕设置为黑
         mVideo.setBackgroundColor(Color.BLACK);
-        // 移除对Surfaceview的布局位置调整和设置
+        // 移除对SurfaceView的布局位置调整和设置
         RelativeLayout.LayoutParams cameraparams = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
         cameraparams.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         cameraparams.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
