@@ -2,6 +2,8 @@ package com.renhui.androidrecorder.survey;
 
 import static com.renhui.androidrecorder.muxer.FileUtil.getExternalStorageDirectory;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -18,11 +20,21 @@ import android.widget.Toast;
 import com.renhui.androidrecorder.R;
 import com.renhui.androidrecorder.muxer.FileUploadThread;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 public class HealthSurveyActivity extends AppCompatActivity {
 
@@ -35,6 +47,15 @@ public class HealthSurveyActivity extends AppCompatActivity {
             "听力是否下降", "体重是否下降", "视力是否下降", "活动能力", "语言表达能力", "有无抑郁情况", "有无焦虑情况",
             "有无认知下降", "吞咽功能", "小便是否正常", "大便是否正常"};
     Object[] answers = new Object[items.length];
+    Map<Integer, Integer> map = new HashMap<Integer, Integer>(){{
+        put(0, 1); put(1, 2); put(2, 3); put(3, 4); put(4, 5); put(5, 6); put(6, 6); put(7, 7); put(8, 8);
+        put(9, 9); put(10, 10); put(11, 11); put(12, 11); put(13, 11); put(14, 11); put(15, 12); put(16, 12);
+        put(17, 12); put(18, 12); put(19, 12); put(20, 13); put(21, 14); put(22, 15); put(23, 15); put(24, 15);
+        put(25, 16); put(26, 17); put(27, 18); put(28, 19); put(29, 20); put(30, 21); put(31, 22); put(32, 23);
+        put(33, 24); put(34, 25); put(35, 26); put(36, 27); put(37, 28); put(38, 29); put(39, 30); put(40, 31);
+        put(41, 32); put(42, 33); put(43, 34); put(44, 35); put(45, 36); put(46, 37); put(47, 38); put(48, 39);
+        put(49, 40); put(50, 41); put(51, 42); put(52, 43);
+    }};
     String androidFileParentPath, androidFileName;
     String fullPath, tagName;
 
@@ -164,35 +185,86 @@ public class HealthSurveyActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // 遍历每个问题，拿到答案，放到answers中
                 List<Integer> unfinished = new ArrayList<>();
+                Set<Integer> smokeQuestion = new HashSet<>(Arrays.asList(12, 13, 14));
+                Set<Integer> drinkQuestion = new HashSet<>(Arrays.asList(16, 17, 18, 19));
+                Set<Integer> sleeplessQuestion = new HashSet<>(Arrays.asList(23, 24));
                 for (int i = 0; i < units.size(); i++) {
                     Object tmp = units.get(i);
                     if (tmp.getClass().getName().endsWith("EditText")) {
                         EditText text = (EditText) tmp;
                         answers[i] = text.getText().toString();
+                        if (answers[i] == null || answers[i].equals("")) {
+                            if (smokeQuestion.contains(i) && smoke.getCheckedRadioButtonId() == R.id.smoke_no) {
+                                continue;
+                            }
+                            if (drinkQuestion.contains(i) && drink.getCheckedRadioButtonId() == R.id.drinking_no) {
+                                continue;
+                            }
+                            if (sleeplessQuestion.contains(i) && sleepless.getCheckedRadioButtonId() == R.id.noSleep_no) {
+                                continue;
+                            }
+                            unfinished.add(i);
+                        }
                     } else if (tmp.getClass().getName().endsWith("RadioGroup")) {
                         RadioGroup group = (RadioGroup) tmp;
                         if (group.getCheckedRadioButtonId() != -1) {
                             Button isSelected = findViewById(group.getCheckedRadioButtonId());
                             answers[i] = isSelected.getText().toString();
                         }
+                        if (answers[i] == null || answers[i].equals("")) {
+                            unfinished.add(i);
+                        }
                     }
                     Log.i("HealthSurvey", answers[i] == null ? "" : answers[i].toString());
                 }
-                List<Object[]> res = new ArrayList<>();
-                res.add(items);
-                res.add(answers);
-                androidFileParentPath = getExternalStorageDirectory() + "/android_records/text/";
-                androidFileName = filePathList[1] + "-" + filePathList[2];
+                // 弹出对话框提示未做完的题目
+                if (unfinished.size() != 0) {
+                    StringBuilder putMessage = new StringBuilder();
+                    putMessage.append("第");
+                    for (Integer index : unfinished) {
+                        putMessage.append(map.get(index));
+                        putMessage.append("、");
+                    }
+                    putMessage.deleteCharAt(putMessage.length() - 1);
+                    putMessage.append("未作答！");
 
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.CHINA);
-                tagName = filePathList[0] + File.separator + filePathList[1] + File.separator + filePathList[2] + "-" +
-                        simpleDateFormat.format(System.currentTimeMillis()) +  ".csv";
-                // 通过
-                CSVUtil.writeToCSV(res, androidFileParentPath, androidFileName);
-                fullPath = CSVUtil.fullPath;
-                // 上传文件
-                FileUploadThread.stopUpload();
-                FileUploadThread.startUpload(HealthSurveyActivity.this, fullPath, tagName);
+                    AlertDialog failDialog = new AlertDialog.Builder(HealthSurveyActivity.this)
+                            .setTitle("问卷未全部作答！")
+                            .setMessage(putMessage)
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            }).create();
+                    failDialog.show();
+                }
+                else {
+                    AlertDialog scoreDialog = new AlertDialog.Builder(HealthSurveyActivity.this)
+                            .setTitle("问卷已完成！")
+                            .setMessage("请点击确定以上传问卷结果")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // 点击确定后保存到txt文件中并上传
+                                    List<Object[]> res = new ArrayList<>();
+                                    res.add(items);
+                                    res.add(answers);
+                                    androidFileParentPath = getExternalStorageDirectory() + "/android_records/text/";
+                                    androidFileName = filePathList[1] + "-" + filePathList[2];
+
+                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.CHINA);
+                                    tagName = filePathList[0] + File.separator + filePathList[1] + File.separator + filePathList[2] + "-" +
+                                            simpleDateFormat.format(System.currentTimeMillis()) +  ".csv";
+                                    // 通过
+                                    CSVUtil.writeToCSV(res, androidFileParentPath, androidFileName);
+                                    fullPath = CSVUtil.fullPath;
+                                    // 上传文件
+                                    FileUploadThread.stopUpload();
+                                    FileUploadThread.startUpload(HealthSurveyActivity.this, fullPath, tagName);
+                                }
+                            }).create();
+                    scoreDialog.show();
+                }
             }
         });
 
