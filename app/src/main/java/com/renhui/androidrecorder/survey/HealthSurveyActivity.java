@@ -212,6 +212,9 @@ public class HealthSurveyActivity extends AppCompatActivity {
                             answers[i] = isSelected.getText().toString();
                         }
                         if (answers[i] == null || answers[i].equals("")) {
+                            if (sleeplessQuestion.contains(i) && sleepless.getCheckedRadioButtonId() == R.id.noSleep_no) {
+                                continue;
+                            }
                             unfinished.add(i);
                         }
                     }
@@ -221,9 +224,13 @@ public class HealthSurveyActivity extends AppCompatActivity {
                 if (unfinished.size() != 0) {
                     StringBuilder putMessage = new StringBuilder();
                     putMessage.append("第");
+                    Set<Integer> exist = new HashSet<>();
                     for (Integer index : unfinished) {
-                        putMessage.append(map.get(index));
-                        putMessage.append("、");
+                        if (!exist.contains(map.get(index))) {
+                            putMessage.append(map.get(index));
+                            putMessage.append("、");
+                            exist.add(map.get(index));
+                        }
                     }
                     putMessage.deleteCharAt(putMessage.length() - 1);
                     putMessage.append("未作答！");
