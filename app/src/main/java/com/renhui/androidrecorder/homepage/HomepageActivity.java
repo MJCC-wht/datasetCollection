@@ -1,13 +1,14 @@
 package com.renhui.androidrecorder.homepage;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.renhui.androidrecorder.MyApplication;
 import com.renhui.androidrecorder.R;
 import com.renhui.androidrecorder.muxer.MediaMuxerActivity;
+import com.renhui.androidrecorder.muxer.ResultAnalyzeThread;
 import com.renhui.androidrecorder.survey.GDSSurveyActivity;
 import com.renhui.androidrecorder.survey.HealthSurveyActivity;
 
@@ -23,7 +25,7 @@ public class HomepageActivity extends AppCompatActivity {
     private Button btn11,btn12,btn13,
             btn21,btn22,
             btn31,btn32,
-            btn41,btn42;
+            btn41,btn42, btn5;
 
     private static final String KEY_INDEX="INDEX";
     private String choice, choice2; // 选择的是哪个项目？
@@ -57,6 +59,7 @@ public class HomepageActivity extends AppCompatActivity {
         btn11.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // TODO:为了测试临时修改的，记得改回去，改为 "video/action1/"
                 setChoice("video/action1/") ;
                 choice2 = "motion";
                 judge1(flag, btn11,0);
@@ -116,8 +119,6 @@ public class HomepageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 intent.setClass(HomepageActivity.this, GDSSurveyActivity.class);
-                setChoice("text/gds/");
-                intent.putExtra("complete_info",choice + filePath);
                 startActivity(intent);
                 btnChange(flag, btn41, 7);
             }
@@ -127,13 +128,64 @@ public class HomepageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 intent.setClass(HomepageActivity.this, HealthSurveyActivity.class);
-                setChoice("text/health/");
-                intent.putExtra("complete_info",choice + filePath);
                 startActivity(intent);
                 btnChange(flag, btn42, 8);//
             }
         });
+
+        // 显示健康状态结果
+        btn5 = (Button) findViewById(R.id.btn5);
+        btn5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 检查有没有结果
+                String analyzeResult = ResultAnalyzeThread.analyzeResult;
+                if (analyzeResult == null) {
+                    // 如果结果还没有来，显示预计还要多久
+                    long elapsedTime = System.currentTimeMillis() - ResultAnalyzeThread.startTime;
+                    int elapsedMinute = (int) (elapsedTime / 1000 / 60);
+                    AlertDialog timeDialog = new AlertDialog.Builder(HomepageActivity.this)
+                            .setTitle("分析未完成：")
+                            .setMessage("预计还剩" + (6 - elapsedMinute) + "分钟左右")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.e("HomePageActivity", "分析未完成");
+                                }
+                        }).create();
+                    timeDialog.show();
+                } else {
+                    // 有结果，但是要分析返回情况
+                    if (analyzeResult.startsWith("分析失败")) {
+                        AlertDialog failDialog = new AlertDialog.Builder(HomepageActivity.this)
+                                .setTitle("分析失败：")
+                                .setMessage(analyzeResult)
+                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Log.e("HomePageActivity", "分析失败");
+                                    }
+                                }).create();
+                        failDialog.show();
+                    } else {
+                        String message = analyzeResult.equals("nan") ? "分析不匹配" :
+                                analyzeResult.equals("1.0") ? "正面" : "负面";
+                        AlertDialog successDialog = new AlertDialog.Builder(HomepageActivity.this)
+                                .setTitle("分析成功：")
+                                .setMessage(message)
+                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Log.e("HomePageActivity", "分析成功");
+                                    }
+                                }).create();
+                        successDialog.show();
+                    }
+                }
+            }
+        });
     }
+
     private void jump_to_collect(int[] flag, Button btn, int i){
         Intent intent = new Intent();
         if (filePath == null || filePath.equals(" ")) {
@@ -196,6 +248,8 @@ public class HomepageActivity extends AppCompatActivity {
 
         btn41=findViewById(R.id.btn41);
         btn42=findViewById(R.id.btn42);
+
+        btn5=findViewById(R.id.btn5);
 
     }
 
