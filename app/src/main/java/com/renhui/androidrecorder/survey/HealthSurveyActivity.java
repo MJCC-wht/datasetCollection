@@ -17,6 +17,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.renhui.androidrecorder.MyApplication;
 import com.renhui.androidrecorder.R;
 import com.renhui.androidrecorder.muxer.FileUploadThread;
 
@@ -286,5 +287,17 @@ public class HealthSurveyActivity extends AppCompatActivity {
                 FileUploadThread.startUpload(HealthSurveyActivity.this, fullPath, tagName);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyApplication.getInstance().setCurrentActivity(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MyApplication.getInstance().setCurrentActivity(null);
     }
 }

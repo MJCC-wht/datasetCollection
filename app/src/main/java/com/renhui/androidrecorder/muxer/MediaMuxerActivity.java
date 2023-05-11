@@ -41,6 +41,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.renhui.androidrecorder.MyApplication;
 import com.renhui.androidrecorder.R;
 
 import java.io.File;
@@ -178,6 +179,18 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     FileUploadThread.stopUpload();
                     if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
                         VideoPlayerThread.startPlay(MediaMuxerActivity.this, mVideo, filePathList[1]);
+//                        if (cameraWindow) {
+//                            // 设置摄像头小窗置于最高层、不透明、尺寸与nobuttun贴合
+//                            surfaceView.setAlpha(0);
+//                            surfaceView.setZOrderOnTop(true);
+//                            if (camera != null) {
+//                                RelativeLayout.LayoutParams cameraparams = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
+//                                cameraparams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.noButton);
+//                                cameraparams.addRule(RelativeLayout.ALIGN_LEFT, R.id.noButton);
+//                                cameraparams.addRule(RelativeLayout.ALIGN_PARENT_TOP, R.id.topButton);
+//                                cameraparams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, R.id.video);
+//                            }
+//                        }
                     }
                 }
             }
@@ -364,6 +377,18 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                 }
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyApplication.getInstance().setCurrentActivity(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MyApplication.getInstance().setCurrentActivity(null);
     }
 
     //----------------------- 摄像头操作相关 --------------------------------------

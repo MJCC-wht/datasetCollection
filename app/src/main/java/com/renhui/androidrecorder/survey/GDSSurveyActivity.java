@@ -13,6 +13,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.renhui.androidrecorder.MyApplication;
 import com.renhui.androidrecorder.R;
 import com.renhui.androidrecorder.homepage.HomepageActivity;
 import com.renhui.androidrecorder.muxer.AudioEncoderThread;
@@ -173,5 +174,17 @@ public class GDSSurveyActivity extends AppCompatActivity {
                 FileUploadThread.startUpload(GDSSurveyActivity.this, fileSwapHelper.getFullPath(), fileSwapHelper.getFilePath());
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyApplication.getInstance().setCurrentActivity(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MyApplication.getInstance().setCurrentActivity(null);
     }
 }

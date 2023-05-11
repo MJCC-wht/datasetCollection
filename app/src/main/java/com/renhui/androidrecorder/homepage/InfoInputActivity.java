@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.renhui.androidrecorder.MyApplication;
 import com.renhui.androidrecorder.R;
 
 public class InfoInputActivity extends AppCompatActivity {
@@ -78,6 +79,18 @@ public class InfoInputActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyApplication.getInstance().setCurrentActivity(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MyApplication.getInstance().setCurrentActivity(null);
     }
 
     // 用于判断文件路径是否合法

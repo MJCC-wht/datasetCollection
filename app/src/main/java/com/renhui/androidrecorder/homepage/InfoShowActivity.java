@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.renhui.androidrecorder.MyApplication;
 import com.renhui.androidrecorder.R;
 import com.renhui.androidrecorder.muxer.MediaMuxerActivity;
 
@@ -59,5 +60,17 @@ public class InfoShowActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyApplication.getInstance().setCurrentActivity(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MyApplication.getInstance().setCurrentActivity(null);
     }
 }

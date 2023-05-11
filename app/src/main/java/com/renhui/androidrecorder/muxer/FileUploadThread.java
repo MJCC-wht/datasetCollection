@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.renhui.androidrecorder.MyApplication;
 import com.renhui.androidrecorder.R;
 
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,7 @@ import okio.Okio;
 public class FileUploadThread extends Thread {
 
     //设置访问服务端IP
-    private final String serverIp = "124.222.64.141:8080";
+    private final String serverIp = "124.222.64.141:8081";
     private static FileUploadThread fileUploadThread;
 
     // 页面的上下文
@@ -64,6 +65,14 @@ public class FileUploadThread extends Thread {
 
     public static void stopUpload() {
         fileUploadThread = null;
+//        if (fileUploadThread != null) {
+//            try {
+//                fileUploadThread.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            fileUploadThread = null;
+//        }
     }
 
 
@@ -151,21 +160,29 @@ public class FileUploadThread extends Thread {
                         Looper.prepare();
 
                         String result = response.body().string();
-                        ((Activity) mContext).runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                AlertDialog successDialog = new AlertDialog.Builder(mContext)
-                                        .setTitle("文件上传成功：")
-                                        .setMessage("请点击确定以明确文件上传成功")
-                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                Log.e("ProgressBar", "上传成功");
-                                            }
-                                        }).create();
-                                successDialog.show();
-                            }
-                        });
+                        // 随时间获取当前Activity
+                        Activity currentActivity = MyApplication.getInstance().getCurrentActivity();
+                        if (currentActivity != null) {
+                            currentActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AlertDialog successDialog = new AlertDialog.Builder(currentActivity)
+                                            .setTitle("文件上传成功：")
+                                            .setMessage("请点击确定以明确文件上传成功")
+                                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    Log.e("ProgressBar", "上传成功，分析开始");
+                                                    // 对特定任务开启分析线程
+                                                    if (tagName.startsWith("video/recognition1")) {
+                                                        ResultAnalyzeThread.startUpload(tagName);
+                                                    }
+                                                }
+                                            }).create();
+                                    successDialog.show();
+                                }
+                            });
+                        }
                         Log.d("theResult", result);
                         VoiceBroadcastThread.stopBroadcast();
                         String action = tagName.endsWith("mp4") ? "拍摄" : "录制";

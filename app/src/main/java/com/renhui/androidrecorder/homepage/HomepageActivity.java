@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.renhui.androidrecorder.MyApplication;
 import com.renhui.androidrecorder.R;
 import com.renhui.androidrecorder.muxer.MediaMuxerActivity;
 import com.renhui.androidrecorder.survey.GDSSurveyActivity;
@@ -196,6 +197,18 @@ public class HomepageActivity extends AppCompatActivity {
         btn41=findViewById(R.id.btn41);
         btn42=findViewById(R.id.btn42);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyApplication.getInstance().setCurrentActivity(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MyApplication.getInstance().setCurrentActivity(null);
     }
 
 //    @Override

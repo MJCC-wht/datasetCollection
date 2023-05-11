@@ -35,7 +35,7 @@ public class VideoEncoderThread extends Thread {
     private Vector<byte[]> frameBytes;
     private byte[] mFrameData;
 
-    private static final int BIT_RATE = IMAGE_HEIGHT * IMAGE_WIDTH * 3; // bit rate CameraWrapper.
+    private static final int BIT_RATE = IMAGE_HEIGHT * IMAGE_WIDTH * 3 / 2; // bit rate CameraWrapper.
 
     private final Object lock = new Object();
 
