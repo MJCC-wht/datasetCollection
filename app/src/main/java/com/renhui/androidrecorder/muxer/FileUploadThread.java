@@ -34,7 +34,7 @@ import okio.Okio;
 public class FileUploadThread extends Thread {
 
     //设置访问服务端IP
-    private final String serverIp = "124.222.64.141:8081";
+    private final String serverIp = "124.222.64.141:8080";
     private static FileUploadThread fileUploadThread;
 
     // 页面的上下文
@@ -123,7 +123,7 @@ public class FileUploadThread extends Thread {
 
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
-                    .writeTimeout(25, java.util.concurrent.TimeUnit.SECONDS)
+                    .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
                     .build();
 
             // 异步请求
@@ -174,9 +174,10 @@ public class FileUploadThread extends Thread {
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     Log.e("ProgressBar", "上传成功，分析开始");
                                                     // 对特定任务开启分析线程
-                                                    if (tagName.startsWith("video/recognition1")) {
-                                                        ResultAnalyzeThread.startUpload(tagName);
-                                                    }
+//                                                    if (tagName.startsWith("video/recognition1")) {
+//                                                        ResultAnalyzeThread.stopUpload();
+//                                                        ResultAnalyzeThread.startUpload(tagName);
+//                                                    }
                                                 }
                                             }).create();
                                     successDialog.show();

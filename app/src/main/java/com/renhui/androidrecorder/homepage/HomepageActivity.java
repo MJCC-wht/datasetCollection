@@ -59,7 +59,6 @@ public class HomepageActivity extends AppCompatActivity {
         btn11.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO:为了测试临时修改的，记得改回去，改为 "video/action1/"
                 setChoice("video/action1/") ;
                 choice2 = "motion";
                 judge1(flag, btn11,0);
@@ -119,6 +118,7 @@ public class HomepageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 intent.setClass(HomepageActivity.this, GDSSurveyActivity.class);
+                intent.putExtra("complete_info", "text/gds/" + filePath);
                 startActivity(intent);
                 btnChange(flag, btn41, 7);
             }
@@ -128,6 +128,7 @@ public class HomepageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 intent.setClass(HomepageActivity.this, HealthSurveyActivity.class);
+                intent.putExtra("complete_info", "text/health/" + filePath);
                 startActivity(intent);
                 btnChange(flag, btn42, 8);//
             }
@@ -142,18 +143,32 @@ public class HomepageActivity extends AppCompatActivity {
                 String analyzeResult = ResultAnalyzeThread.analyzeResult;
                 if (analyzeResult == null) {
                     // 如果结果还没有来，显示预计还要多久
-                    long elapsedTime = System.currentTimeMillis() - ResultAnalyzeThread.startTime;
-                    int elapsedMinute = (int) (elapsedTime / 1000 / 60);
-                    AlertDialog timeDialog = new AlertDialog.Builder(HomepageActivity.this)
-                            .setTitle("分析未完成：")
-                            .setMessage("预计还剩" + (6 - elapsedMinute) + "分钟左右")
-                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Log.e("HomePageActivity", "分析未完成");
-                                }
-                        }).create();
-                    timeDialog.show();
+                    if (ResultAnalyzeThread.startTime == - 1) {
+                        // 说明还没开始
+                        AlertDialog noStartDialog = new AlertDialog.Builder(HomepageActivity.this)
+                                .setTitle("分析未开始：")
+                                .setMessage("请先完成测试再查看结果")
+                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Log.e("HomePageActivity", "分析未开始");
+                                    }
+                                }).create();
+                        noStartDialog.show();
+                    } else {
+                        long elapsedTime = System.currentTimeMillis() - ResultAnalyzeThread.startTime;
+                        int elapsedMinute = (int) (elapsedTime / 1000 / 60);
+                        AlertDialog timeDialog = new AlertDialog.Builder(HomepageActivity.this)
+                                .setTitle("分析未完成：")
+                                .setMessage("预计还剩" + (6 - elapsedMinute) + "分钟左右")
+                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Log.e("HomePageActivity", "分析未完成");
+                                    }
+                                }).create();
+                        timeDialog.show();
+                    }
                 } else {
                     // 有结果，但是要分析返回情况
                     if (analyzeResult.startsWith("分析失败")) {

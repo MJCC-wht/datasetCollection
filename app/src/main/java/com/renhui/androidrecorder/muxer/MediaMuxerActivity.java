@@ -1,7 +1,9 @@
 package com.renhui.androidrecorder.muxer;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.app.ActionBar;
 import android.content.pm.PackageManager;
@@ -150,17 +152,64 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
             @Override
             public void onClick(View view) {
                 if (view.getTag().toString().equalsIgnoreCase("stop")) {
-                    view.setTag("start");
-                    ((TextView) view).setText("录制视频");
-                    Toast.makeText(MediaMuxerActivity.this, "拍摄完成", Toast.LENGTH_SHORT).show();
-                    MediaMuxerThread.stopMuxer();
-                    // 视频录制完，上传文件
-                    uploadProgress.setVisibility(View.VISIBLE);
-                    FileUploadThread.startUpload(MediaMuxerActivity.this, MediaMuxerThread.filePath, MediaMuxerThread.tagName);
-                    if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
+                    // 如果此时视频还在播放，跳出弹窗提醒是否要关闭
+                    if (mVideo.isPlaying() && filePathList[1].startsWith("recognition")) {
+                        AlertDialog closeDialog = new AlertDialog.Builder(MediaMuxerActivity.this)
+                                .setTitle("视频正在播放：")
+                                .setMessage("确定要停止录制吗")
+                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        view.setTag("start");
+                                        ((TextView) view).setText("录制视频");
+                                        Toast.makeText(MediaMuxerActivity.this, "拍摄完成", Toast.LENGTH_SHORT).show();
+                                        MediaMuxerThread.stopMuxer();
+                                        // 视频录制完，上传文件
+                                        uploadProgress.setVisibility(View.VISIBLE);
+                                        FileUploadThread.startUpload(MediaMuxerActivity.this, MediaMuxerThread.filePath, MediaMuxerThread.tagName);
+                                        // 如果结束时为横屏屏，不显示摄像头预览
+                                        if (cameraWindow && camera != null && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                                            // 小窗透明、最高层设定取消
+                                            surfaceView.setAlpha(0);
+                                            surfaceView.setZOrderOnTop(false);
+                                        }
+                                        VideoPlayerThread.stopPlay(mVideo, surfaceView);
+                                        stopCamera();
+                                    }
+                                })
+                                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                }).create();
+                        closeDialog.show();
+                    } else {
+                        view.setTag("start");
+                        ((TextView) view).setText("录制视频");
+                        Toast.makeText(MediaMuxerActivity.this, "拍摄完成", Toast.LENGTH_SHORT).show();
+                        MediaMuxerThread.stopMuxer();
+                        // 视频录制完，上传文件
+                        uploadProgress.setVisibility(View.VISIBLE);
+                        FileUploadThread.startUpload(MediaMuxerActivity.this, MediaMuxerThread.filePath, MediaMuxerThread.tagName);
+                        // 如果结束时为横屏屏，不显示摄像头预览
+                        if (cameraWindow && camera != null && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                            // 小窗透明、最高层设定取消
+                            surfaceView.setAlpha(0);
+                            surfaceView.setZOrderOnTop(false);
+                        }
                         VideoPlayerThread.stopPlay(mVideo, surfaceView);
+                        stopCamera();
                     }
-                    stopCamera();
+
+//                    view.setTag("start");
+//                    ((TextView) view).setText("录制视频");
+//                    Toast.makeText(MediaMuxerActivity.this, "拍摄完成", Toast.LENGTH_SHORT).show();
+//                    MediaMuxerThread.stopMuxer();
+//                    // 视频录制完，上传文件
+//                    uploadProgress.setVisibility(View.VISIBLE);
+//                    FileUploadThread.startUpload(MediaMuxerActivity.this, MediaMuxerThread.filePath, MediaMuxerThread.tagName);
+//                    stopCamera();
                 } else {
                     uploadProgress.setVisibility(View.GONE);
                     if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
@@ -342,22 +391,22 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                 Log.e("view change", "横屏");
 
                 // 横屏时显示摄像头预览窗口
-                if (cameraWindow) {
+                if (cameraWindow && camera != null) {
                     // 设置摄像头小窗置于最高层、不透明、尺寸与nobuttun贴合
                     surfaceView.setAlpha(1);
                     surfaceView.setZOrderOnTop(true);
                     // 隐藏状态栏
                     mVideo.setSystemUiVisibility(View.INVISIBLE);
-                    if (camera != null) {
-                        RelativeLayout.LayoutParams cameraparams = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
-                        cameraparams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.noButton);
-                        cameraparams.addRule(RelativeLayout.ALIGN_LEFT, R.id.noButton);
-                        cameraparams.addRule(RelativeLayout.ALIGN_PARENT_TOP, R.id.topButton);
-                        cameraparams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, R.id.video);
-                    }
+
+                    RelativeLayout.LayoutParams cameraparams = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
+                    cameraparams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.noButton);
+                    cameraparams.addRule(RelativeLayout.ALIGN_LEFT, R.id.noButton);
+                    cameraparams.addRule(RelativeLayout.ALIGN_PARENT_TOP, R.id.topButton);
+                    cameraparams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, R.id.video);
                 }
             } else {
                 // 竖屏时给出竖屏弹窗、显示按钮
+//                uploadProgress.setVisibility(View.VISIBLE);
                 Toast.makeText(getApplicationContext(), "竖屏", Toast.LENGTH_SHORT).show();
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mVideo.getLayoutParams();
                 // 竖屏时恢复在按钮之下的布局设定

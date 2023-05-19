@@ -185,6 +185,12 @@ public class VideoPlayerThread extends Thread{
                             MediaMuxerActivity.mainActivity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+//                                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mVideo.getLayoutParams();
+//                                    // 竖屏时恢复在按钮之下的布局设定
+//                                    params.addRule(RelativeLayout.BELOW, R.id.topButton);
+//                                    mVideo.setLayoutParams(params);
+//                                    // 显示状态栏
+//                                    mVideo.setSystemUiVisibility(View.VISIBLE);
                                     MediaMuxerActivity.mainActivity.videoStartStopButton.performClick();
                                 }
                             });

@@ -13,6 +13,7 @@ import com.renhui.androidrecorder.R;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -25,7 +26,7 @@ import okhttp3.Response;
 
 public class ResultAnalyzeThread extends Thread {
     //设置访问服务端IP
-    private final String serverIp = "124.222.64.141:8081";
+    private final String serverIp = "124.222.64.141:8080";
     private static ResultAnalyzeThread resultAnalyzeThread;
 
     // 本地文件地址
@@ -80,7 +81,7 @@ public class ResultAnalyzeThread extends Thread {
 
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
-                    .writeTimeout(25, java.util.concurrent.TimeUnit.SECONDS)
+                    .readTimeout(10, TimeUnit.MINUTES)
                     .build();
 
             // 异步请求
@@ -93,19 +94,18 @@ public class ResultAnalyzeThread extends Thread {
                     Looper.prepare();
 
                     Log.d("failureResult", "结果分析失败，网络错误！" + e.toString());
-                    stopUpload();
 
                     Looper.loop();
                 }
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
+                    Log.d("analyze Result", "接收到反馈");
                     if (response.body() != null){
                         Looper.prepare();
 
                         analyzeResult = response.body().string();
                         Log.d("analyze Result", analyzeResult);
-                        stopUpload();
 
                         Looper.loop();
                     }

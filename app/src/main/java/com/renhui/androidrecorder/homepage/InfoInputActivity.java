@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.renhui.androidrecorder.MyApplication;
@@ -25,6 +26,7 @@ public class InfoInputActivity extends AppCompatActivity {
     private String allInfo;
     private String number = "",name= "",gender = "",age="",education="";
     private String floatWindow = "";
+    private TextView versionInfo;
 
     // 定义下拉列表需要显示的文本数组
     private String[] starArray = {"是", "否"};
@@ -53,10 +55,19 @@ public class InfoInputActivity extends AppCompatActivity {
         }
 
         initView();
-        etNumber=(EditText) findViewById(R.id.number);
-        etName=(EditText) findViewById(R.id.name);
-        etAge=(EditText) findViewById(R.id.age);
+        etNumber = (EditText) findViewById(R.id.number);
+        etName = (EditText) findViewById(R.id.name);
+        etAge = (EditText) findViewById(R.id.age);
         btnSave = (Button) findViewById(R.id.btnsave);
+        versionInfo = (TextView) findViewById(R.id.version);
+
+        // 设置版本号信息
+        try {
+            String versionCode = versionInfo.getText().toString() + getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+            versionInfo.setText(versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
         // 输入信息保存，跳转至信息确认界面
         btnSave.setOnClickListener(new View.OnClickListener() {
