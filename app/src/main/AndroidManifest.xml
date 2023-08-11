@@ -31,6 +31,8 @@
         <activity
             android:name=".survey.HealthSurveyActivity"
             android:exported="false" />
+        <activity android:name=".survey.ADLActivity"
+            android:exported="false" />
         <activity
             android:name=".homepage.HomepageActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize"

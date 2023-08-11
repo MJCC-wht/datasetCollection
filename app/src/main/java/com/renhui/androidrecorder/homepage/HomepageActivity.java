@@ -12,20 +12,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.renhui.androidrecorder.MyApplication;
 import com.renhui.androidrecorder.R;
 import com.renhui.androidrecorder.muxer.MediaMuxerActivity;
 import com.renhui.androidrecorder.muxer.ResultAnalyzeThread;
+import com.renhui.androidrecorder.survey.ADLActivity;
 import com.renhui.androidrecorder.survey.GDSSurveyActivity;
 import com.renhui.androidrecorder.survey.HealthSurveyActivity;
+
+import java.util.Locale;
 
 public class HomepageActivity extends AppCompatActivity {
     private Button btn11,btn12,btn13,
             btn21,btn22,
             btn31,btn32,
-            btn41,btn42, btn5;
+            btn41,btn42,btn43,btn5;
+    private TextView infoText;
 
     private static final String KEY_INDEX="INDEX";
     private String choice, choice2; // 选择的是哪个项目？
@@ -54,6 +59,13 @@ public class HomepageActivity extends AppCompatActivity {
         Intent intent = getIntent();
         filePath = intent.getStringExtra("complete_info");
         camera_window = intent.getStringExtra("cameraWindow");
+
+        // 直接显示info
+        infoText = (TextView) findViewById(R.id.info);
+        String[] infoList = filePath.split("-");
+        String info = "编号：" + infoList[0] + "\n" + "姓名：" + infoList[1];
+        infoText.setText(info);
+        infoText.setTextColor(Color.RED);
 
         btn11 = (Button) findViewById(R.id.btn11);
         btn11.setOnClickListener(new View.OnClickListener() {
@@ -133,6 +145,16 @@ public class HomepageActivity extends AppCompatActivity {
                 btnChange(flag, btn42, 8);//
             }
         });
+        btn43 = (Button) findViewById(R.id.btn43);
+        btn43.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intent.setClass(HomepageActivity.this, ADLActivity.class);
+                intent.putExtra("complete_info", "text/ADL/" + filePath);
+                startActivity(intent);
+                btnChange(flag, btn42, 8);//
+            }
+        });
 
         // 显示健康状态结果
         btn5 = (Button) findViewById(R.id.btn5);
@@ -160,7 +182,7 @@ public class HomepageActivity extends AppCompatActivity {
                         int elapsedMinute = (int) (elapsedTime / 1000 / 60);
                         AlertDialog timeDialog = new AlertDialog.Builder(HomepageActivity.this)
                                 .setTitle("分析未完成：")
-                                .setMessage("预计还剩" + (6 - elapsedMinute) + "分钟左右")
+                                .setMessage("预计还剩" + (10 - elapsedMinute) + "分钟左右")
                                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -183,8 +205,22 @@ public class HomepageActivity extends AppCompatActivity {
                                 }).create();
                         failDialog.show();
                     } else {
-                        String message = analyzeResult.equals("nan") ? "分析不匹配" :
-                                analyzeResult.equals("1.0") ? "正面" : "负面";
+                        String message = "";
+                        if (analyzeResult.startsWith("分析完成")) {
+                            message = analyzeResult;
+                        } else if (analyzeResult.equals("nan")) {
+                            message = "分析数据错误，可能为时长不够";
+                        } else {
+                            double score = Double.parseDouble(analyzeResult);
+                            score = Double.parseDouble(String.format(Locale.CHINA, "%.2f", score));
+                            if (score >= 0.7) {
+                                message = "您的记忆减退风险为" + (1 - score) + "，为健康人群。建议定期筛查，感谢您的配合";
+                            } else if (score >= 0.4) {
+                                message = "您的记忆减退风险为" + (1 - score) + "，为低风险人群。建议定期筛查，感谢您的配合";
+                            } else {
+                                message = "您的记忆减退风险为" + (1 - score) + "，为中风险人群。建议定期筛查，感谢您的配合";
+                            }
+                        }
                         AlertDialog successDialog = new AlertDialog.Builder(HomepageActivity.this)
                                 .setTitle("分析成功：")
                                 .setMessage(message)

@@ -26,7 +26,7 @@ import okhttp3.Response;
 
 public class ResultAnalyzeThread extends Thread {
     //设置访问服务端IP
-    private final String serverIp = "124.222.64.141:8080";
+    private final String serverIp = "124.222.64.141:" + FileUploadThread.port;
     private static ResultAnalyzeThread resultAnalyzeThread;
 
     // 本地文件地址
@@ -81,7 +81,7 @@ public class ResultAnalyzeThread extends Thread {
 
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
-                    .readTimeout(10, TimeUnit.MINUTES)
+                    .readTimeout(20, TimeUnit.MINUTES)
                     .build();
 
             // 异步请求

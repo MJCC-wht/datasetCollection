@@ -189,12 +189,16 @@ public class HealthSurveyActivity extends AppCompatActivity {
                 Set<Integer> smokeQuestion = new HashSet<>(Arrays.asList(12, 13, 14));
                 Set<Integer> drinkQuestion = new HashSet<>(Arrays.asList(16, 17, 18, 19));
                 Set<Integer> sleeplessQuestion = new HashSet<>(Arrays.asList(23, 24));
+                Set<Integer> skipQuestion = new HashSet<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6));
                 for (int i = 0; i < units.size(); i++) {
                     Object tmp = units.get(i);
                     if (tmp.getClass().getName().endsWith("EditText")) {
                         EditText text = (EditText) tmp;
                         answers[i] = text.getText().toString();
                         if (answers[i] == null || answers[i].equals("")) {
+                            if (skipQuestion.contains(i)) {
+                                continue;
+                            }
                             if (smokeQuestion.contains(i) && smoke.getCheckedRadioButtonId() == R.id.smoke_no) {
                                 continue;
                             }
@@ -213,6 +217,9 @@ public class HealthSurveyActivity extends AppCompatActivity {
                             answers[i] = isSelected.getText().toString();
                         }
                         if (answers[i] == null || answers[i].equals("")) {
+                            if (skipQuestion.contains(i)) {
+                                continue;
+                            }
                             if (sleeplessQuestion.contains(i) && sleepless.getCheckedRadioButtonId() == R.id.noSleep_no) {
                                 continue;
                             }
@@ -234,7 +241,7 @@ public class HealthSurveyActivity extends AppCompatActivity {
                         }
                     }
                     putMessage.deleteCharAt(putMessage.length() - 1);
-                    putMessage.append("未作答！");
+                    putMessage.append("题未作答！");
 
                     AlertDialog failDialog = new AlertDialog.Builder(HealthSurveyActivity.this)
                             .setTitle("问卷未全部作答！")

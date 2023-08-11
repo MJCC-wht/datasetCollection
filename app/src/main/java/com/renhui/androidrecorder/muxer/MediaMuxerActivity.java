@@ -335,7 +335,7 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         Log.w("MainActivity", "enter surfaceCreated method");
-        if (filePathList[1] != null && (filePathList[1].equals("description1") || filePathList[1].equals("description3"))) {
+        if (filePathList[1] != null && (filePathList[1].startsWith("description"))) {
             updateImage(getImageFromAssetsFile(switchImage(filePathList[1])));
         }
     }

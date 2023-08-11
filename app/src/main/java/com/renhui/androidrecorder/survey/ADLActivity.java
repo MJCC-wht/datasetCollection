@@ -8,44 +8,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.renhui.androidrecorder.MyApplication;
 import com.renhui.androidrecorder.R;
-import com.renhui.androidrecorder.homepage.HomepageActivity;
-import com.renhui.androidrecorder.muxer.AudioEncoderThread;
 import com.renhui.androidrecorder.muxer.FileUploadThread;
 import com.renhui.androidrecorder.muxer.FileUtil;
-import com.renhui.androidrecorder.muxer.MediaMuxerActivity;
-import com.renhui.androidrecorder.muxer.MediaMuxerThread;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class GDSSurveyActivity extends AppCompatActivity {
-
+public class ADLActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gdssurvey);
+        setContentView(R.layout.activity_adl);
 
         Intent intent = getIntent();
         String filePath = intent.getStringExtra("complete_info");
-
-        int[] questionScore = new int[]{1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,
-                0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1};
 
         List<RadioGroup> groupList = new ArrayList<>();
         groupList.add(findViewById(R.id.button1));
@@ -62,22 +49,6 @@ public class GDSSurveyActivity extends AppCompatActivity {
         groupList.add(findViewById(R.id.button12));
         groupList.add(findViewById(R.id.button13));
         groupList.add(findViewById(R.id.button14));
-        groupList.add(findViewById(R.id.button15));
-        groupList.add(findViewById(R.id.button16));
-        groupList.add(findViewById(R.id.button17));
-        groupList.add(findViewById(R.id.button18));
-        groupList.add(findViewById(R.id.button19));
-        groupList.add(findViewById(R.id.button20));
-        groupList.add(findViewById(R.id.button21));
-        groupList.add(findViewById(R.id.button22));
-        groupList.add(findViewById(R.id.button23));
-        groupList.add(findViewById(R.id.button24));
-        groupList.add(findViewById(R.id.button25));
-        groupList.add(findViewById(R.id.button26));
-        groupList.add(findViewById(R.id.button27));
-        groupList.add(findViewById(R.id.button28));
-        groupList.add(findViewById(R.id.button29));
-        groupList.add(findViewById(R.id.button30));
 
         Button isFinished = findViewById(R.id.isfinished);
         Button reUpload = findViewById(R.id.reUpload);
@@ -87,24 +58,33 @@ public class GDSSurveyActivity extends AppCompatActivity {
             @Override
             public void onClick(View arg0) {
                 List<Integer> unfinished = new ArrayList<>();
+                List<Integer> scoreList = new ArrayList<>();
                 int sumScore = 0;
-                for (int i = 0; i < 30; i++) {
+                for (int i = 0; i < groupList.size(); i++) {
                     // 生成两个groupButton
                     String firstName = "button" + (i + 1) + '_' + 0;
                     String secondName = "button" + (i + 1) + '_' + 1;
+                    String thirdName = "button" + (i + 1) + '_' + 2;
+                    String firthName = "button" + (i + 1) + '_' + 3;
                     int firstId = getResources().getIdentifier(firstName, "id", getPackageName());
                     int secondId = getResources().getIdentifier(secondName, "id", getPackageName());
+                    int thirdId = getResources().getIdentifier(thirdName, "id", getPackageName());
+                    int firthId = getResources().getIdentifier(firthName, "id", getPackageName());
                     // 判断是否已作答与对应分值
                     if (groupList.get(i).getCheckedRadioButtonId() == -1) {
                         unfinished.add(i);
                     } else if (groupList.get(i).getCheckedRadioButtonId() == firstId) {
-                        if (questionScore[i] == 0) {
-                            sumScore++;
-                        }
+                        sumScore += 1;
+                        scoreList.add(1);
                     } else if (groupList.get(i).getCheckedRadioButtonId() == secondId) {
-                        if (questionScore[i] == 1) {
-                            sumScore++;
-                        }
+                        sumScore += 2;
+                        scoreList.add(2);
+                    } else if (groupList.get(i).getCheckedRadioButtonId() == thirdId) {
+                        sumScore += 3;
+                        scoreList.add(3);
+                    } else if (groupList.get(i).getCheckedRadioButtonId() == firthId) {
+                        sumScore += 4;
+                        scoreList.add(4);
                     } else {
                         Log.i("tag", String.valueOf(i) + "  ButtonId error");
                     }
@@ -120,7 +100,7 @@ public class GDSSurveyActivity extends AppCompatActivity {
                     putMessage.deleteCharAt(putMessage.length() - 1);
                     putMessage.append("题未作答！");
 
-                    AlertDialog failDialog = new AlertDialog.Builder(GDSSurveyActivity.this)
+                    AlertDialog failDialog = new AlertDialog.Builder(ADLActivity.this)
                             .setTitle("问卷未全部作答！")
                             .setMessage(putMessage)
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -132,8 +112,14 @@ public class GDSSurveyActivity extends AppCompatActivity {
                 }
                 else {
                     Log.i("tag", String.valueOf(sumScore));
-                    String message = "您在GDS问卷中的得分是：" + sumScore + "分";
-                    AlertDialog scoreDialog = new AlertDialog.Builder(GDSSurveyActivity.this)
+                    StringBuilder scoreMessage = new StringBuilder("得分情况为：");
+                    for (Integer score : scoreList) {
+                        scoreMessage.append(score);
+                        scoreMessage.append(",");
+                    }
+                    scoreMessage.deleteCharAt(scoreMessage.length() - 1);
+                    String message = "您在ADL问卷中的得分是：" + sumScore + "分";
+                    AlertDialog scoreDialog = new AlertDialog.Builder(ADLActivity.this)
                             .setTitle("问卷已完成！")
                             .setMessage(message)
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -146,6 +132,8 @@ public class GDSSurveyActivity extends AppCompatActivity {
                                         FileOutputStream fos = new FileOutputStream(file);
                                         OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
                                         BufferedWriter bw = new BufferedWriter(osw);
+                                        bw.write(scoreMessage.toString());
+                                        bw.write("\n");
                                         bw.write(message);
                                         bw.close();
                                         osw.close();
@@ -155,7 +143,7 @@ public class GDSSurveyActivity extends AppCompatActivity {
                                     }
                                     // 上传文件
                                     FileUploadThread.stopUpload();
-                                    FileUploadThread.startUpload(GDSSurveyActivity.this, fileSwapHelper.getFullPath(), fileSwapHelper.getFilePath());
+                                    FileUploadThread.startUpload(ADLActivity.this, fileSwapHelper.getFullPath(), fileSwapHelper.getFilePath());
                                 }
                             }).create();
                     scoreDialog.show();
@@ -167,11 +155,11 @@ public class GDSSurveyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (fileSwapHelper.getFullPath() == null) {
-                    Toast.makeText(GDSSurveyActivity.this, "还没有填写完问卷并提交", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ADLActivity.this, "还没有填写完问卷并提交", Toast.LENGTH_SHORT).show();
                 }
                 // 重新上传最近的文件
                 FileUploadThread.stopUpload();
-                FileUploadThread.startUpload(GDSSurveyActivity.this, fileSwapHelper.getFullPath(), fileSwapHelper.getFilePath());
+                FileUploadThread.startUpload(ADLActivity.this, fileSwapHelper.getFullPath(), fileSwapHelper.getFilePath());
             }
         });
     }

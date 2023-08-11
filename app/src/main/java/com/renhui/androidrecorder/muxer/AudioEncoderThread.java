@@ -147,7 +147,7 @@ public class AudioEncoderThread extends Thread {
                 }
                 // 通过chronometer获取时间，一分钟准时结束
                 long elapsedTime = SystemClock.elapsedRealtime() - MediaMuxerActivity.mainActivity.chronometer.getBase();
-                if (elapsedTime > 60 * 1000) {
+                if (tagName.startsWith("audio/description2") && elapsedTime > 60 * 1000) {
                     isExit = true;
                     MediaMuxerActivity.mainActivity.runOnUiThread(new Runnable() {
                         @Override

@@ -8,18 +8,30 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true">
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/txtx"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="30dp"
+                android:text="编号：202305062413 \n      姓名：汪昊天"
+                android:textColor="#000000"
+                android:textSize="20sp" />
 
             <ImageButton
                 android:id="@+id/yundong"
                 android:layout_width="170dp"
                 android:layout_height="120dp"
+                android:layout_below="@+id/txt"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="70dp"
-                android:background="@drawable/butai"></ImageButton>
+                android:layout_marginTop="20dp"
+                android:background="@drawable/butai" />
 
             <TextView
                 android:id="@+id/txt1"
@@ -30,7 +42,7 @@
                 android:layout_marginTop="7dp"
                 android:text="3个动作"
                 android:textColor="#000000"
-                android:textSize="18sp"></TextView>
+                android:textSize="18sp" />
 
             <ImageButton
                 android:id="@+id/renzhi"
@@ -39,7 +51,7 @@
                 android:layout_below="@+id/yundong"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="70dp"
-                android:background="@drawable/renzhi"></ImageButton>
+                android:background="@drawable/renzhi" />
 
             <TextView
                 android:id="@+id/txt2"
@@ -50,7 +62,7 @@
                 android:layout_marginTop="7dp"
                 android:text="2个视频"
                 android:textColor="#000000"
-                android:textSize="18sp"></TextView>
+                android:textSize="18sp" />
 
             <ImageButton
                 android:id="@+id/yuyin"
@@ -59,7 +71,7 @@
                 android:layout_below="@+id/renzhi"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="70dp"
-                android:background="@drawable/yuyin"></ImageButton>
+                android:background="@drawable/yuyin" />
 
             <TextView
                 android:id="@+id/txt4"
@@ -70,16 +82,17 @@
                 android:layout_marginTop="7dp"
                 android:text="2个语音任务"
                 android:textColor="#000000"
-                android:textSize="18sp"></TextView>
+                android:textSize="18sp" />
+
             <TextView
-                android:layout_marginTop="70px"
-                android:layout_marginLeft="50dp"
+                android:layout_marginTop="120dp"
+                android:layout_marginStart="50dp"
                 android:id="@+id/txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="功能维度"
                 android:textColor="#000000"
-                android:textSize="18sp"></TextView>
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/txtx"
@@ -90,8 +103,7 @@
                 android:layout_alignTop="@+id/txt"
                 android:text="数据采集"
                 android:textColor="#000000"
-                android:textSize="18sp"></TextView>
-
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btn11"
@@ -106,7 +118,7 @@
                 android:layout_toRightOf="@+id/yundong"
                 android:background="@drawable/btn_bg_selector"
                 android:text="正常行走"
-                android:textSize="18sp"></Button>
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btn12"
@@ -120,7 +132,7 @@
                 android:layout_toRightOf="@+id/yundong"
                 android:background="@drawable/btn_bg_selector"
                 android:text="从椅子上站起坐下"
-                android:textSize="18sp"></Button>
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btn13"
@@ -134,7 +146,7 @@
                 android:layout_toRightOf="@+id/yundong"
                 android:background="@drawable/btn_bg_selector"
                 android:text="360度转身"
-                android:textSize="18sp"></Button>
+                android:textSize="18sp" />
 
 
             <Button
@@ -149,7 +161,7 @@
                 android:layout_toRightOf="@+id/renzhi"
                 android:background="@drawable/btn_bg_selector"
                 android:text="视频 1"
-                android:textSize="18sp"></Button>
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btn22"
@@ -163,7 +175,7 @@
                 android:layout_toRightOf="@+id/renzhi"
                 android:background="@drawable/btn_bg_selector"
                 android:text="视频 2"
-                android:textSize="18sp"></Button>
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btn31"
@@ -177,7 +189,7 @@
                 android:layout_toRightOf="@+id/yuyin"
                 android:background="@drawable/btn_bg_selector"
                 android:text="任务 1"
-                android:textSize="18sp"></Button>
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btn32"
@@ -191,7 +203,7 @@
                 android:layout_toRightOf="@+id/yuyin"
                 android:background="@drawable/btn_bg_selector"
                 android:text="任务 2"
-                android:textSize="18sp"></Button>
+                android:textSize="18sp" />
 
             <ImageButton
                 android:id="@+id/test"
@@ -200,7 +212,7 @@
                 android:layout_below="@+id/yuyin"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="70dp"
-                android:background="@drawable/test"></ImageButton>
+                android:background="@drawable/test" />
 
             <TextView
                 android:id="@+id/txt5"
@@ -209,9 +221,10 @@
                 android:layout_below="@+id/test"
                 android:layout_marginLeft="55dp"
                 android:layout_marginTop="7dp"
-                android:text="2个健康量表"
+                android:text="3个健康量表"
                 android:textColor="#000000"
-                android:textSize="18sp"></TextView>
+                android:textSize="18sp" />
+
             <Button
                 android:id="@+id/btn41"
                 style="@style/MyBtnStyle"
@@ -219,12 +232,12 @@
                 android:layout_height="35dp"
                 android:layout_alignTop="@+id/test"
                 android:layout_marginLeft="21dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="0dp"
                 android:layout_marginRight="13dp"
                 android:layout_toRightOf="@+id/test"
                 android:background="@drawable/btn_bg_selector"
                 android:text="老年抑郁量表"
-                android:textSize="18sp"></Button>
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btn42"
@@ -232,13 +245,27 @@
                 android:layout_width="166dp"
                 android:layout_height="35dp"
                 android:layout_marginLeft="21dp"
-                android:layout_marginTop="22dp"
+                android:layout_marginTop="10dp"
                 android:layout_below="@+id/btn41"
                 android:layout_marginRight="13dp"
                 android:layout_toRightOf="@+id/test"
                 android:background="@drawable/btn_bg_selector"
                 android:text="社区健康情况调查表"
-                android:textSize="18sp"></Button>
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btn43"
+                style="@style/MyBtnStyle"
+                android:layout_width="166dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="21dp"
+                android:layout_marginTop="10dp"
+                android:layout_below="@+id/btn42"
+                android:layout_marginRight="13dp"
+                android:layout_toRightOf="@+id/test"
+                android:background="@drawable/btn_bg_selector"
+                android:text="日常生活能力量表"
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btn5"
@@ -253,7 +280,7 @@
                 android:layout_toRightOf="@+id/test"
                 android:background="@drawable/btn_bg_selector"
                 android:text="健康状况查询"
-                android:textSize="18sp"></Button>
+                android:textSize="18sp" />
         </RelativeLayout>
     </ScrollView>
 </LinearLayout>

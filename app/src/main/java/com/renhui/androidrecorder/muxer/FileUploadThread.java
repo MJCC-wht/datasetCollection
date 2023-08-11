@@ -17,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -34,7 +36,8 @@ import okio.Okio;
 public class FileUploadThread extends Thread {
 
     //设置访问服务端IP
-    private final String serverIp = "124.222.64.141:8080";
+    public static String port = "8080";
+    private final String serverIp = "124.222.64.141:" + port;
     private static FileUploadThread fileUploadThread;
 
     // 页面的上下文
@@ -73,6 +76,26 @@ public class FileUploadThread extends Thread {
 //            }
 //            fileUploadThread = null;
 //        }
+    }
+
+    private String getMissionName(String tagName) {
+        String[] tagNameList = tagName.split("/");
+        switch (tagNameList[1]) {
+            case "action1": case "action2": case "action3":
+                return "运动任务" + tagNameList[1].charAt(tagNameList[1].length() - 1);
+            case "recognition1" : case "recognition2":
+                return "认知任务" + tagNameList[1].charAt(tagNameList[1].length() - 1);
+            case "description1" : case "description2":
+                return "语音任务" + tagNameList[1].charAt(tagNameList[1].length() - 1);
+            case "gds":
+                return "GSD问卷结果";
+            case "health":
+                return "社区健康调查问卷结果";
+            case "adl":
+                return "ADL问卷结果";
+            default:
+                return "未知任务";
+        }
     }
 
 
@@ -123,7 +146,7 @@ public class FileUploadThread extends Thread {
 
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
-                    .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+                    .writeTimeout(5, TimeUnit.MINUTES)
                     .build();
 
             // 异步请求
@@ -168,16 +191,16 @@ public class FileUploadThread extends Thread {
                                 public void run() {
                                     AlertDialog successDialog = new AlertDialog.Builder(currentActivity)
                                             .setTitle("文件上传成功：")
-                                            .setMessage("请点击确定以明确文件上传成功")
+                                            .setMessage("请点击确定以明确" + getMissionName(tagName) + "的文件上传成功")
                                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     Log.e("ProgressBar", "上传成功，分析开始");
                                                     // 对特定任务开启分析线程
-//                                                    if (tagName.startsWith("video/recognition1")) {
-//                                                        ResultAnalyzeThread.stopUpload();
-//                                                        ResultAnalyzeThread.startUpload(tagName);
-//                                                    }
+                                                    if (tagName.startsWith("video/recognition1")) {
+                                                        ResultAnalyzeThread.stopUpload();
+                                                        ResultAnalyzeThread.startUpload(tagName);
+                                                    }
                                                 }
                                             }).create();
                                     successDialog.show();

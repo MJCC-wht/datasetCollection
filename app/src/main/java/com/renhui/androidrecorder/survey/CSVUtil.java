@@ -1,5 +1,6 @@
 package com.renhui.androidrecorder.survey;
 
+import android.os.Build;
 import android.util.Log;
 
 import java.io.BufferedWriter;
@@ -53,7 +54,9 @@ public class CSVUtil {
 
 
             //实例化文件输出流
-            fileOutputStream = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8), 1024);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                fileOutputStream = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(file.toPath()), "GBK"), 1024);
+            }
 
             //遍历输出每行
             Iterator<Object[]> ite = rows.iterator();

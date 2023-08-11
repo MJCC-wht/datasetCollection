@@ -6,4 +6,8 @@
     <string name="reupload">重新上传</string>
     <string name="yes">是</string>
     <string name="no">否</string>
+    <string name="score_1">可以完全靠自己完成</string>
+    <string name="score_2">有些许困难，但自己尚能完成</string>
+    <string name="score_3">需要别人帮助才能完成</string>
+    <string name="score_4">完全无法完成</string>
 </resources>
