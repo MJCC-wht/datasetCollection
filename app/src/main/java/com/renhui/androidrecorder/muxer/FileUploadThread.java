@@ -91,7 +91,7 @@ public class FileUploadThread extends Thread {
                 return "GSD问卷结果";
             case "health":
                 return "社区健康调查问卷结果";
-            case "adl":
+            case "ADL":
                 return "ADL问卷结果";
             default:
                 return "未知任务";

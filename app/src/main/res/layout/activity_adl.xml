@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question1">
 
@@ -53,8 +53,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_2"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_2" />
 
                 <RadioButton
                     android:id="@+id/button1_2"
@@ -62,8 +61,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_3"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_3"/>
 
                 <RadioButton
                     android:id="@+id/button1_3"
@@ -71,8 +69,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_4"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_4" />
             </RadioGroup>
 
             <TextView
@@ -93,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question2">
 
@@ -111,8 +108,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_2"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_2" />
 
                 <RadioButton
                     android:id="@+id/button2_2"
@@ -120,8 +116,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_3"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_3" />
 
                 <RadioButton
                     android:id="@+id/button2_3"
@@ -129,8 +124,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_4"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_4" />
             </RadioGroup>
 
             <TextView
@@ -151,7 +145,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question3">
 
@@ -169,8 +163,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_2"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_2" />
 
                 <RadioButton
                     android:id="@+id/button3_2"
@@ -178,8 +171,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_3"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_3" />
 
                 <RadioButton
                     android:id="@+id/button3_3"
@@ -187,8 +179,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_4"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_4" />
             </RadioGroup>
 
             <TextView
@@ -209,7 +200,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question4">
 
@@ -227,8 +218,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_2"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_2" />
 
                 <RadioButton
                     android:id="@+id/button4_2"
@@ -236,8 +226,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_3"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_3" />
 
                 <RadioButton
                     android:id="@+id/button4_3"
@@ -245,8 +234,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_4"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_4" />
             </RadioGroup>
 
             <TextView
@@ -267,7 +255,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question5">
 
@@ -285,8 +273,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_2"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_2" />
 
                 <RadioButton
                     android:id="@+id/button5_2"
@@ -294,8 +281,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_3"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_3"/>
 
                 <RadioButton
                     android:id="@+id/button5_3"
@@ -303,8 +289,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_4"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_4"/>
             </RadioGroup>
 
             <TextView
@@ -325,7 +310,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question6">
 
@@ -343,8 +328,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_2"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_2"/>
 
                 <RadioButton
                     android:id="@+id/button6_2"
@@ -352,8 +336,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_3"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_3"/>
 
                 <RadioButton
                     android:id="@+id/button6_3"
@@ -361,8 +344,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_4"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_4"/>
             </RadioGroup>
 
             <TextView
@@ -383,7 +365,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question7">
 
@@ -401,8 +383,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_2"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_2"/>
 
                 <RadioButton
                     android:id="@+id/button7_2"
@@ -410,8 +391,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_3"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_3"/>
 
                 <RadioButton
                     android:id="@+id/button7_3"
@@ -419,8 +399,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_4"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_4"/>
             </RadioGroup>
 
             <TextView
@@ -441,7 +420,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question8">
 
@@ -459,8 +438,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_2"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_2"/>
 
                 <RadioButton
                     android:id="@+id/button8_2"
@@ -468,8 +446,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_3"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_3"/>
 
                 <RadioButton
                     android:id="@+id/button8_3"
@@ -477,8 +454,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_4"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_4"/>
             </RadioGroup>
 
             <TextView
@@ -499,7 +475,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question9">
 
@@ -517,8 +493,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_2"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_2"/>
 
                 <RadioButton
                     android:id="@+id/button9_2"
@@ -526,8 +501,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_3"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_3"/>
 
                 <RadioButton
                     android:id="@+id/button9_3"
@@ -535,8 +509,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_4"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_4"/>
             </RadioGroup>
 
             <TextView
@@ -557,7 +530,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question10">
 
@@ -575,8 +548,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_2"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_2"/>
 
                 <RadioButton
                     android:id="@+id/button10_2"
@@ -584,8 +556,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_3"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_3"/>
 
                 <RadioButton
                     android:id="@+id/button10_3"
@@ -593,8 +564,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_4"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_4"/>
             </RadioGroup>
 
             <TextView
@@ -615,7 +585,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question11">
 
@@ -633,8 +603,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_2"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_2"/>
 
                 <RadioButton
                     android:id="@+id/button11_2"
@@ -642,8 +611,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_3"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_3"/>
 
                 <RadioButton
                     android:id="@+id/button11_3"
@@ -651,8 +619,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_4"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_4"/>
             </RadioGroup>
 
             <TextView
@@ -673,7 +640,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question12">
 
@@ -691,8 +658,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_2"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_2"/>
 
                 <RadioButton
                     android:id="@+id/button12_2"
@@ -700,8 +666,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_3"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_3"/>
 
                 <RadioButton
                     android:id="@+id/button12_3"
@@ -709,8 +674,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_4"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_4"/>
             </RadioGroup>
 
             <TextView
@@ -731,7 +695,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question13">
 
@@ -749,8 +713,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_2"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_2"/>
 
                 <RadioButton
                     android:id="@+id/button13_2"
@@ -758,8 +721,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_3"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_3"/>
 
                 <RadioButton
                     android:id="@+id/button13_3"
@@ -767,8 +729,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_4"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_4"/>
             </RadioGroup>
 
             <TextView
@@ -789,7 +750,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question14">
 
@@ -807,8 +768,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_2"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_2"/>
 
                 <RadioButton
                     android:id="@+id/button14_2"
@@ -816,8 +776,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_3"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_3"/>
 
                 <RadioButton
                     android:id="@+id/button14_3"
@@ -825,8 +784,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:text="@string/score_4"
-                    android:layout_marginStart="30dp"/>
+                    android:text="@string/score_4"/>
             </RadioGroup>
 
             <Button

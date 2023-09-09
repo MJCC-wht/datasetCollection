@@ -127,7 +127,7 @@
                 android:layout_toRightOf="@+id/txt1"
                 android:background="@drawable/edit_text_bg"
 
-                android:inputType="number"
+                android:inputType="text"
                 android:textSize="20sp"></EditText>
             <EditText
                 android:id="@+id/name"

@@ -34,7 +34,7 @@ public class HomepageActivity extends AppCompatActivity {
 
     private static final String KEY_INDEX="INDEX";
     private String choice, choice2; // 选择的是哪个项目？
-    private int[] flag = new int[]{0,0,0,0,0,0,0,0,0};//初始状态
+    private int[] flag = new int[]{0,0,0,0,0,0,0,0,0,0};//初始状态
     private String filePath, camera_window = "";
 
     public void setFlag(int[] flag) {
@@ -152,7 +152,7 @@ public class HomepageActivity extends AppCompatActivity {
                 intent.setClass(HomepageActivity.this, ADLActivity.class);
                 intent.putExtra("complete_info", "text/ADL/" + filePath);
                 startActivity(intent);
-                btnChange(flag, btn42, 8);//
+                btnChange(flag, btn43, 9);//
             }
         });
 
