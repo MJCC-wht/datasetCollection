@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.icu.text.IDNA;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +30,7 @@ public class HomepageActivity extends AppCompatActivity {
     private Button btn11,btn12,btn13,
             btn21,btn22,
             btn31,btn32,
-            btn41,btn42,btn43,btn5;
+            btn41,btn42,btn43,btn5,btn_return;
     private TextView infoText;
 
     private static final String KEY_INDEX="INDEX";
@@ -235,6 +236,13 @@ public class HomepageActivity extends AppCompatActivity {
                 }
             }
         });
+        btn_return.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent.setClass(HomepageActivity.this, InfoInputActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void jump_to_collect(int[] flag, Button btn, int i){
@@ -301,6 +309,7 @@ public class HomepageActivity extends AppCompatActivity {
         btn42=findViewById(R.id.btn42);
 
         btn5=findViewById(R.id.btn5);
+        btn_return=findViewById(R.id.btn_return);
 
     }
 

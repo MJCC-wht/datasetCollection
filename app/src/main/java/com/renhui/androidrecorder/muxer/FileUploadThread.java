@@ -145,7 +145,8 @@ public class FileUploadThread extends Thread {
                     .build();
 
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .connectTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
+                    .connectTimeout(5, TimeUnit.SECONDS)
+                    .readTimeout(5, TimeUnit.MINUTES)
                     .writeTimeout(5, TimeUnit.MINUTES)
                     .build();
 
@@ -154,14 +155,14 @@ public class FileUploadThread extends Thread {
             Call call = okHttpClient.newCall(request);
             call.enqueue(new Callback() {
                 @Override
-                public void onFailure( Call call, IOException e) {
+                public void onFailure(Call call, IOException e) {
                     Looper.prepare();
                     ((Activity) mContext).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             AlertDialog failDialog = new AlertDialog.Builder(mContext)
                                     .setTitle("文件上传失败：")
-                                    .setMessage("由于网络错误，请确认网络连接正常后重新上传")
+                                    .setMessage("由于网络错误，请确认网络连接正常后重新上传 " + e.getMessage())
                                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
