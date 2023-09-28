@@ -20,6 +20,7 @@ import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
@@ -29,6 +30,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.Surface;
+import android.view.SurfaceControl;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -61,6 +63,8 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
     static MediaMuxerActivity mainActivity;
     SurfaceView surfaceView;
     VideoView mVideo;
+    SurfaceControl surfaceViewControl, mVideoControl;
+    SurfaceControl.Transaction surfaceTransaction, mVideoTransaction;
     Button videoStartStopButton;
     Button audioStartStopButton;
     Button changeCameraButton;
@@ -167,14 +171,25 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                                         // 视频录制完，上传文件
                                         uploadProgress.setVisibility(View.VISIBLE);
                                         FileUploadThread.startUpload(MediaMuxerActivity.this, MediaMuxerThread.filePath, MediaMuxerThread.tagName);
+
                                         // 如果结束时为横屏屏，不显示摄像头预览
-                                        if (cameraWindow && camera != null && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                                            // 小窗透明、最高层设定取消
+//                                        if (cameraWindow && camera != null && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+                                        VideoPlayerThread.stopPlay(mVideo, surfaceView);
+                                        stopCamera();
+
+                                        // 小窗透明、最高层设定取消
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                            surfaceTransaction.setAlpha(surfaceViewControl, 0);
+                                            mVideoTransaction.setAlpha(mVideoControl, 0);
+                                            surfaceTransaction.setLayer(surfaceViewControl, 5);
+                                            mVideoTransaction.setLayer(mVideoControl, 10);
+                                            surfaceTransaction.apply();
+                                            mVideoTransaction.apply();
+                                        } else {
                                             surfaceView.setAlpha(0);
                                             surfaceView.setZOrderOnTop(false);
                                         }
-                                        VideoPlayerThread.stopPlay(mVideo, surfaceView);
-                                        stopCamera();
                                     }
                                 })
                                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -192,11 +207,20 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                         // 视频录制完，上传文件
                         uploadProgress.setVisibility(View.VISIBLE);
                         FileUploadThread.startUpload(MediaMuxerActivity.this, MediaMuxerThread.filePath, MediaMuxerThread.tagName);
+
                         // 如果结束时为横屏屏，不显示摄像头预览
                         if (cameraWindow && camera != null && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                             // 小窗透明、最高层设定取消
-                            surfaceView.setAlpha(0);
-                            surfaceView.setZOrderOnTop(false);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                surfaceTransaction.setAlpha(surfaceViewControl, 0);
+                                surfaceTransaction.setLayer(surfaceViewControl, 5);
+                                mVideoTransaction.setLayer(mVideoControl, 10);
+                                surfaceTransaction.apply();
+                                mVideoTransaction.apply();
+                            } else {
+                                surfaceView.setAlpha(0);
+                                surfaceView.setZOrderOnTop(false);
+                            }
                         }
                         VideoPlayerThread.stopPlay(mVideo, surfaceView);
                         stopCamera();
@@ -214,7 +238,6 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                     uploadProgress.setVisibility(View.GONE);
                     if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
                         startCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
-                        // 一开始为竖屏的时候，摄像头小窗透明
                         surfaceView.setAlpha(0);
                     } else if (confirmType(filePathList[1]) == ACTION_TYPE) {
                         startCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
@@ -222,24 +245,47 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                         Toast.makeText(MediaMuxerActivity.this, "禁止录制视频", Toast.LENGTH_SHORT).show();
                         return;
                     }
+
                     view.setTag("stop");
                     ((TextView) view).setText("停止录制");
                     MediaMuxerThread.startMuxer(filePath);
                     FileUploadThread.stopUpload();
                     if (confirmType(filePathList[1]) == RECOGNITION_TYPE || confirmType(filePathList[1]) == EMOTION_TYPE) {
                         VideoPlayerThread.startPlay(MediaMuxerActivity.this, mVideo, filePathList[1]);
-//                        if (cameraWindow) {
-//                            // 设置摄像头小窗置于最高层、不透明、尺寸与nobuttun贴合
-//                            surfaceView.setAlpha(0);
-//                            surfaceView.setZOrderOnTop(true);
-//                            if (camera != null) {
-//                                RelativeLayout.LayoutParams cameraparams = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
-//                                cameraparams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.noButton);
-//                                cameraparams.addRule(RelativeLayout.ALIGN_LEFT, R.id.noButton);
-//                                cameraparams.addRule(RelativeLayout.ALIGN_PARENT_TOP, R.id.topButton);
-//                                cameraparams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, R.id.video);
-//                            }
-//                        }
+
+                        if (cameraWindow) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                mVideoTransaction.setAlpha(mVideoControl, 1);
+                                // 当前横屏
+                                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                                    // 直接放大到全屏
+                                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mVideo.getLayoutParams();
+                                    // 移除必须在按钮之下的位置设定，让横屏能全屏播放
+                                    params.removeRule(RelativeLayout.BELOW);
+                                    mVideo.setLayoutParams(params);
+                                    surfaceTransaction.setAlpha(surfaceViewControl, 1);
+                                    surfaceTransaction.setLayer(surfaceViewControl, 10);
+                                    mVideoTransaction.setLayer(mVideoControl, 5);
+                                } else {
+                                    surfaceTransaction.setAlpha(surfaceViewControl, 0);
+                                    surfaceTransaction.setLayer(surfaceViewControl, 5);
+                                    mVideoTransaction.setLayer(mVideoControl, 10);
+                                }
+                                surfaceTransaction.apply();
+                                mVideoTransaction.apply();
+                            } else {
+                                // 设置摄像头小窗置于最高层、不透明、尺寸与nobuttun贴合
+                                surfaceView.setAlpha(1);
+                                surfaceView.setZOrderOnTop(true);
+                            }
+                            if (camera != null) {
+                                RelativeLayout.LayoutParams cameraparams = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
+                                cameraparams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.noButton);
+                                cameraparams.addRule(RelativeLayout.ALIGN_LEFT, R.id.noButton);
+                                cameraparams.addRule(RelativeLayout.ALIGN_PARENT_TOP, R.id.topButton);
+                                cameraparams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, R.id.video);
+                            }
+                        }
                     }
                 }
             }
@@ -338,6 +384,13 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
         if (filePathList[1] != null && (filePathList[1].startsWith("description"))) {
             updateImage(getImageFromAssetsFile(switchImage(filePathList[1])));
         }
+        // 获取surfaceView和videoView的control
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            surfaceViewControl = surfaceView.getSurfaceControl();
+            mVideoControl = mVideo.getSurfaceControl();
+            surfaceTransaction = new SurfaceControl.Transaction();
+            mVideoTransaction = new SurfaceControl.Transaction();
+        }
     }
 
     @Override
@@ -392,9 +445,17 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
 
                 // 横屏时显示摄像头预览窗口
                 if (cameraWindow && camera != null) {
-                    // 设置摄像头小窗置于最高层、不透明、尺寸与nobuttun贴合
-                    surfaceView.setAlpha(1);
-                    surfaceView.setZOrderOnTop(true);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        surfaceTransaction.setAlpha(surfaceViewControl, 1);
+                        surfaceTransaction.setLayer(surfaceViewControl, 10);
+                        mVideoTransaction.setLayer(mVideoControl, 5);
+                        surfaceTransaction.apply();
+                        mVideoTransaction.apply();
+                    } else {
+                        // 设置摄像头小窗置于最高层、不透明、尺寸与nobuttun贴合
+                        surfaceView.setAlpha(1);
+                        surfaceView.setZOrderOnTop(true);
+                    }
                     // 隐藏状态栏
                     mVideo.setSystemUiVisibility(View.INVISIBLE);
 
@@ -419,9 +480,17 @@ public class MediaMuxerActivity extends AppCompatActivity implements SurfaceHold
                 // 竖屏时不显示摄像头
                 if (cameraWindow) {
                     if (camera != null) {
-                        // 小窗透明、最高层设定取消
-                        surfaceView.setAlpha(0);
-                        surfaceView.setZOrderOnTop(false);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            surfaceTransaction.setAlpha(surfaceViewControl, 0);
+                            surfaceTransaction.setLayer(surfaceViewControl, 5);
+                            mVideoTransaction.setLayer(mVideoControl, 10);
+                            surfaceTransaction.apply();
+                            mVideoTransaction.apply();
+                        } else {
+                            // 小窗透明、最高层设定取消
+                            surfaceView.setAlpha(1);
+                            surfaceView.setZOrderOnTop(false);
+                        }
                     }
                 }
             }

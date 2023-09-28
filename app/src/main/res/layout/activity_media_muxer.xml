@@ -6,7 +6,7 @@
     <Button
         android:id="@+id/noButton"
         android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_height="75dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true">
     </Button>
@@ -51,13 +51,6 @@
         android:layout_height="wrap_content"
         android:textSize="24sp"/>
 
-    <!--用于显示预览-->
-    <SurfaceView
-        android:id="@+id/surface_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/topButton" />
-
     <!-- 显示视频 -->
     <VideoView
         android:id="@+id/video"
@@ -65,6 +58,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/topButton"
         android:keepScreenOn="true" />
+
+    <!--用于显示预览-->
+    <SurfaceView
+        android:id="@+id/surface_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/topButton" />
 
     <ProgressBar
         android:id="@+id/upload_progress"
