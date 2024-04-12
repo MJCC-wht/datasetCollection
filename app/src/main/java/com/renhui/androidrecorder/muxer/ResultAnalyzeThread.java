@@ -10,10 +10,18 @@ import android.widget.ProgressBar;
 
 import com.renhui.androidrecorder.MyApplication;
 import com.renhui.androidrecorder.R;
+import com.renhui.androidrecorder.util.NgariSyncUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -26,7 +34,7 @@ import okhttp3.Response;
 
 public class ResultAnalyzeThread extends Thread {
     //设置访问服务端IP
-    private final String serverIp = "124.222.64.141:" + FileUploadThread.port;
+    private final String serverIp = FileUploadThread.mainIP + FileUploadThread.port;
     private static ResultAnalyzeThread resultAnalyzeThread;
 
     // 本地文件地址
@@ -56,6 +64,8 @@ public class ResultAnalyzeThread extends Thread {
         startTime = -1;
         analyzeResult = null;
     }
+
+
 
 
     @Override
@@ -105,6 +115,11 @@ public class ResultAnalyzeThread extends Thread {
                         Looper.prepare();
 
                         analyzeResult = response.body().string();
+
+                        // 获取到结果的同时同步到纳里的接口
+//                        NgariSyncUtil ngariSyncUtil = new NgariSyncUtil(filePath, analyzeResult);
+//                        ngariSyncUtil.syncData2Ngari();
+
                         Log.d("analyze Result", analyzeResult);
 
                         Looper.loop();

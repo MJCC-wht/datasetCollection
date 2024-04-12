@@ -25,6 +25,8 @@ import com.renhui.androidrecorder.survey.GDSSurveyActivity;
 import com.renhui.androidrecorder.survey.HealthSurveyActivity;
 
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HomepageActivity extends AppCompatActivity {
     private Button btn11,btn12,btn13,
@@ -194,10 +196,11 @@ public class HomepageActivity extends AppCompatActivity {
                     }
                 } else {
                     // 有结果，但是要分析返回情况
-                    if (analyzeResult.startsWith("分析失败")) {
+                    if (analyzeResult.startsWith("ERROR") || analyzeResult.contains("nan") || analyzeResult.contains("失败")) {
                         AlertDialog failDialog = new AlertDialog.Builder(HomepageActivity.this)
                                 .setTitle("分析失败：")
-                                .setMessage(analyzeResult)
+                                // TODO:需要改正
+                                .setMessage("分析失败，视频时长不足")
                                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -207,21 +210,26 @@ public class HomepageActivity extends AppCompatActivity {
                         failDialog.show();
                     } else {
                         String message = "";
-                        if (analyzeResult.startsWith("分析完成")) {
-                            message = analyzeResult;
-                        } else if (analyzeResult.equals("nan")) {
-                            message = "分析数据错误，可能为时长不够";
-                        } else {
-                            double score = Double.parseDouble(analyzeResult);
-                            score = Double.parseDouble(String.format(Locale.CHINA, "%.2f", score));
-                            if (score >= 0.7) {
-                                message = "您的记忆减退风险为" + (1 - score) + "，为健康人群。建议定期筛查，感谢您的配合";
-                            } else if (score >= 0.4) {
-                                message = "您的记忆减退风险为" + (1 - score) + "，为低风险人群。建议定期筛查，感谢您的配合";
-                            } else {
-                                message = "您的记忆减退风险为" + (1 - score) + "，为中风险人群。建议定期筛查，感谢您的配合";
-                            }
+                        // 定义匹配浮点数的正则表达式
+                        String regex = "\\d+\\.\\d+";
+                        // 编译正则表达式
+                        Pattern pattern = Pattern.compile(regex);
+                        // 创建Matcher对象
+                        Matcher matcher = pattern.matcher(analyzeResult);
+                        double score = 0.0;
+                        if (matcher.find()) {
+                            String floatString = matcher.group();
+                            score = Double.parseDouble(floatString);
                         }
+                        score = Double.parseDouble(String.format(Locale.CHINA, "%.2f", score));
+                        if (score >= 0.7) {
+                            message = "您的记忆减退风险为" + (1 - score) + "，为健康人群。建议定期筛查，感谢您的配合";
+                        } else if (score >= 0.4) {
+                            message = "您的记忆减退风险为" + (1 - score) + "，为低风险人群。建议定期筛查，感谢您的配合";
+                        } else {
+                            message = "您的记忆减退风险为" + (1 - score) + "，为中风险人群。建议定期筛查，感谢您的配合";
+                        }
+
                         AlertDialog successDialog = new AlertDialog.Builder(HomepageActivity.this)
                                 .setTitle("分析成功：")
                                 .setMessage(message)

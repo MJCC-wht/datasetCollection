@@ -36,8 +36,10 @@ import okio.Okio;
 public class FileUploadThread extends Thread {
 
     //设置访问服务端IP
-    public static String port = "8080";
-    private final String serverIp = "124.222.64.141:" + port;
+    public static String port = "8081";
+    public static String mainIP = "124.222.64.141:";
+    public static String testIP = "47.110.32.102:";
+    private final String serverIp = mainIP + port;
     private static FileUploadThread fileUploadThread;
 
     // 页面的上下文
